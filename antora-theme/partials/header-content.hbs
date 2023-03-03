@@ -1,0 +1,75 @@
+    <header class="header" role="banner">
+      {{> nav-toggle}}
+      <nav id="main-nav">
+          <!-- Mobile menu toggle button (hamburger/x icon) -->
+          <input id="main-menu-state" type="checkbox" />
+          <label class="main-menu-btn" for="main-menu-state">
+              <span class="main-menu-btn-icon"></span> Toggle main menu visibility
+          </label>
+          <!-- Sample menu definition -->
+          <ul id="main-menu" class="sm sm-blue">
+              <li><a href="{{page.attributes.corporatesite-url}}" class="logo"><img src="{{uiRootPath}}/img/logo.svg" alt="Logo"></a></li>
+              <li><a href="{{siteRootPath}}/{{page.component.name}}/{{#if page.version}}{{page.version}}/{{/if}}{{page.module}}/{{page.attributes.homepage-url}}">Docs</a></li>
+              <li><a href="/api">API</a></li>
+              <li><a>{{page.attributes.awscompatibility-text}}</a>
+                  <ul>
+                      <li><a href="/fcu">FCU</a></li>
+                      <li><a href="/lbu">LBU</a></li>
+                      <li><a href="/eim">EIM</a></li>
+                      <li><a href="/icu">ICU</a></li>
+                      <li><a href="/directlink">DirectLink</a></li>
+                      <li><a href="{{page.attributes.oos-url}}">OOS</a></li>
+
+                  </ul>
+              </li>
+              <li><a>{{page.attributes.tooling-text}}</a>
+                  <ul>
+                      <li><a href="{{page.attributes.cockpit-url}}">Cockpit</a></li>
+                      <li><a href="{{page.attributes.osccli-url}}">{{page.attributes.osccli-text}}</a></li>
+                      <li><a href="Terraform.html">Terraform</a></li>
+                      <li><a href="https://www.packer.io/docs/builders/outscale.html">Packer<span class="fa fa-external-link fa-fw"></span></a></li>
+                      <li><a href="https://github.com/outscale/osc-sdk-python">{{page.attributes.sdkforpython-text}}<span class="fa fa-external-link fa-fw"></span></a></li>
+                      <li><a href="https://github.com/outscale/osc-sdk-go">{{page.attributes.sdkforgo-text}}<span class="fa fa-external-link fa-fw"></span></a></li>
+                      <li><a href="https://github.com/outscale/osc-sdk-js">{{page.attributes.sdkforjs-text}}<span class="fa fa-external-link fa-fw"></span></a></li>
+                      <li><a href="https://github.com/outscale/osc-sdk-rust">{{page.attributes.sdkforrust-text}}<span class="fa fa-external-link fa-fw"></span></a></li>
+                      <li><a href="https://github.com/outscale/frieza">{{page.attributes.frieza-text}}<span class="fa fa-external-link fa-fw"></span></a></li>
+                      <li><a href="https://github.com/outscale/osc-logs">{{page.attributes.osclogs-text}}<span class="fa fa-external-link fa-fw"></span></a></li>
+                      <li><a href="https://github.com/outscale/osc-libcurl-examples">{{page.attributes.osclibcurlexamples-text}}<span class="fa fa-external-link fa-fw"></span></a></li>
+                  </ul>
+              </li>
+              <li><a href="{{page.attributes.faqs-url}}">{{page.attributes.faqs-text}}<span class="fa fa-external-link fa-fw"></span></a></li>
+              {{#if page.attributes.fr}}
+              <li id="lang-switcher"><a>English<span class="fa fa-globe fa-fw"></span></a>
+                  <ul>
+                      <li><a href="{{siteRootPath}}/fr/{{#if page.version}}{{page.version}}/{{/if}}{{page.module}}/{{page.attributes.fr}}.html">Français</a></li>
+                  </ul>
+              </li>
+              {{/if}}
+              {{#if page.attributes.en}}
+              <li id="lang-switcher"><a>Français<span class="fa fa-globe fa-fw"></span></a>
+                  <ul>
+                      <li><a href="{{siteRootPath}}/en/{{#if page.version}}{{page.version}}/{{/if}}{{page.module}}/{{page.attributes.en}}.html">English</a></li>
+                  </ul>
+              </li>
+              {{/if}}
+              {{#if env.SITE_SEARCH_PROVIDER}}
+              <li id="search-field" class="field has-filter">
+                  <a><input id="search-input" type="text" placeholder="{{page.attributes.search-text}}"></a>
+                  <input type="checkbox" data-facet-filter="component:{{page.component.name}}" checked style="display: none">
+              </li>
+              {{/if}}
+          </ul>
+      </nav>
+    </header>
+    <script src="{{uiRootPath}}/js/vendor/_jquery.js"  type="application/javascript"></script>
+    <script src="{{uiRootPath}}/js/vendor/jquery.smartmenus.min.js" type="application/javascript"></script>
+
+    <!-- SmartMenus jQuery init -->
+    <script type="text/javascript">
+        $(function() {
+            $('#main-menu').smartmenus({
+                subMenusSubOffsetX: 1,
+                subMenusSubOffsetY: -8
+            });
+        });
+    </script>

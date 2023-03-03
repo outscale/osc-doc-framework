@@ -1,0 +1,8 @@
+extends: existence
+message: There seems to be a merge conflict marker.
+level: error
+scope: raw
+raw:
+  - '<<<<<<< .+|'
+  - '=======\n|'
+  - '>>>>>>> .+'

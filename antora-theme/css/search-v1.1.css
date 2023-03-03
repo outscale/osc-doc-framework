@@ -1,0 +1,203 @@
+.navbar-brand .navbar-item + .navbar-item {
+  flex-grow: 1;
+  justify-content: flex-end;
+}
+
+@media screen and (min-width: 1024px) {
+  .navbar-brand {
+    flex-grow: 1;
+  }
+
+  .navbar-menu {
+    flex-grow: 0;
+  }
+}
+
+#search-input {
+  color: #333;
+  font-family: inherit;
+  font-size: 0.95rem;
+  border: 1px solid #dbdbdb;
+  border-radius: 0.1em;
+  line-height: 1.5;
+  padding: 0 0.25em;
+}
+
+@media screen and (min-width: 769px) {
+  #search-input {
+    position: relative;
+    z-index: 1000;
+    width: 190px;
+  }
+}
+
+#search-spinner {
+  font-size: 1.5em;
+  margin-right: 0.25em;
+}
+
+.search-result-dropdown-menu {
+  position: absolute;
+  z-index: 100;
+  display: block;
+  right: 0;
+  left: inherit;
+  top: 100%;
+  border-radius: 4px;
+  margin: 6px 0 0;
+  padding: 0;
+  text-align: left;
+  height: auto;
+  background: transparent;
+  border: none;
+  font-family: "Montserrat", sans-serif;
+  max-width: 600px;
+  min-width: 500px;
+}
+
+@media screen and (max-width: 768px) {
+  .navbar-brand .navbar-item + .navbar-item {
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .search-result-dropdown-menu {
+    min-width: calc(100vw - 3.75rem);
+  }
+}
+
+.search-result-dataset {
+  position: relative;
+  border: 1px solid #d9d9d9;
+  color: #333;
+  box-shadow: 0px 0px 0px 10000px rgba(0, 0, 0, 0.50);
+  background: #fff;
+  border-radius: 4px;
+  overflow: auto;
+  padding: 0 8px 8px;
+  max-height: calc(100vh - 5.25rem);
+  color: #333;
+  scrollbar-width: initial;
+}
+
+@media screen and (max-width: 768px) {
+  .search-result-dataset {
+    position: fixed;
+    top: 50px;
+    right: 10px;
+    width: 65vw;
+  }
+}
+
+.search-result-item {
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.search-result-item:hover {
+  background-color: rgba(69, 142, 225, 0.1);
+}
+
+.search-result-component-header {
+  display: none;
+}
+
+.search-result-document-title {
+  border-bottom: 1px solid #ddd;
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 0.25rem 0.5rem 0.25rem 2rem;
+  margin: 0 0.5rem;
+  position: relative;
+  text-shadow: initial;
+  word-wrap: break-word;
+}
+
+.search-result-document-title:before {
+  content: "\f0f6";
+  position: absolute;
+  font-family: "FontAwesome";
+  font-size: 1.5em;
+  margin-left: -1.3em;
+}
+
+.search-result-document-hit {
+  font-size: 0.75em;
+  color: #02060c;
+}
+
+.search-result-document-hit .search-result-highlight {
+  background-color: #fbf4ca;
+  font-weight: 500;
+  padding: .1em .05em;
+}
+
+.search-result-document-hit > a {
+  display: block;
+  background: initial !important;
+  color: var(--outscale-blue) !important;
+  font-family: "Montserrat", sans-serif !important;
+  font-size: 1.1em !important;
+  font-weight: initial !important;
+  margin-top: -2rem;
+  padding: 2rem 0 0.5rem 2rem !important;
+  text-shadow: initial !important;
+  white-space: initial !important;
+}
+
+.search-result-document-hit > a:hover {
+  font-family: "Montserrat", sans-serif !important;
+  font-weight: normal !important;
+}
+
+.search-result-document-hit > strong,
+.search-result-dataset > .search-result-item:first-of-type:before {
+  font-size: 0.8rem;
+  padding-left: 1em;
+  text-shadow: initial;
+}
+
+.search-result-document-hit .search-result-section-title {
+  color: #303030;
+  font-weight: 500;
+  margin-bottom: 0.25em;
+}
+
+.search-result-dataset > .search-result-item:first-of-type:before {
+  content: "No results.";
+}
+
+[lang=fr] .search-result-dataset > .search-result-item:first-of-type:before {
+  content: "Aucun résultat.";
+}
+
+.search-result-dataset > .search-result-item:first-of-type > .search-result-document-hit {
+  display: none;
+}
+
+.search-result-dataset > .search-result-item:first-of-type {
+  background: initial;
+}
+
+#search-input:focus {
+  outline: none;
+}
+
+#search-input:disabled {
+  background-color: #fff;
+  background-repeat: no-repeat;
+}
+
+#search-input:disabled::placeholder {
+  color: transparent;
+}
+
+/* https://stackoverflow.com/a/59066059 */
+#search-input:disabled:placeholder-shown {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' version='1.1'><text x='4' y='16' fill='grey' font-family='Montserrat, sans-serif' font-size='14.25' font-weight='lighter'>Loading...</text></svg>");
+}
+
+[lang=fr] #search-input:disabled:placeholder-shown {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' version='1.1'><text x='4' y='16' fill='grey' font-family='Montserrat, sans-serif' font-size='14.25' font-weight='lighter'>Chargement...</text></svg>");
+}

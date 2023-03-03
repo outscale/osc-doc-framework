@@ -1,0 +1,14 @@
+extends: existence
+message: Inconsistent singular/plural for the Related Page(s) heading, compared to the actual number of pages you have listed.
+level: error
+scope: raw
+raw:
+# Heading in singular but at least two links
+  - '(\*Related Page\*\n\n+)(\* xref:.+?\n){2,}|'
+  - '(\*Page connexe\*\n\n+)(\* xref:.+?\n){2,}|'
+# Heading in plural but only one link
+  - '(\*Related Pages\*\n\n+)(\* xref:.+?)(\n\n|\n*$)|'
+  - '(\*Pages connexes\*\n\n+)(\* xref:.+?)(\n\n|\n*$)|'
+# "Page(s)" and "connexe(s)" not consistent
+  - '(\*Page connexes\*)|'
+  - '(\*Pages connexe\*)'

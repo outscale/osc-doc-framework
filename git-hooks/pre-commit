@@ -1,0 +1,22 @@
+#!/bin/sh
+
+DIR="./node_modules/@outscale/osc-doc-framework/"
+LINTSTAGED_BIN="${DIR}/node_modules/.bin/lint-staged"
+
+if [ ! -e "${LINTSTAGED_BIN}" ]; then
+    exit 0
+fi
+
+if [ ${TERM} = xterm-256color ]; then
+    VALE_TEMPLATE="color.tmpl"
+else
+    VALE_TEMPLATE="colorless.tmpl"
+fi
+
+LINTSTAGED_CONFIG='{
+    "*": "vale
+            --config='${DIR}'/Vale/.vale.ini
+            --output='${DIR}'/Vale/'${VALE_TEMPLATE}'"
+}'
+
+echo ${LINTSTAGED_CONFIG} | ${LINTSTAGED_BIN} --shell=/bin/sh --quiet --verbose --config -

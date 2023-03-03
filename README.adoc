@@ -1,0 +1,15 @@
+= osc-doc-framework
+
+== Installing
+
+You need `node` 16.0.0+.
+
+To install globally (tested with `npm` 9.5.1):
+
+[source,shell]
+----
+$ git clone https://gitlab.outscale.internal/documentation/osc-doc-framework.git
+$ cd osc-doc-framework
+$ npm ci
+$ npm link
+----

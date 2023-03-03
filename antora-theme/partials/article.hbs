@@ -1,0 +1,11 @@
+<article class="doc">
+{{#with page.title}}
+<h1 class="page">{{{this}}}</h1>
+{{/with}}
+{{{page.contents}}}
+{{#if (and env.CI (not env.DISABLE_EDIT_PAGE_LINK))}}
+<div class="edit-this-page paragraph"><a href="{{page.editUrl}}"><strong>{{page.attributes.editthispage-text}}</strong> <i class="fa fa-file-code-o"></i></a></div>
+{{else if (not env.DISABLE_EDIT_PAGE_LINK)}}
+<div class="edit-this-page paragraph"><a href="{{page.fileUri}}"><strong>{{page.attributes.editthispage-text}}</strong> <i class="fa fa-file-code-o"></i></a></div>
+{{/if}}
+</article>
