@@ -118,9 +118,10 @@
     }
   }
 
-  function moveAwsDisclaimer() {
+  function moveSpecialDivs() {
+    const mobileOnlyDivs = document.getElementsByClassName('mobile-only')
     const awsDisclaimer = document.getElementById('aws-disclaimer')
-    if (awsDisclaimer) {document.getElementsByClassName('doc')[0].appendChild(awsDisclaimer)}
+    document.getElementsByClassName('doc')[0].append(...mobileOnlyDivs, awsDisclaimer)
   }
 
   const tabs = document.getElementsByClassName("tab")
@@ -131,7 +132,7 @@
       updateTabs(n, true, hash)
     }
     window.onhashchange = updateTabs2
-    moveAwsDisclaimer()
+    moveSpecialDivs()
   }
 
 })()
