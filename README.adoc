@@ -2,9 +2,14 @@
 
 == Installing
 
-You need `node` 16.0.0+.
+First, you need `node` 16.0.0 or later. If you have `nvm` (https://github.com/nvm-sh/nvm[Node Version Manager]), you can install the LTS version of `node` as follows:
 
-To install globally (tested with `npm` 9.5.1):
+[source,shell]
+----
+$ nvm install --lts
+----
+
+Then you can install `osc-doc-framework` globally:
 
 [source,shell]
 ----
