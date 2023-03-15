@@ -1,7 +1,7 @@
 {
   "private": true,
   "name": "@outscale/osc-doc-framework",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "This package contains tooling used to generate OUTSCALE documentations.",
   "peerDependencies": {
     "antora": "3.1.1",
@@ -12,7 +12,7 @@
     "antora-navigator-extension": "https://gitlab.com/opendevise/oss/antora-navigator-extension/-/archive/2d0ec861f894728b303a8bbe68ccd68acdef7b9f/antora-navigator-extension-2d0ec861f894728b303a8bbe68ccd68acdef7b9f.tar.gz"
   },
   "bin": {
-    "antora": "node_modules/.bin/antora"
+    "antora": "bin/antora"
   },
   "engines": {
     "node": ">=16.0.0"
