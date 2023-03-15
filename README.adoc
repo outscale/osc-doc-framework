@@ -1,20 +1,71 @@
 = osc-doc-framework
 
+image:https://docs.outscale.com/fr/userguide/_images/Project-Graduated-green.svg[Project Graduated, link="https://docs.outscale.com/en/userguide/Open-Source-Projects.html"]
+
+`osc-doc-framework` is a framework used to generate OUTSCALE documentations. It is primarily based on the https://antora.org/[Antora] documentation site generator, with extension and theme files to customize the Antora output.
+
+
+
+== Prerequisites
+
+* You need to install `node` 16.0.0 or later from the https://nodejs.org/en/[official Node.js website] or via the https://github.com/nvm-sh/nvm[Node Version Manager (`nvm`)].
+* You need to create an Antora documentation project. For more information, see the https://docs.antora.org/antora/latest/[official Antora documentation].
+
+
+
 == Installing
 
-First, you need `node` 16.0.0 or later. If you have `nvm` (https://github.com/nvm-sh/nvm[Node Version Manager]), you can install the LTS version of `node` as follows:
+There are multiple ways to install `osc-doc-framework` in your Antora documentation project. Here is an example:
 
 [source,shell]
 ----
-$ nvm install --lts
+$ cd <YOUR_ANTORA_PROJECT>
+$ git clone https://github.com/outscale/osc-doc-framework.git
+$ npm install ./osc-doc-framework
 ----
 
-Then you can install `osc-doc-framework` globally:
+Then, in your Antora playbook file, you can plug the different components of `osc-doc-framework` by adding the following keys:
+
+[source,yaml]
+----
+ui:
+  bundle:
+    url: https://gitlab.com/antora/antora-ui-default/-/jobs/artifacts/master/raw/build/ui-bundle.zip?job=bundle-stable
+  supplemental_files: ./node_modules/@outscale/osc-doc-framework/antora-theme
+antora:
+  extensions:
+    - require: ./node_modules/@antora/lunr-extension
+    - require: ./node_modules/antora-navigator-extension
+    - require: ./node_modules/@outscale/osc-doc-framework/antora-extension
+----
+
+
+
+== Linting
+
+Optionally, you can configure your Git to use the pre-commit hook in the `git-hooks` folder. This pre-commit hook will run https://vale.sh/[Vale] on your documentation pages in order to lint them with the style rules located in the `Vale/styles` folder.
+
+
+
+== Building
+
+Once you have installed `osc-doc-framework`, you can build your documentation in the usual Antora way:
 
 [source,shell]
 ----
-$ git clone https://gitlab.outscale.internal/documentation/osc-doc-framework.git
-$ cd osc-doc-framework
-$ npm ci
-$ npm link
+$ npx antora <YOUR_PLAYBOOK_YML>
 ----
+
+
+
+== Contributing
+
+Feel free to open an issue in case of bugs.
+
+
+
+== License
+
+Copyright Outscale SAS
+
+MPL-2.0
