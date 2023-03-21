@@ -6,7 +6,7 @@ module.exports.register = function ({ config }) {
       const files = contentAggregate[i].files
       for (let j = 0, length = files.length; j < length; j++) {
         files[j].stem = files[j].stem.normalize('NFC')
-        files[j].contents = modifyAsciiDoc(files[j])
+        if (files[j].extname === '.adoc') files[j].contents = modifyAsciiDoc(files[j])
       }
     }
   })
