@@ -517,6 +517,10 @@ footer.footer a {
 
 /* Sidepanels */
 
+.content.static .toc.sidebar .toc-menu {
+  position: static;
+}
+
 .toc.sidebar table .paragraph {
   height: 2rem;
 }
