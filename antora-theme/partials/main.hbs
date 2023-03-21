@@ -1,11 +1,11 @@
 <main class="article">
-<div class="toolbar navigation"></div>
-<div class="content">
+{{> toolbar}}
+  <div class="content {{page.attributes.tocposition}}">
 {{#if (eq page.layout '404')}}
 {{> article-404}}
 {{else}}
 {{> toc}}
 {{> article}}
 {{/if}}
-</div>
+  </div>
 </main>
