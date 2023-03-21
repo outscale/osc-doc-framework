@@ -121,7 +121,8 @@
   function moveSpecialDivs() {
     const mobileOnlyDivs = document.getElementsByClassName('mobile-only')
     const awsDisclaimer = document.getElementById('aws-disclaimer')
-    document.getElementsByClassName('doc')[0].append(...mobileOnlyDivs, awsDisclaimer)
+    document.getElementsByClassName('doc')[0].append(...mobileOnlyDivs)
+    if (awsDisclaimer) document.getElementsByClassName('doc')[0].append(awsDisclaimer)
   }
 
   const tabs = document.getElementsByClassName("tab")
