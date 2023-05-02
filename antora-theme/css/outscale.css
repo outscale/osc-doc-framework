@@ -710,3 +710,13 @@ div.tab.active {
 #term-box a:hover {
   color: #104d92;
 }
+
+a[href^="_rss"]:after {
+  background: url("../img/rss.svg") no-repeat;
+  background-size: 18px;
+  content: " ";
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  margin: 0 0 0 3px;
+}

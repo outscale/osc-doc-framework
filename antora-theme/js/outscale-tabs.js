@@ -19,7 +19,7 @@
 
     for (var i = 0, length = tabs.length; i < length; i++) {
       const tabHeading = tabs[i].querySelector("h2:first-child, h3:first-child, h4:first-child, h5:first-child, h6:first-child")
-      const id = tabHeading.textContent.replaceAll(" ", "_").replaceAll(/[’:/()]/g, "")
+      const id = tabHeading.textContent.replaceAll(" ", "_").replaceAll(/[’:/()]|_+$/g, "")
 
       const li = document.createElement("li")
       const p = document.createElement("p")
