@@ -40,21 +40,6 @@ module.exports.register = function ({
   })
 }
 
-function getFiles (contentCatalog, sourceFiles, logger) {
-  const files = []
-
-  for (let i = 0, length = sourceFiles.length; i < length; i++) {
-    const file = contentCatalog.getByPath(sourceFiles[i])
-    if (file) files.push(file)
-    else {
-      logger.error('In the playbook, the specified source file "' + sourceFiles[i].path + '" does not exist.')
-      process.exit(1)
-    }
-  }
-
-  return files
-}
-
 function $ (x) {
   return cheerio.load(x)
 }
@@ -83,13 +68,15 @@ function addItems (htmlContent, link, language, sectionSelector, titleSelector, 
 
   const sections = $(htmlContent)(sectionSelector)
   for (let i = 0, length = sections.length; i < length; i++) {
-    const sectionContent = $(sections[i]).html()
+    const section = sections[i]
+    const sectionContent = $(section).html()
     const title = $(sectionContent)(titleSelector).text()
     const anchor = $(sectionContent)(titleSelector + ' > a').attr('href')
     const baseUrl = link.substring(0, link.lastIndexOf(link.replace(/.+\//g, '')))
     const pubDate = getDate(sectionContent, link, language, title, logger)
 
-    let description = $(sectionContent)(descriptionSelector).html()
+    $(section)(titleSelector).remove()
+    let description = $(section).html()
     description = description.replace(/\n/g, '')
     description = description.replace(/href="(?!http)/g, 'href="' + baseUrl)
 
