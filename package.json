@@ -21,6 +21,9 @@
     "@antora/playbook-builder": {
       "convict": "~6.2.4"
     },
+    "lint-staged": {
+      "yaml": "~2.2.2"
+    },
     "vinyl-fs": {
       "glob-stream": "~7.0"
     }
