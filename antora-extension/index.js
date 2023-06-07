@@ -1,6 +1,10 @@
 const fs = require('fs')
 
 module.exports.register = function ({ config }) {
+  this.once('beforeProcess', () => {
+    require('mac-ca')
+  })
+
   this.once('contentAggregated', ({ contentAggregate }) => {
     for (let i = 0, length = contentAggregate.length; i < length; i++) {
       const files = contentAggregate[i].files
