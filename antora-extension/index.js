@@ -2,7 +2,10 @@ const fs = require('fs')
 
 module.exports.register = function ({ config }) {
   this.once('beforeProcess', () => {
-    require('mac-ca')
+    try {
+      require('mac-ca')
+    }
+    catch (e) {}
   })
 
   this.once('contentAggregated', ({ contentAggregate }) => {
