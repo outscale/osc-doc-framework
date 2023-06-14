@@ -388,10 +388,13 @@ code, kbd, pre {
   border:1px solid #e1e1e1;
 }
 .doc table.tableblock thead th {
+  position: -webkit-sticky;
+  position: sticky;
+  top: var(--topbar-height);
+  z-index: 1;
   background: #f4f5f7;
-  border-top:1px solid #e1e1e1;
-  border-right:1px solid #e1e1e1;
-  border-left:1px solid #e1e1e1;
+  border: 1px solid #e1e1e1;
+  outline: 1px solid #e1e1e1;
 }
 
 .doc table.tableblock img[src*="scrNbRed"] {
