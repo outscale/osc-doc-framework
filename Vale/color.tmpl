@@ -31,8 +31,10 @@
 
 {{- $loc := printf "%d:%d" .Line (index .Span 0) -}}
 {{- $row := list $loc $error .Message .Check | toStrings -}}
+{{- $blankline := "" | toStrings -}}
 
 {{- $table = addRow $table $row -}}
+{{- $table = addRow $table $blankline -}}
 {{end -}}
 
 {{- $table = renderTable $table -}}
