@@ -1,0 +1,9 @@
+extends: substitution
+message: Use '%s' instead of '%s'.
+level: error
+scope: text
+swap:
+  Email: E-mail
+  Emails: E-mail
+  email: e-mail
+  emails: e-mail
