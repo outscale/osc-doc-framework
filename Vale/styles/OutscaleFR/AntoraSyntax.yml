@@ -1,0 +1,6 @@
+extends: substitution
+message: Here the correct syntax is '%s' and not '%s'.
+level: error
+scope: raw
+swap:
+  page-fr: page-en

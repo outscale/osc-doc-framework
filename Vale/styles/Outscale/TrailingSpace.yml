@@ -1,0 +1,6 @@
+extends: existence
+message: Don't leave a space at the end of a line, as it can mess with search-and-replace operations.
+level: error
+scope: raw
+raw:
+  - ' \n'

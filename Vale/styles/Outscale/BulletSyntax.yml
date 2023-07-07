@@ -1,0 +1,8 @@
+extends: existence
+message: "Missing space after the asterisk of the bullet."
+level: error
+scope: raw
+raw:
+  - '(?<=\n)'
+  - '\*+(?!Before you begin|Avant de commencer|Related Page|Corresponding API|Pages* connexe|Méthodes* API)'
+  - '[^ \*]'

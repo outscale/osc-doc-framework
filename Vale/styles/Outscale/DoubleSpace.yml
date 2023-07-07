@@ -1,0 +1,6 @@
+extends: existence
+message: Don't insert two spaces between words, as they can mess with search-and-replace operations.
+level: error
+scope: text
+raw:
+  - '  '

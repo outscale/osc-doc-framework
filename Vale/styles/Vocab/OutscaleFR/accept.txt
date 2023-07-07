@@ -1,0 +1,16 @@
+Availability Zone
+Availability Zones
+Cloud
+Cockpit
+DirectLink
+Internet
+Linux
+Microsoft
+OUTSCALE
+OUTSCALE Monitoring Services
+OUTSCALE Object Storage
+Red Hat
+Région
+Régions
+Virtual Private Cloud
+Windows

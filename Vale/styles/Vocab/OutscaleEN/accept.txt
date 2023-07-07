@@ -1,0 +1,27 @@
+AWS CLI
+boolean
+bootdisk
+Cyberduck
+deregister*
+dissassociat*
+firewalling
+gibibyte
+hostname
+idempotency
+idempotent
+keypair
+lifecycle
+mebibyte
+multiline
+multiselect*
+OSC CLI
+passthrough
+peering
+preconfigur*
+reassociat*
+s3cmd
+subnet
+sysprep
+uncheck*
+unencrypt*
+virtualiz*

@@ -10,7 +10,7 @@
 {{- /* Range over the linted files */ -}}
 
 {{- range .Files}}
-{{$table := newTable true}}
+{{$table := newTable false}}
 
 {{- $f = add1 $f -}}
 {{- .Path | underline | indent 1 -}}
@@ -24,19 +24,20 @@
     {{- $error = .Severity | red -}}
     {{- $e = add1 $e  -}}
 {{- else if eq .Severity "warning" -}}
+    {{- $error = .Severity | yellow -}}
     {{- $w = add1 $w -}}
 {{- else -}}
+    {{- $error = .Severity | blue -}}
     {{- $s = add1 $s -}}
 {{- end}}
 
-{{- $loc := printf "%d:%d" .Line (index .Span 0) -}}
-{{- $row := list $loc $error .Message .Check | toStrings -}}
-{{- $blankline := "" | toStrings -}}
+{{- $loc := printf "Line %d, Column %d" .Line (index .Span 0) -}}
+{{- $row := list $loc $error .Message "" .Check | toStrings -}}
 
 {{- $table = addRow $table $row -}}
-{{- $table = addRow $table $blankline -}}
 {{end -}}
 
 {{- $table = renderTable $table -}}
 {{end}}
-{{- $e}} {{$e | int | plural "error" "errors" | red}}, {{$w}} {{$w | int | plural "warning" "warnings" | yellow}} and {{$s}} {{$s | int | plural "suggestion" "suggestions" | blue}} in {{$f}} {{$f | int | plural "file" "files"}}.
+{{- if ne $e 0}}✖ {{else if ne $w 0}}✖ {{else}}✔ {{end -}}
+{{$e}} {{$e | int | plural "error" "errors" | red}}, {{$w}} {{$w | int | plural "warning" "warnings" | yellow}} and {{$s}} {{$s | int | plural "suggestion" "suggestions" | blue}} in {{$f}} out of {{.LintedTotal}} {{.LintedTotal | int | plural "file" "files"}}.

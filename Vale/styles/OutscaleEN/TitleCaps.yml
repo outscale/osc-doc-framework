@@ -1,0 +1,11 @@
+extends: capitalization
+message: "'%s' should be in titlecase. Use https://titlecaseconverter.com (with default settings) to get the right capitalization."
+level: error
+scope: heading
+match: $title
+style: AP
+exceptions:
+- cockpit-1
+- cockpit-2
+- fGPUs?
+- '[a-z]+-[a-z]+-[0-9]+[a-z]?'

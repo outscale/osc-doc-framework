@@ -10,7 +10,7 @@
 {{- /* Range over the linted files */ -}}
 
 {{- range .Files}}
-{{$table := newTable true}}
+{{$table := newTable false}}
 
 {{- $f = add1 $f -}}
 "{{- .Path -}}"
@@ -28,14 +28,13 @@
     {{- $s = add1 $s -}}
 {{- end}}
 
-{{- $loc := printf "%d:%d" .Line (index .Span 0) -}}
-{{- $row := list $loc $error .Message .Check | toStrings -}}
-{{- $blankline := "" | toStrings -}}
+{{- $loc := printf "Line %d, Column %d" .Line (index .Span 0) -}}
+{{- $row := list $loc $error .Message "" .Check | toStrings -}}
 
 {{- $table = addRow $table $row -}}
-{{- $table = addRow $table $blankline -}}
 {{end -}}
 
 {{- $table = renderTable $table -}}
 {{end}}
-{{- $e}} {{$e | int | plural "error" "errors"}}, {{$w}} {{$w | int | plural "warning" "warnings"}} and {{$s}} {{$s | int | plural "suggestion" "suggestions"}} in {{$f}} {{$f | int | plural "file" "files"}}.
+{{- if ne $e 0}}✖ {{else if ne $w 0}}✖ {{else}}✔ {{end -}}
+{{$e}} {{$e | int | plural "error" "errors"}}, {{$w}} {{$w | int | plural "warning" "warnings"}} and {{$s}} {{$s | int | plural "suggestion" "suggestions"}} in {{$f}} out of {{.LintedTotal}} {{.LintedTotal | int | plural "file" "files"}}.
