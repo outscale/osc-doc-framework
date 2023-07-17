@@ -63,13 +63,6 @@
       if (LANG === 'fr') abbrS = ''
       if (key.charAt(key.length - 1) === ')') keyPlural = key.replace(/ \\\((.+)\\\)/g, 's \\($1' + abbrS + '\\)')
 
-      const wordsUpperPlural = keyPlural.split(' ')
-      const wordsUpper = key.split(' ')
-      for (let i = 0, length = wordsUpper.length; i < length; i++) {
-        wordsUpperPlural[i] = wordsUpperPlural[i][0].toUpperCase() + wordsUpperPlural[i].substring(1)
-        wordsUpper[i] = wordsUpper[i][0].toUpperCase() + wordsUpper[i].substring(1)
-      }
-
       let value = valuesEnFr[LANG] || valuesEnFr.en
       let valuePlural = value + 's'
       if (value.charAt(value.length - 1) === ')') valuePlural = value.replace(/ \((.+)\)/g, 's \($1' + abbrS + '\)')
@@ -77,8 +70,6 @@
       value = (textBefore[LANG] || textBefore.en) + value + (textAfter[LANG] || textAfter.en)
       valuePlural = (textBefore[LANG] || textBefore.en) + valuePlural + (textAfter[LANG] || textAfter.en)
 
-      map2.set(wordsUpperPlural.join(' '), valuePlural)
-      map2.set(wordsUpper.join(' '), value)
       map2.set(keyPlural, valuePlural)
       map2.set(key, value)
     })
@@ -92,7 +83,7 @@
       let child = el.lastChild
       while (child) {
         if (
-          child.nodeType === 1 && !child.classList.contains('tooltip') &&
+          child.nodeType === 1 && !child.classList.contains('tooltip') && !child.classList.contains('print-only') &&
           child.tagName !== 'CODE' && child.tagName !== 'STRONG' && child.tagName !== 'ASIDE' && child.tagName !== 'A'
         ) {
           surroundInElement(child, regex, surrounderCreateFunc)
@@ -141,7 +132,7 @@
     const child = document.createElement('span')
     child.classList.add('tooltiptext', tooltipClass)
 
-    child.textContent = map2.get(term).charAt(0).toUpperCase() + map2. get(term).slice(1)
+    child.textContent = map2.get(term)
 
     el.appendChild(matchedTextNode)
     el.appendChild(child)

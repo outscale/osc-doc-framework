@@ -1,0 +1,143 @@
+html {
+    font-size: 15px;
+}
+
+header,
+#main-nav,
+.nav-container,
+.toc.sidebar,
+.ulist.tabBar,
+.sidebar-button a,
+iframe {
+    display: none;
+}
+
+.doc > h1.page:first-child + .print-only {
+    margin-top: -1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.doc > h1.page:first-child + .print-only,
+#aws-disclaimer {
+    font-size: .83333rem;
+}
+
+aside.toc {
+    display: initial;
+}
+
+aside.toc.embedded .toc-menu {
+    margin-bottom: 1.5em;
+}
+
+.footer {
+    border-color: initial !important;
+    text-align: center;
+}
+.footer a::before {
+    content: "\A";
+    white-space: pre-wrap;
+}
+.footer p:last-child {
+    display: none;
+}
+
+#preamble {
+    background: var(--preamble);
+    border: 2px solid var(--preamble);
+}
+#preamble #preamble {
+    border: none;
+}
+
+.tableblock th,
+.tableblock td,
+.doc .listingblock .title,
+.doc pre.highlight code {
+    border: 1px solid black !important;
+    box-shadow: initial;
+}
+.doc .listingblock .title {
+    border-bottom: none !important;
+}
+
+img,
+.doc .listingblock {
+    break-inside: avoid;
+}
+
+.source-toolbox .source-lang {
+    visibility: initial !important;
+}
+.source-toolbox .source-lang::after {
+    display: none !important;
+}
+
+.doc .admonitionblock td.content {
+    border-radius: initial;
+}
+.doc .admonitionblock.note td.content {
+    background: var(--admonition-note);
+    border: 2px solid var(--admonition-note);
+}
+.doc .admonitionblock.tip td.content {
+    background: var(--admonition-tip);
+    border: 2px solid var(--admonition-tip);
+}
+.doc .admonitionblock.important td.content {
+    background: var(--admonition-important);
+    border: 2px solid var(--admonition-important);
+}
+.doc .admonitionblock.warning td.content {
+    background: var(--admonition-warning);
+    border: 2px solid var(--admonition-warning);
+}
+.doc .admonitionblock.note td.content a::after {
+    border-bottom-color: var(--admonition-note);
+}
+.doc .admonitionblock.tip td.content a::after {
+    border-bottom-color: var(--admonition-tip);
+}
+.doc .admonitionblock.important td.content a::after {
+    border-bottom-color: var(--admonition-important);
+}
+.doc .admonitionblock.warning td.content a::after {
+    border-bottom-color: var(--admonition-warning);
+}
+
+.doc a,
+.footer a {
+    color: #1565c0 !important;
+    border-bottom: 1px solid #1565c0;
+    text-decoration: none;
+}
+.doc a:not([href^="mailto"])::after,
+.footer a:not([href^="mailto"])::after {
+    content: " (" attr(href) ")";
+    border-bottom: 1px solid white;
+    color: lightslategray;
+}
+.doc .toc.embedded a {
+    border-bottom: none;
+    color: var(--outscale-blue) !important;
+}
+.doc .print-only a::after,
+.doc .toc.embedded a::after,
+.doc a.anchor::after {
+    content: none;
+}
+.doc a[href^=_rss]::after {
+    padding-left: 18px;
+    width: initial;
+}
+
+.tooltiptext {
+    color: lightslategray;
+    margin: initial !important;
+}
+.tooltiptext::before {
+    content: " (";
+}
+.tooltiptext::after {
+    content: ")";
+}
