@@ -28,11 +28,13 @@
     copyToSidebar(tag, "Related Page", " connexe")
     copyToSidebar(tag, "Corresponding API Method", " API correspondante")
   }
-  const editThisPage = document.querySelector(".edit-this-page")
-  if (editThisPage) {
-    const editThisPageCopy = editThisPage.cloneNode(true)
-    tocMenu.appendChild(editThisPageCopy)
-    editThisPage.classList.add('mobile-only')
+  const sidebarButtons = document.querySelectorAll(".sidebar-button")
+  for (const sidebarButton of sidebarButtons) {
+    if (sidebarButton) {
+      const sidebarButtonCopy = sidebarButton.cloneNode(true)
+      tocMenu.appendChild(sidebarButtonCopy)
+      sidebarButton.classList.add('mobile-only')
+    }
   }
 
 })()
