@@ -51,11 +51,18 @@ aside.toc.embedded .toc-menu {
 }
 
 .tableblock th,
-.tableblock td,
+.tableblock > tbody > tr > td,
 .doc .listingblock .title,
 .doc pre.highlight code {
     border: 1px solid black !important;
     box-shadow: initial;
+}
+.doc table.tableblock thead th {
+    outline: none;
+    position: static;
+}
+.tableblock td.icon {
+    border: none !important;
 }
 .doc .listingblock .title {
     border-bottom: none !important;
@@ -114,12 +121,11 @@ img,
 .doc a:not([href^="mailto"])::after,
 .footer a:not([href^="mailto"])::after {
     content: " (" attr(href) ")";
-    border-bottom: 1px solid white;
     color: lightslategray;
 }
 .doc .toc.embedded a {
     border-bottom: none;
-    color: var(--outscale-blue) !important;
+    color: #222 !important;
 }
 .doc .print-only a::after,
 .doc .toc.embedded a::after,
