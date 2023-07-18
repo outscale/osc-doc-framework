@@ -538,6 +538,10 @@ i.fa.icon-warning::before {color: #cf4336; content: "\f071";}
   position: static;
 }
 
+.toc.sidebar .toc-menu {
+  margin-bottom: 0.5rem;
+}
+
 .toc.sidebar table .paragraph {
   height: 2rem;
 }
