@@ -2,6 +2,9 @@
 
 const { spawn } = require('child_process')
 
+try {require('mac-ca')}
+catch (e) {}
+
 function callGitCredentialFill (url) {
   const { protocol, host } = new URL(url)
   return new Promise((resolve, reject) => {
@@ -24,6 +27,7 @@ function callGitCredentialFill (url) {
 }
 
 module.exports = {
+  callGitCredentialFill,
   configure () {
     this.urls = {}
   },
