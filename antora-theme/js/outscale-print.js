@@ -74,8 +74,8 @@
   
   function printPage() {
     if (!hasClickedPrintButton) {
-      if (document.documentElement.lang === "fr") alert('Dans la prochaine fenêtre, sélectionnez l\'imprimante "Enregistrer au format PDF" pour exporter cette page en PDF.')
-      else alert('In the next window, select the "Save as PDF" printer to export this page to PDF.')
+      if (document.documentElement.lang === "fr") alert('Dans la prochaine fenêtre, sélectionnez l\'imprimante "Enregistrer au format PDF" pour exporter une version PDF de cette page.')
+      else alert('In the next window, select the "Save as PDF" printer to export a PDF version of this page.')
       hasClickedPrintButton = true
     }
     window.print()
