@@ -40,10 +40,10 @@
         let word = "or"
         if (document.documentElement.lang === "fr") word = "ou"
         tooltipText.textContent = tooltipText.textContent.replace(/\((.+?)\)/g, word + " $1")
-        // Swap logo
-        const logo = document.querySelector(".logo img")
-        logo.src = logo.src.replace("/logo.svg", "/logo-darkblue.svg")
       }
+      // Swap logo
+      const logo = document.querySelector(".logo img")
+      logo.src = logo.src.replace("/logo.svg", "/logo-darkblue.svg")
     }
   
     function adaptToScreen() {
