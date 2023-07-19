@@ -2,14 +2,36 @@ html {
     font-size: 15px;
 }
 
-header,
-#main-nav,
+header a,
+header button,
+header label,
 .nav-container,
 .toc.sidebar,
 .ulist.tabBar,
 .sidebar-button a,
 iframe {
-    display: none;
+    display: none !important;
+}
+header, .sm {
+    position: static;
+    background: none;
+    border: none !important;
+    box-shadow: none !important;
+}
+.sm li, .sm-blue a {
+    background: none !important;
+}
+header a.logo {
+    display: block !important;
+    margin: 0 2rem 0.25rem;
+    padding: 0 !important;
+}
+header a.logo, header a.logo img {
+    max-width: 130px !important;
+}
+
+.doc > h1.page:first-child {
+    margin-bottom: 0.25rem;
 }
 
 .doc > h1.page:first-child + .print-only {
@@ -19,7 +41,7 @@ iframe {
 
 .doc > h1.page:first-child + .print-only,
 #aws-disclaimer {
-    font-size: .83333rem;
+    font-size: .88889rem;
 }
 
 aside.toc {

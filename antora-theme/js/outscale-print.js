@@ -40,6 +40,9 @@
         let word = "or"
         if (document.documentElement.lang === "fr") word = "ou"
         tooltipText.textContent = tooltipText.textContent.replace(/\((.+?)\)/g, word + " $1")
+        // Swap logo
+        const logo = document.querySelector(".logo img")
+        logo.src = logo.src.replace("/logo.svg", "/logo-darkblue.svg")
       }
     }
   
@@ -55,6 +58,9 @@
       for (const tooltipText of tooltipTexts) {
         tooltipText.textContent = tooltipText.textContent.replace(/\b(or|ou) (.+?)\b/g, "($2)")
       }
+      // Swap logo
+      const logo = document.querySelector(".logo img")
+      logo.src = logo.src.replace("/logo-darkblue.svg", "/logo.svg")
     }
   
     const pageOrigin = getPageOrigin()
