@@ -14,11 +14,8 @@
       }
     }
   
-    function getSitePath() {
-      const fullUrl = document.querySelector("head [rel=canonical]").href
-      const currentPageName = document.location.pathname.split("/").pop() 
-  
-      return fullUrl.replace(currentPageName, "")
+    function getPath() {
+      return document.querySelector("head [rel=canonical]").href.split("/").slice(0, -1).join("/") + "/"
     }
   
     function createTimestamp(pageOrigin) {
@@ -32,10 +29,10 @@
   
     function adaptToPrint() {
       // Make xrefs absolute
-      const sitePath = getSitePath()
+      const path = getPath()
       const xrefs = document.querySelectorAll("a.xref:not([href^=http])")
       for (const xref of xrefs) {
-        xref.href = sitePath + xref.getAttribute("href")
+        xref.href = path + xref.getAttribute("href").normalize('NFC')
       }
       // remove parentheses in tooltip texts
       const tooltipTexts = document.getElementsByClassName("tooltiptext")
@@ -48,10 +45,10 @@
   
     function adaptToScreen() {
       // Make xrefs relative
-      const sitePath = getSitePath()
+      const path = getPath()
       const xrefs = document.querySelectorAll("a.xref[href^=http]")
       for (const xref of xrefs) {
-        xref.href = xref.href.replace(sitePath, "")
+        xref.href = xref.href.replace(path, "")
       }
       // Add parentheses back in tooltip texts
       const tooltipTexts = document.getElementsByClassName("tooltiptext")
