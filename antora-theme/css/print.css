@@ -68,6 +68,16 @@ aside.toc.embedded .toc-menu {
     border-bottom: none !important;
 }
 
+h1, h2, h3, h4, h5, h6 {
+    page-break-inside: avoid;
+}
+h1::after, h2::after, h3::after, h4::after, h5::after, h6::after {
+    content: "";
+    display: block;
+    height: 2em;
+    margin-bottom: -2em;
+}
+
 img,
 .doc .listingblock {
     break-inside: avoid;
