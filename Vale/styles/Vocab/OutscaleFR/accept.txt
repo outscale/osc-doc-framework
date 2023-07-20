@@ -7,6 +7,7 @@ Internet
 Linux
 Microsoft
 OUTSCALE
+OUTSCALE Key Management Service
 OUTSCALE Monitoring Services
 OUTSCALE Object Storage
 Red Hat
