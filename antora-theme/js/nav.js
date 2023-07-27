@@ -520,7 +520,10 @@
   document.querySelectorAll('.nav-title').forEach(element => {element.remove()})
   const navText = document.getElementsByClassName('nav-text')
   for (let i = 0, length = navText.length; i < length; i++) {
-    if (navText[i].textContent === 'User Guide' || navText[i].textContent === 'Guide utilisateur') {
+    if (navText[i].textContent === 'Home' || navText[i].textContent === 'Accueil') {
+      navText[i].parentNode.classList.add('is-active')
+    }
+    else if (navText[i].textContent === 'User Guide' || navText[i].textContent === 'Guide utilisateur') {
       navText[i].parentNode.classList.add('is-active')
       break
     }

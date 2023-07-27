@@ -500,7 +500,8 @@
   #main-menu-state:not(:checked) ~ #main-menu {
     box-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
   }
-  #main-menu-state:not(:checked) ~ #main-menu li:not(:first-child) {
+  #main-menu-state:not(:checked) ~ #main-menu li:not(:first-child),
+  #main-menu-state:not(:checked) ~ #main-menu form {
     display: none;
   }
   #main-menu-state ~ #main-menu li a {

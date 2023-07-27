@@ -144,7 +144,7 @@ img,
     border-bottom-color: var(--admonition-warning);
 }
 
-.doc a,
+.doc *:not(.search-result-document-hit) > a,
 .footer a {
     color: #1565c0 !important;
     border-bottom: 1px solid #1565c0;

@@ -53,10 +53,12 @@
               </li>
               {{/if}}
               {{#if env.SITE_SEARCH_PROVIDER}}
-              <li id="search-field" class="field has-filter">
-                  <a><input id="search-input" type="text" placeholder="{{page.attributes.search-text}}"></a>
+              <form id="search-field" class="field has-filter" action="{{#if page.attributes.en}}Recherche.html{{else}}Search.html{{/if}}" autocomplete="off">
+                  <a>
+                    <input id="search-input" name="q" type="text" placeholder="{{page.attributes.search-text}}"><span id="search-icon" class="fa fa-search fa-fw"></span><input type="submit" value="">
+                  </a>
                   <input type="checkbox" data-facet-filter="component:{{page.component.name}}" checked style="display: none">
-              </li>
+              </form>
               {{/if}}
           </ul>
       </nav>
