@@ -21,9 +21,10 @@
   border-radius: 0.1em;
   line-height: 1.5;
   padding: 0 0.25em;
+  width: 100%;
 }
 
-@media screen and (min-width: 769px) {
+@media screen and (min-width: 768px) {
   #search-input {
     position: relative;
     z-index: 1000;
@@ -31,12 +32,16 @@
   }
 }
 
+#search-input:focus + #search-icon:before {
+  content: "\f061"
+}
+
 #search-spinner {
   font-size: 1.5em;
   margin-right: 0.25em;
 }
 
-.search-result-dropdown-menu {
+nav .search-result-dropdown-menu {
   position: absolute;
   z-index: 100;
   display: block;
@@ -66,7 +71,7 @@
   }
 }
 
-.search-result-dataset {
+nav .search-result-dataset {
   position: relative;
   border: 1px solid #d9d9d9;
   color: #333;
@@ -81,7 +86,7 @@
 }
 
 @media screen and (max-width: 768px) {
-  .search-result-dataset {
+  nav .search-result-dataset {
     position: fixed;
     top: 50px;
     right: 10px;
@@ -89,10 +94,15 @@
   }
 }
 
-.search-result-item {
+nav .search-result-item {
   font-size: 1rem;
   margin-bottom: 0.5rem;
   margin-top: 0.5rem;
+}
+
+.search-result-item {
+  margin-bottom: 1.5rem;
+  margin-top: 1.5rem;
 }
 
 .search-result-item:hover {
@@ -105,13 +115,16 @@
 
 .search-result-document-title {
   border-bottom: 1px solid #ddd;
-  font-size: 0.8rem;
-  font-weight: 700;
   padding: 0.25rem 0.5rem 0.25rem 2rem;
+  font-weight: 500;
   margin: 0 0.5rem;
   position: relative;
   text-shadow: initial;
   word-wrap: break-word;
+}
+nav .search-result-document-title {
+  font-size: 0.8rem;
+  font-weight: 700;
 }
 
 .search-result-document-title:before {
@@ -119,10 +132,11 @@
   position: absolute;
   font-family: "FontAwesome";
   font-size: 1.5em;
+  line-height: 23px;
   margin-left: -1.3em;
 }
 
-.search-result-document-hit {
+nav .search-result-document-hit {
   font-size: 0.75em;
   color: #02060c;
 }
@@ -135,15 +149,19 @@
 
 .search-result-document-hit > a {
   display: block;
+  position: relative;
   background: initial !important;
   color: var(--outscale-blue) !important;
   font-family: "Montserrat", sans-serif !important;
-  font-size: 1.1em !important;
   font-weight: initial !important;
   margin-top: -2rem;
   padding: 2rem 0 0.5rem 2rem !important;
+  text-decoration: none;
   text-shadow: initial !important;
   white-space: initial !important;
+}
+nav .search-result-document-hit > a {
+  font-size: 1.1em !important;
 }
 
 .search-result-document-hit > a:hover {
@@ -152,7 +170,7 @@
 }
 
 .search-result-document-hit > strong,
-.search-result-dataset > .search-result-item:first-of-type:before {
+nav .search-result-dataset > .search-result-item:first-of-type:before {
   font-size: 0.8rem;
   padding-left: 1em;
   text-shadow: initial;
@@ -200,4 +218,47 @@
 
 [lang=fr] #search-input:disabled:placeholder-shown {
   background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' version='1.1'><text x='4' y='16' fill='grey' font-family='Montserrat, sans-serif' font-size='14.25' font-weight='lighter'>Chargement...</text></svg>");
+}
+
+#search-icon, #search-field [type=submit] {
+  position: absolute;
+  width: 24px;
+  height: 23px;
+  cursor: pointer;
+  padding: 3px;
+}
+#search-icon {
+  color: #333;
+  background: white;
+}
+#search-field [type=submit] {
+  background: transparent;
+  border: 2px solid #e3e3e3;
+  border-right: 2px solid #979797;
+  border-bottom: 2px solid #979797;
+}
+#search-field [type=submit]:active {
+  border: 2px solid #979797;
+  border-right: 2px solid #e3e3e3;
+  border-bottom: 2px solid #e3e3e3;
+}
+
+@media screen and (max-width: 767px) {
+  #search-icon, #search-field [type=submit] {
+    right: 58px;
+  }
+}
+
+@media screen and (min-width: 768px) and (max-width: 1159px) {
+  #search-icon, #search-field [type=submit] {
+    right: 12px;
+    z-index: 1000;
+  }
+}
+
+@media screen and (min-width: 1160px) {
+  #search-icon, #search-field [type=submit] {
+    right: 24px;
+    z-index: 1000;
+  }
 }
