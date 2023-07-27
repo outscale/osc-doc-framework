@@ -1,8 +1,12 @@
 {
   "private": true,
   "name": "@outscale/osc-doc-framework",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "This package contains tooling used to generate OUTSCALE documentations.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/outscale/osc-doc-framework.git"
+  },
   "peerDependencies": {
     "antora": "3.1.1",
     "lint-staged": "13.1.0",
