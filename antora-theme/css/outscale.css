@@ -206,6 +206,10 @@ html {
   }
 }
 
+.doc h1, .doc h2, .doc h3, .doc h4, .doc h5, .doc h6 {
+  scroll-margin-top: var(--topbar-height);
+}
+
 .doc h1 {
   color: var(--outscale-red);
 }
