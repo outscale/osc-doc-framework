@@ -3,4 +3,4 @@ message: Don't leave a space at the end of a line, as it can mess with search-an
 level: error
 scope: raw
 raw:
-  - ' \n'
+- ' \n'

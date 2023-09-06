@@ -4,6 +4,31 @@ level: error
 scope: heading
 match: $sentence
 exceptions:
+# OUTSCALE something names
+- Key Management Service
+- Marketplace
+- Monitoring Services
+- Object Storage
+
+# Other things
+- ''
+- '[a-z]+-[a-z]+-[0-9]+[a-z]?'
+- Availability Zones?
+- Cloud
+- Cockpit
+- cockpit-global
 - cockpit-1
 - cockpit-2
-- '[a-z]+-[a-z]+-[0-9]+[a-z]?'
+- DirectLink
+- fGPU
+- Internet
+- Linux
+- Microsoft
+- Net
+- Oracle
+- Read\w+
+- Red Hat
+- Régions?
+- Subnets?
+- Virtual Private Clouds?
+- Windows

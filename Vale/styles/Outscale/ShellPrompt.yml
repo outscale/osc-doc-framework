@@ -1,0 +1,6 @@
+extends: existence
+message: Shell code blocks must start with a prompt (`$ `).
+level: error
+scope: raw
+raw:
+- '\[source,shell.*\]\n----\n\$[^ ]'

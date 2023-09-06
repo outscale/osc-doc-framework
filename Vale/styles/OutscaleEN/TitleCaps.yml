@@ -5,7 +5,15 @@ scope: heading
 match: $title
 style: AP
 exceptions:
+- cockpit-global
 - cockpit-1
 - cockpit-2
 - fGPUs?
+- inWebo
+- macOS
+- optional
+- s3
+- s3api
+- s3cmd
+- ssh-keygen
 - '[a-z]+-[a-z]+-[0-9]+[a-z]?'

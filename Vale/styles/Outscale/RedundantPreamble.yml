@@ -1,0 +1,11 @@
+extends: existence
+message: "Don't use the preamble formatting if the page contains sections (this formatting is only needed when there's no sections)."
+level: error
+scope: raw
+raw:
+- '\[#preamble\]\n'
+- '--\n'
+- '(.*?\n)+?'
+- '--\n+?'
+- '(\[\.tab.+?\n)?'
+- '=='

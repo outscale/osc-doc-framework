@@ -1,0 +1,6 @@
+extends: existence
+message: "Missing serial comma in '%s'."
+level: error
+scope: sentence
+raw:
+- '(\w+?( \(.+?\))?, )+\w+?( \(.+?\))? (and|or) \w+'

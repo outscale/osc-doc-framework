@@ -3,5 +3,6 @@ message: In EN, don't put a space before a colon.
 level: error
 scope: raw
 raw:
-  - '[  ]:'
-  - '(?= |\n)'
+- '.+?'
+- '[  ]:'
+- '(?= |\n)'

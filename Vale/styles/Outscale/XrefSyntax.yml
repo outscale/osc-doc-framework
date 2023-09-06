@@ -3,8 +3,8 @@ message: "Missing '.adoc' extension in the xref '%s'."
 level: error
 scope: raw
 raw:
-  - '('
-  - 'xref:.+?(?<!adoc)(?<!#.+?)\[.*?\]' # xref without '.adoc'
-  - '|'
-  - 'xref:.+?(?<!adoc)#.+?\[.*?\]' # xref without '.adoc' but with an anchor
-  - ')'
+- '('
+- 'xref:[^ \+\[]+?(?<!adoc)(?<!pdf)(?<!#.+?)\[.*?\]' # xref without '.adoc'
+- '|'
+- 'xref:[^ \+\[]+?(?<!adoc)#.+?\[.*?\]' # xref without '.adoc' but with an anchor
+- ')'
