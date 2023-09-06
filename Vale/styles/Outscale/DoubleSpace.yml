@@ -3,4 +3,4 @@ message: Don't insert two spaces between words, as they can mess with search-and
 level: error
 scope: text
 raw:
-  - '  '
+- '  '

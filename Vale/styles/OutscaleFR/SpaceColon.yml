@@ -3,6 +3,7 @@ message: In FR, put a non-breaking space before a colon (type Option+Space).
 level: error
 scope: raw
 raw:
-  - '(?<!\n:.+?)' # Don't detect Antora page attributes
-  - '[^ "]:'
-  - '(?= |\n)'
+- '.+?'
+- '(?<!\n:.+?)' # Don't detect Antora page attributes
+- '[^ "]:'
+- '(?= |\n)'

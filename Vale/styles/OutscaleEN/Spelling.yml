@@ -1,6 +1,49 @@
 extends: spelling
-message: "Did you really mean '%s'?"
+message: "Is '%s' spelled correctly?"
 level: warning
 filters:
-  - '[A-Z]'
-ignore: Vocab/OutscaleEN/accept.txt
+- '[A-Z]'
+- authorized_keys
+- backdoor
+- boolean
+- bootable
+- bootdisk
+- borderless
+- datacenter
+- depublication
+- deregister
+- dissassociate
+- dissassociating
+- firewalling
+- gibibyte
+- hostname
+- ico
+- idempotency
+- keypair
+- kibibyte
+- lifecycle
+- mebibyte
+- middleware
+- misconfigure
+- misconfiguring
+- multiline
+- multiselect
+- netmask
+- passthrough
+- peering
+- preconfigure
+- pseudocode
+- reassociate
+- reassociating
+- reassociation
+- s3cmd
+- subnet
+- sysprep
+- tebibyte
+- unassign
+- uncheck
+- uncomment
+- unmount
+- unpublish
+- virtualize
+- virtualizing

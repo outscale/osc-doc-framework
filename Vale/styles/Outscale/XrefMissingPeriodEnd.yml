@@ -1,0 +1,6 @@
+extends: existence
+message: "This sentence is probably missing a period after the final xref."
+level: error
+scope: raw
+raw:
+- '.+(see|voir) xref:.+?\[.*?\]\n'

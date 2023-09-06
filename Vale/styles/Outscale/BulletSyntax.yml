@@ -1,8 +1,8 @@
 extends: existence
-message: "Missing space after the asterisk of the bullet."
+message: "Missing space in the bullet list item '%s'."
 level: error
 scope: raw
 raw:
-  - '(?<=\n)'
-  - '\*+(?!Before you begin|Avant de commencer|Related Page|Corresponding API|Pages* connexe|Méthodes* API)'
-  - '[^ \*]'
+- '(?<=\n)'
+- '\*+(?!Before you begin|Avant de commencer|Related Page|Corresponding API|Pages* connexe|Méthodes* API|.+?\*)'
+- '[^ \*]+'
