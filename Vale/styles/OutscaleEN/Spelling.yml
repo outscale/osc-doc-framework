@@ -9,6 +9,7 @@ filters:
 - bootable
 - bootdisk
 - borderless
+- ciphertext
 - datacenter
 - depublication
 - deregister
@@ -29,8 +30,10 @@ filters:
 - multiline
 - multiselect
 - netmask
+- openssl
 - passthrough
 - peering
+- plaintext
 - preconfigure
 - pseudocode
 - reassociate
