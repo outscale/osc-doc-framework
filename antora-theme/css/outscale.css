@@ -203,6 +203,7 @@ html {
   .doc {
     color: var(--outscale-blue);
     max-width: 100%;
+    z-index: 1;
   }
 }
 
