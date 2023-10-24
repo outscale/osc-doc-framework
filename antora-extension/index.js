@@ -44,7 +44,7 @@ function modifyAsciiDoc (file) {
 
   if (~file.dirname.indexOf('/pages')) {
     text = text.replace(/(\n:page-\w\w:.+)\.adoc(\n)/, '$1$2')
-    if (~text.indexOf('AWS')) text += '\n[#aws-disclaimer]\n{page-awsdisclaimer-text}\n'
+    if (~text.indexOf('AWS')) text += '\n\n[#aws-disclaimer]\n{page-awsdisclaimer-text}\n'
   }
 
   return Buffer.from(text)
