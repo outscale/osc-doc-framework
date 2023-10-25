@@ -1,6 +1,9 @@
 const fs = require('fs')
+const resolveResource = require('@antora/content-classifier/lib/util/resolve-resource')
 
 module.exports.register = function ({ config }) {
+  const logger = this.getLogger('@outscale/antora-extension')
+
   this.once('beforeProcess', () => {
     try {
       require('mac-ca')
@@ -26,6 +29,13 @@ module.exports.register = function ({ config }) {
     }
   })
 
+  this.once('documentsConverted', ({ contentCatalog }) => {
+    const files = contentCatalog.getFiles()
+    for (let j = 0, length = files.length; j < length; j++) {
+      checkOtherLanguageLink(files[j], contentCatalog, logger)
+    }
+  })
+
   this.once('sitePublished', ({ playbook }) => {
     moveJsFileToSubdir('search-index.js', playbook)
     moveJsFileToSubdir('site-navigation-data.js', playbook)
@@ -43,7 +53,6 @@ function modifyAsciiDoc (file) {
   text = disambiguateTabIds(/\[\.tab, id="AWS CLI"\]/g, text)
 
   if (~file.dirname.indexOf('/pages')) {
-    text = text.replace(/(\n:page-\w\w:.+)\.adoc(\n)/, '$1$2')
     if (~text.indexOf('AWS')) text += '\n\n[#aws-disclaimer]\n{page-awsdisclaimer-text}\n'
   }
 
@@ -59,6 +68,21 @@ function disambiguateTabIds (re, text) {
     }
   }
   return text
+}
+
+function checkOtherLanguageLink (file, contentCatalog, logger) {
+  const lang = file.src.component
+  let otherLang = 'fr'
+  if (lang === 'fr') otherLang = 'en'
+  const otherLangPage = file.asciidoc?.attributes['page-' + otherLang]
+  const resolve = resolveResource(`${otherLang}:${file.src.module}:${otherLangPage}`, contentCatalog)
+  if (otherLangPage) {
+    if (resolve) file.asciidoc.attributes['page-' + otherLang] = resolve.out.basename
+    else {
+      logger.error(`target of "page-${otherLang}" not found: ${otherLangPage}`)
+      console.log(`    file: ${lang}/${file.path}\n`)
+    }
+  }
 }
 
 function moveJsFileToSubdir (filename, playbook) {

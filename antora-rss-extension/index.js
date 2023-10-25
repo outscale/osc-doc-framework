@@ -119,6 +119,6 @@ function getDate (sectionContent, link, language, title, logger) {
   if (date === 'Invalid Date') {
     const pageName = link.replace(/^.+\/(.+)\.html/, '$1.adoc')
     logger.error('In "' + pageName + '", the date in the "' + title + '" section is not correctly formatted.')
-    process.exit(1)
+    this.stop()
   } else return date
 }

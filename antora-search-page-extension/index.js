@@ -57,7 +57,7 @@ function getConfig (playbook, componentName, config={}) {
     config.module = config.module || 'userguide'
     config.searchPage = {
       name: csp.name || 'Recherche',
-      content: csp.content || '= Résultats de la recherche :\n:page-en: Search\n:page-role: search',
+      content: csp.content || '= Résultats de la recherche :\n:page-en: Search.adoc\n:page-role: search',
     }
     config.openSearch = {
       shortName: cos.shortName || 'OUTSCALE Docs FR',
@@ -72,7 +72,7 @@ function getConfig (playbook, componentName, config={}) {
     config.module = config.module || 'userguide'
     config.searchPage = {
       name: csp.name || 'Search',
-      content: csp.content || '= Search Results:\n:page-fr: Recherche\n:page-role: search',
+      content: csp.content || '= Search Results:\n:page-fr: Recherche.adoc\n:page-role: search',
     }
     config.openSearch = {
       shortName: cos.shortName || 'OUTSCALE Docs EN',
