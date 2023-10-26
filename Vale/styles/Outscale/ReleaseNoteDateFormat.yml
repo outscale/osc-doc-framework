@@ -1,0 +1,6 @@
+extends: existence
+message: "In these release notes, the date \"%s\" is not correctly formatted. You can use placeholder elements if you don't know the final date yet, but there still has to be three elements in the date (for example: October XX, 2023)."
+level: error
+scope: raw
+raw:
+- '(?<=:page-rssfeed: true[\s\S.]+)(?<==== )([A-zÀ-ÿ-\d]+),* (\d\d\d\d)'

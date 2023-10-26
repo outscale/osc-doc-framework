@@ -96,6 +96,7 @@ function getDate (sectionContent, link, language, title, logger) {
   const m = $(sectionContent)
     .text()
     .match(/([A-zÀ-ÿ-\d]+) ([A-zÀ-ÿ-\d]+),* (\d\d\d\d)/)
+  if (!m) throwError(link, title, logger)
 
   if (language === 'fr') {
     const frToEn = {
@@ -116,9 +117,15 @@ function getDate (sectionContent, link, language, title, logger) {
   }
 
   const date = new Date(m[1] + ' ' + m[2] + ' ' + m[3] + ' 00:00:00 GMT').toUTCString()
-  if (date === 'Invalid Date') {
-    const pageName = link.replace(/^.+\/(.+)\.html/, '$1.adoc')
-    logger.error('In "' + pageName + '", the date in the "' + title + '" section is not correctly formatted.')
-    this.stop()
-  } else return date
+  if (date === 'Invalid Date') throwError(link, title, logger)
+  else return date
+}
+
+function throwError (link, title, logger) {
+  const pageName = link.replace(/^.+\/(.+)\.html/, '$1.adoc')
+  logger.error(
+    'In "' + pageName + '", the date in the "' + title + '" section is not correctly formatted.'
+    + 'You can use placeholder elements if you don\'t know the final date yet,'
+    + 'but there still has to be three elements in the date (for example: "October XX, 2023").')
+  process.exit(1)
 }
