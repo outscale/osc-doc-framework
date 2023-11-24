@@ -226,7 +226,7 @@ html {
     opacity: 0;
     transition: visibility 0s, opacity 100ms linear;
   }
-  header .dropdown.entry:not(:active):focus-within ul {
+  header .dropdown.entry:focus-within ul {
     position: static;
     height: auto;
     visibility: visible;
@@ -301,7 +301,7 @@ html {
     display: block;
   }
 
-  header .dropdown.entry:not(:active):hover ul,
+  header .dropdown.entry:hover ul,
   header .dropdown.entry:not(:active):focus-within ul {
     position: absolute;
     height: auto;
