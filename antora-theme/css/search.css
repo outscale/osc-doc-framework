@@ -1,16 +1,32 @@
+
+@media screen and (max-width: 1023px) {
+  #search-input {
+    width: 50%;
+  }
+  .search-result-dropdown-menu {
+    position: static !important;
+    max-width: initial !important;
+  }
+  .search-result-dropdown-menu a {
+    text-align: left !important;
+  }
+}
+
+@media screen and (min-width: 1024px) and (max-width: 1300px) {
+  #search-input {
+    width: 190px;
+  }
+}
+
+@media screen and (min-width: 1301px) {
+  #search-input {
+    width: 200px;
+  }
+}
+
 .navbar-brand .navbar-item + .navbar-item {
   flex-grow: 1;
   justify-content: flex-end;
-}
-
-@media screen and (min-width: 1024px) {
-  .navbar-brand {
-    flex-grow: 1;
-  }
-
-  .navbar-menu {
-    flex-grow: 0;
-  }
 }
 
 #search-input {
@@ -22,14 +38,8 @@
   line-height: 1.5;
   padding: 0 0.25em;
   width: 100%;
-}
-
-@media screen and (min-width: 768px) {
-  #search-input {
-    position: relative;
-    z-index: 1000;
-    width: 190px;
-  }
+  position: relative;
+  z-index: 1000;
 }
 
 #search-input:focus + #search-icon:before {
@@ -55,20 +65,9 @@ nav .search-result-dropdown-menu {
   height: auto;
   background: transparent;
   border: none;
-  font-family: "Montserrat", sans-serif;
+  font-family: "Montserrat-fontsource", sans-serif;
   max-width: 600px;
   min-width: 500px;
-}
-
-@media screen and (max-width: 768px) {
-  .navbar-brand .navbar-item + .navbar-item {
-    padding-left: 0;
-    padding-right: 0;
-  }
-
-  .search-result-dropdown-menu {
-    min-width: calc(100vw - 3.75rem);
-  }
 }
 
 nav .search-result-dataset {
@@ -83,15 +82,6 @@ nav .search-result-dataset {
   max-height: calc(100vh - 5.25rem);
   color: #333;
   scrollbar-width: initial;
-}
-
-@media screen and (max-width: 768px) {
-  nav .search-result-dataset {
-    position: fixed;
-    top: 50px;
-    right: 10px;
-    width: 65vw;
-  }
 }
 
 nav .search-result-item {
@@ -152,7 +142,7 @@ nav .search-result-document-hit {
   position: relative;
   background: initial !important;
   color: var(--outscale-blue) !important;
-  font-family: "Montserrat", sans-serif !important;
+  font-family: "Montserrat-fontsource", sans-serif !important;
   font-weight: initial !important;
   margin-top: -2rem;
   padding: 2rem 0 0.5rem 2rem !important;
@@ -165,7 +155,7 @@ nav .search-result-document-hit > a {
 }
 
 .search-result-document-hit > a:hover {
-  font-family: "Montserrat", sans-serif !important;
+  font-family: "Montserrat-fontsource", sans-serif !important;
   font-weight: normal !important;
 }
 
@@ -213,11 +203,11 @@ nav .search-result-dataset > .search-result-item:first-of-type:before {
 
 /* https://stackoverflow.com/a/59066059 */
 #search-input:disabled:placeholder-shown {
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' version='1.1'><text x='4' y='16' fill='grey' font-family='Montserrat, sans-serif' font-size='14.25' font-weight='lighter'>Loading...</text></svg>");
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' version='1.1'><text x='4' y='16' fill='grey' font-family='Montserrat-fontsource, sans-serif' font-size='14.25' font-weight='lighter'>Loading...</text></svg>");
 }
 
 [lang=fr] #search-input:disabled:placeholder-shown {
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' version='1.1'><text x='4' y='16' fill='grey' font-family='Montserrat, sans-serif' font-size='14.25' font-weight='lighter'>Chargement...</text></svg>");
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' version='1.1'><text x='4' y='16' fill='grey' font-family='Montserrat-fontsource, sans-serif' font-size='14.25' font-weight='lighter'>Chargement...</text></svg>");
 }
 
 #search-icon, #search-field [type=submit] {
