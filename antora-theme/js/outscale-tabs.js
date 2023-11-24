@@ -119,7 +119,7 @@
   }
 
   function moveSpecialDivs() {
-    const mobileOnlyDivs = document.getElementsByClassName('mobile-only')
+    const mobileOnlyDivs = document.querySelectorAll('.doc .mobile-only')
     const awsDisclaimer = document.getElementById('aws-disclaimer')
     document.getElementsByClassName('doc')[0].append(...mobileOnlyDivs)
     if (awsDisclaimer) document.getElementsByClassName('doc')[0].append(awsDisclaimer)
