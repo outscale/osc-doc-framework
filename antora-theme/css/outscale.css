@@ -174,8 +174,11 @@ html {
   header .entry {
     position: relative;
   }
+  header .entry button[type=submit] {
+    display: none;
+  }
   header .entry a,
-  header .entry button {
+  header .entry button:not([type=submit]) {
     display: block;
     width: 100%;
     background: none;
@@ -192,10 +195,10 @@ html {
   header .entry a:hover {
     color: var(--outscale-green);
   }
-  header .entry button {
+  header .entry button:not([type=submit]) {
     cursor: pointer;
   }
-  header .entry button:after {
+  header .entry button:not([type=submit]):after {
     content: "";
     position: absolute;
     top: var(--topbar-height);
@@ -279,11 +282,11 @@ html {
     float: right;
   }
   header .entry a,
-  header .entry button {
+  header .entry button:not([type=submit]) {
     text-align: left;
   }
 
-  header .entry button:after {
+  header .entry button:not([type=submit]):after {
     left: 50%;
     margin-top: -12px;
   }
@@ -302,7 +305,7 @@ html {
   }
 
   header .dropdown.entry:hover ul,
-  header .dropdown.entry:not(:active):focus-within ul {
+  header .dropdown.entry:focus-within ul {
     position: absolute;
     height: auto;
     visibility: visible;
@@ -332,7 +335,7 @@ html {
 
 @media screen and (min-width: 1301px) {
   header .entry a,
-  header .entry button {
+  header .entry button:not([type=submit]) {
     padding: 13px 24px;
   }
   .nav-container {
