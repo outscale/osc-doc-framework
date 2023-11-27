@@ -507,18 +507,19 @@ html {
   font-size: inherit;
 }
 
-.doc .admonitionblock .icon {
+.doc .admonitionblock td.icon {
   border-radius: 1rem;
   padding: 0;
   -webkit-transform: translate(1rem, 1em);
   transform: translate(1.2rem, 1em);
 }
+.doc .admonitionblock td.icon i {padding: 0;}
 
-.doc .admonitionblock .icon i::after {content: "";}
-.doc .admonitionblock.note .icon {background: none;}
-.doc .admonitionblock.tip .icon {background: none;}
-.doc .admonitionblock.important .icon {background: none;}
-.doc .admonitionblock.warning .icon {background: none;}
+.doc .admonitionblock td.icon i::after {content: "";}
+.doc .admonitionblock td.icon i.icon-note {background: none;}
+.doc .admonitionblock td.icon i.icon-tip {background: none;}
+.doc .admonitionblock td.icon i.icon-important {background: none;}
+.doc .admonitionblock td.icon i.icon-warning {background: none;}
 
 .doc .admonitionblock p .icon {
   color: initial !important;
