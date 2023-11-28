@@ -443,6 +443,12 @@ html {
   }
 }
 
+.doc {
+  -webkit-hyphens: none;
+  -ms-hyphens: none;
+  hyphens: none;
+}
+
 .doc h1, .doc h2, .doc h3, .doc h4, .doc h5, .doc h6 {
   scroll-margin-top: var(--topbar-height);
 }
