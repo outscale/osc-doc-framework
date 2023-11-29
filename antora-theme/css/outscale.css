@@ -597,7 +597,8 @@ code, kbd, pre {
 
 .doc .ulist li {margin-bottom: 0rem;}
 
-.doc p code, .doc thead code {
+.doc p code, .doc thead code,
+.doc h1 code, .doc h2 code, .doc h3 code, .doc h4 code, doc h5 code, .doc h6 code {
   background: rgba(0, 0, 0, 0.05);
   border-radius: 3px;
   padding: 0 3px;
