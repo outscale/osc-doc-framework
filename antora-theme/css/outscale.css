@@ -916,6 +916,8 @@ a[href^="http"]:after {
   content: "\f08e";
   font-size: 0.9em;
 }
+a[href*="outscale.internal"]:after,
+a[href*="outscale.com"]:after,
 .logo.entry a[href^="http"]:after {
   content: none;
 }
