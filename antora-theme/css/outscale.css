@@ -899,34 +899,36 @@ div.tab.active {
 
 /* Link icons */
 
-a[href^="http"]:after,
-a[href^="_rss"]:after {
-  position: relative;
-  bottom: 0.2em;
-  display: inline-block;
-  font: normal;
-  font-family: FontAwesome;
-  line-height: 1;
-  margin: 0 0.3em;
-  text-rendering: auto;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
+@media screen {
+  a[href^="http"]:after,
+  a[href^="_rss"]:after {
+    position: relative;
+    bottom: 0.2em;
+    display: inline-block;
+    font: normal;
+    font-family: FontAwesome;
+    line-height: 1;
+    margin: 0 0.3em;
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
 
-a[href^="http"]:after {
-  content: "\f08e";
-  font-size: 0.9em;
-}
-a[href*="outscale.internal"]:after,
-a[href*="outscale.com"]:after,
-.logo.entry a[href^="http"]:after {
-  content: none;
-}
+  a[href^="http"]:after {
+    content: "\f08e";
+    font-size: 0.9em;
+  }
+  a[href*="outscale.internal"]:after,
+  a[href*="outscale.com"]:after,
+  .logo.entry a[href^="http"]:after {
+    content: none;
+  }
 
-a[href^="_rss"]:after {
-  content: "\f143";
-  color: #ffa500;
-  font-size: 1.15em;
+  a[href^="_rss"]:after {
+    content: "\f143";
+    color: #ffa500;
+    font-size: 1.15em;
+  }
 }
 
 @media screen {
