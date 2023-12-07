@@ -1,6 +1,0 @@
-extends: substitution
-message: The correct syntax is '%s' and not '%s'.
-level: error
-scope: raw
-swap:
-  page-alias: page-aliases

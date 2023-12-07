@@ -1,0 +1,10 @@
+extends: existence
+message: "Misformatted page aliases (the correct prefix is `:page-aliases:` even if there is only one, and all aliases must be on the same line, separated by commas)."
+level: error
+scope: raw
+raw:
+- '('
+- ':page-alias*: .+'
+- '|'
+- ':page-alias(es)*: .+?\n:page-alias(es)*: .+'
+- ')'
