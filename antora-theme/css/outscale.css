@@ -673,6 +673,10 @@ i.fa.icon-warning::before {color: #cf4336; content: "\f071";}
   padding-top: 3em;
 }
 
+#matomo-optout-form {
+  margin-bottom: 3em;
+}
+
 @media screen {
   footer.footer {
     color: #ccc;
