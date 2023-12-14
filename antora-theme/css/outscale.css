@@ -101,7 +101,7 @@ html {
 
 @media screen {
   .mobile-only {
-    display: initial;
+    display: block;
   }
 
   header #top-menu .entry:not(.logo) {
