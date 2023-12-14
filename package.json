@@ -8,11 +8,11 @@
     "url": "https://github.com/outscale/osc-doc-framework.git"
   },
   "peerDependencies": {
-    "antora": "3.1.1",
     "lint-staged": "13.1.0",
     "mac-ca": "1.1.0"
   },
   "dependencies": {
+    "antora": "3.1.1",
     "@antora/lunr-extension": "1.0.0-alpha.8",
     "antora-navigator-extension": "https://gitlab.com/opendevise/oss/antora-navigator-extension/-/archive/2d0ec861f894728b303a8bbe68ccd68acdef7b9f/antora-navigator-extension-2d0ec861f894728b303a8bbe68ccd68acdef7b9f.tar.gz"
   },

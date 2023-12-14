@@ -35,8 +35,11 @@ ui:
 antora:
   extensions:
     - require: ./node_modules/@antora/lunr-extension
+    - require: ./node_modules/@outscale/osc-doc-framework/antora-search-page-extension
     - require: ./node_modules/antora-navigator-extension
     - require: ./node_modules/@outscale/osc-doc-framework/antora-extension
+    - require: ./node_modules/@outscale/osc-doc-framework/antora-git-log-extension
+    - require: ./node_modules/@outscale/osc-doc-framework/antora-rss-extension
 ----
 
 

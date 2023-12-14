@@ -57,12 +57,9 @@ aside.toc.embedded .toc-menu {
     border-color: initial !important;
     text-align: center;
 }
-.footer a::before {
+.footer p:first-of-type a::before {
     content: "\A";
     white-space: pre-wrap;
-}
-.footer p:last-child {
-    display: none;
 }
 
 #preamble {
