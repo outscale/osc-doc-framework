@@ -462,7 +462,7 @@ html {
 .doc h3 {
   font-size: 20px;
 }
-.doc h4 {
+.doc h3:not(.discrete) {
   font-weight: 500;
 }
 
