@@ -45,8 +45,8 @@
   const TEXT_AWS_AFTER = { en: " in AWS-Compliant APIs", fr: " dans les API AWS-compliant" }
 
   const TEXT_SIDEBAR = {
-    en: "<strong>Note:</strong><br /><br />While Cockpit v1 uses the terminology of AWS, Cockpit v2 uses the terminology of the OUTSCALE API.<br /><br />For example, a VPC in Cockpit v1 is a Net in Cockpit v2.<br /><br />In this page, you can hover over the underlined terms to see the various correspondences (see also the <a href=\"OUTSCALE-APIs-Reference.html#_differences_in_resource_names\">full list here</a>).",
-    fr: "<strong>Remarque :</strong><br /><br />Tandis que Cockpit v1 utilise la terminologie d'AWS, Cockpit v2 utilise la terminologie de l'API OUTSCALE.<br /><br />Par exemple, un VPC dans Cockpit v1 est un Net dans Cockpit v2.<br /><br />Dans cette page, vous pouvez survoler les termes soulignés pour voir les différentes correspondances (voir aussi la <a href=\"Référentiel-des-API-OUTSCALE.html#_différences_entre_les_noms_de_ressource\">liste complète</a>)."
+    en: "<strong>Note:</strong><br /><br />Cockpit v2 uses the terminology of the OUTSCALE API.<br /><br />For example, a VPC in the AWS terminology is a Net in OUTSCALE terminology.<br /><br />In this page, you can hover over the underlined terms to see the various correspondences (see also the <a href=\"OUTSCALE-APIs-Reference.html#_differences_in_resource_names\">full list here</a>).",
+    fr: "<strong>Remarque :</strong><br /><br />Cockpit v2 utilise la terminologie de l'API OUTSCALE.<br /><br />Par exemple, un VPC dans la terminologie AWS est un Net dans la terminologie OUTSCALE.<br /><br />Dans cette page, vous pouvez survoler les termes soulignés pour voir les différentes correspondances (voir aussi la <a href=\"Référentiel-des-API-OUTSCALE.html#_différences_entre_les_noms_de_ressource\">liste complète</a>)."
   }
 
   function expandMap (map, textBefore, textAfter) {
