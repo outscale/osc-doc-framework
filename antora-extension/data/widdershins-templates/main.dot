@@ -1,0 +1,239 @@
+{{ {
+
+function convertToToc(source, data) {
+    let resources_unordered = {};
+    var tagNames = [];
+    resources_unordered[data.translations.defaultTag] = { count: 0, methods: {} };
+    if (source.tags) {
+        for (let tag of source.tags) {
+            resources_unordered[tag.name] = { count: 0, methods: {}, description: tag.description, externalDocs: tag.externalDocs };
+            tagNames[tagNames.length] = tag.name;
+        }
+    }
+    for (var p in source.paths) {
+        if (!p.startsWith('x-')) {
+            for (var m in source.paths[p]) {
+                if ((m !== 'parameters') && (m !== 'summary') && (m !== 'description') && (!m.startsWith('x-'))) {
+                    var method = {};
+                    method.operation = source.paths[p][m];
+                    method.pathItem = source.paths[p];
+                    method.verb = m;
+                    method.path = p;
+                    method.pathParameters = source.paths[p].parameters;
+                    var sMethodUniqueName = (method.operation.operationId ? method.operation.operationId : m + '_' + p).split('?')[0].split('/').join('_');
+                    if (data.options.tocSummary && method.operation.summary) {
+                        sMethodUniqueName = method.operation.summary;
+                    }
+                    method.slug = sMethodUniqueName.toLowerCase().split(' ').join('-'); /* TODO {, } and : ?*/
+                    var tagName = data.translations.defaultTag;
+                    var tagDescription = '';
+                    if (method.operation.tags && method.operation.tags.length > 0) {
+                        var tagData = getTagGroup(method.operation.tags[0], data.options.tagGroups);
+                        tagName = tagData.name;
+                        tagDescription = tagData.description;
+                    }
+                    method.operation.description = source.paths[p].description;
+                    if (!resources_unordered[tagName]) {
+                        resources_unordered[tagName] = { count: 0, methods: {} };
+                        tagNames[tagNames.length] = tagName;
+                    }
+                    resources_unordered[tagName].count++;
+                    resources_unordered[tagName].methods[sMethodUniqueName] = method;
+                }
+            }
+        }
+    }
+    for (let r in resources_unordered) {
+        if (resources_unordered[r].count <= 0) {
+            delete resources_unordered[r];
+            delete tagNames[r];
+        }
+    }
+    tagNames.sort();
+    var resources = {};
+    for (var r in tagNames) {
+        resources[tagNames[r]] = resources_unordered[tagNames[r]]
+    }
+    return resources;
+}
+
+function getTagGroup(tag, tagGroups) {
+    if (tagGroups) {
+        for (let group of tagGroups) {
+            if (group.tags.indexOf(tag) > -1) {
+                return { name: group.title, description: group.description };
+            }
+        }
+    }
+    return { name: tag, description: '' };
+}
+
+function concatenateSomePropertyOneOfs(origSchema) {
+    const properties = origSchema.properties;
+    for (const property of Object.values(properties)) {
+        if (property.oneOf) {
+            const oneOf = property.oneOf;
+            let types = [];
+            const formats = [];
+            for (var i = 0, length = oneOf.length; i < length; i++) {
+                types.push(oneOf[i].type);
+                formats.push(oneOf[i].format);
+            }
+            types = [...new Set(types)];
+            if (types.length === 1) {
+                property.type = types + ' (' + formats.join(' or ') + ')';
+                delete(property.oneOf);
+            }
+        }
+    }
+    return origSchema;
+}
+
+function cleanType(type) {
+    return type.replace(/\b\(/, ' (');
+}
+
+function cleanParameterDescription(description) {
+    if (description) return description.replace(/\n/g, '');
+    else return 'none';
+}
+
+function printEnum(p) {
+    let s = '';
+    if (p.schema.enum) {
+        s += '<br />Possible values: `' + p.schema.enum.join('`, `') + '`.';
+    }
+    return s;
+}
+
+function getFirstPartOfIntro(description) {
+    const s = data.api.info.description.split('# Authentication Schemes');
+    if (s.length > 1) {
+        return s.slice(0, 1);
+    }
+    else {
+        return s.slice(0, 1);
+    }
+}
+
+function getSecondPartOfIntro(description) {
+    const s = data.api.info.description.split('# Authentication Schemes');
+    if (s.length > 1) {
+        return '# Authentication Schemes' + s.slice(-1);
+    }
+    else {
+        return null;
+    }
+}
+
+data.resources = convertToToc(data.api,data);
+data.version = (data.api.info && data.api.info.version && typeof data.api.info.version === 'string' && (data.api.info.version.toLowerCase().startsWith('v') || data.api.info.version.match('[0-9]{4}-[0-9]{2}-[0-9]{2}')) ? data.api.info.version : 'v'+data.api.info.version);
+
+} }}
+
+<!-- Generator: Widdershins v{{=data.widdershins.version}} -->
+
+{{= data.tags.section }}
+<h1 id="{{=data.title_prefix}}">{{=data.api.info && data.api.info.title}} {{=data.version}}</h1>
+
+{{? data.api.info && data.api.info.description}}{{= getFirstPartOfIntro(data.api.info.description) }}{{?}}
+
+{{? data.api.servers }}
+{{#def.servers}}
+{{?}}
+
+{{? data.api.info && data.api.info.termsOfService}}<a href="{{=data.api.info.termsOfService}}">Terms of service</a>.{{?}}
+{{? data.api.info && data.api.info.contact}}{{? data.api.info.contact.email}}Email: <a href="mailto:{{=data.api.info.contact.email}}">{{=data.api.info.contact.name || data.api.info.contact.email}}</a>. {{?}}{{? data.api.info.contact.url}}Web: <a href="{{=data.api.info.contact.url}}">{{= data.api.info.contact.name || 'Support'}}</a>. {{?}}{{?}}
+{{? data.api.info && data.api.info.license}}{{? data.api.info.license.url}}License: <a href="{{=data.api.info.license.url}}">{{=data.api.info.license.name}}</a>.{{??}} License: {{=data.api.info.license.name}}.{{?}}{{?}}
+{{= data.tags.endSection }}
+
+{{? data.api.components && data.api.components.securitySchemes }}
+
+{{ let secondPartofIntro = getSecondPartOfIntro(data.api.info.description); }}
+{{? secondPartofIntro !== null }}{{=secondPartofIntro}}
+{{?? secondPartofIntro === null }}{{#def.security}}{{?}}
+
+{{?}}
+
+{{ for (var r in data.resources) { }}
+{{ data.resource = data.resources[r]; }}
+
+{{= data.tags.section }}
+<h1 id="{{=data.title_prefix+'-'+data.utils.slugify(r)}}">{{= r}}</h1>
+
+{{? data.resource.description }}{{= data.resource.description}}{{?}}
+
+{{? data.resource.externalDocs}}
+<a href="{{=data.resource.externalDocs.url}}">{{=data.resource.externalDocs.description||'External documentation'}}</a>
+{{?}}
+
+{{ for (var m in data.resource.methods) { }}
+{{ data.operationUniqueName = m; }}
+{{ data.method = data.resource.methods[m]; }}
+{{ data.operationUniqueSlug = data.method.slug; }}
+{{ data.operation = data.method.operation; }}
+{{= data.templates.operation(data) }}
+{{ } /* of methods */ }}
+
+{{= data.tags.endSection }}
+{{ } /* of resources */ }}
+
+{{? data.api.components && data.api.components.schemas }}
+{{= data.tags.section }}
+
+# Schemas
+
+{{ for (var s in data.components.schemas) { }}
+{{ if (!s.endsWith('Request')) { }}
+{{ var origSchema = data.components.schemas[s]; }}
+{{ var schema = data.api.components.schemas[s]; }}
+{{ { origSchema = concatenateSomePropertyOneOfs(origSchema); } }}
+
+{{= data.tags.section }}
+<h2 id="tocS_{{=s}}">{{=s}}</h2>
+<a class="offset-up" id="schema{{=s.toLowerCase()}}"></a>
+<a class="offset-up" id="schema_{{=s}}"></a>
+<a class="offset-up" id="tocS{{=s.toLowerCase()}}"></a>
+<a class="offset-up" id="tocs{{=s.toLowerCase()}}"></a>
+
+{{ var blocks = data.utils.schemaToArray(origSchema,-1,{trim:true,join:true},data); }}
+
+{{~ blocks :block}}
+{{? block.title }}{{= block.title}}{{= '\n\n'}}{{?}}
+{{? block.externalDocs}}
+<a href="{{=block.externalDocs.url}}">{{=block.externalDocs.description||'External documentation'}}</a>
+{{?}}
+
+{{? block===blocks[0] }}
+{{= data.tags.section }}
+
+### Properties
+{{?}}
+
+{{? block.rows.length}}|Name|Type|Description|
+|---|---|---|{{?}}
+{{~ block.rows :p}}|{{=p.displayName}}|{{= cleanType(p.safeType) }}|{{= cleanParameterDescription(p.description) }}|
+{{~}}
+{{~}}
+{{? (blocks[0].rows.length === 0) && (blocks.length === 1) }}
+*None*
+{{?}}
+
+> Schema
+{{? data.options.yaml }}
+```yaml
+{{=data.utils.yaml.stringify(data.utils.getSample(schema,data.options,{quiet:true},data.api))}}{{??}}
+```json
+{{=data.utils.safejson(data.utils.getSample(schema,data.options,{quiet:true},data.api),null,2)}}{{?}}
+```
+
+{{= data.tags.endSection }}
+
+{{ } /* of if endsWith('Request') */ }}
+{{ } /* of schemas */ }}
+
+{{?}}
+
+{{? data.options.discovery}}
+{{#def.discovery}}
+{{?}}

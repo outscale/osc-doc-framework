@@ -1,5 +1,25 @@
     <link rel="stylesheet" href="{{uiRootPath}}/css/outscale.css">
     <link rel="stylesheet" href="{{uiRootPath}}/css/darkula.css">
+    {{#if (eq page.attributes.role 'apidocs')}}
+    <link rel="stylesheet" media="screen" href="{{uiRootPath}}/css/apidocs/screen.css">
+    <link rel="stylesheet" media="screen" href="{{uiRootPath}}/css/apidocs/screen_overrides.css">
+    <link rel="stylesheet" media="screen" href="{{uiRootPath}}/css/apidocs/darkula.css">
+    <link rel="stylesheet" media="screen" href="{{uiRootPath}}/css/apidocs/theme_overrides.css">
+    <link rel="stylesheet" media="print" href="{{uiRootPath}}/css/apidocs/print.css">
+    <link rel="stylesheet" media="print" href="{{uiRootPath}}/css/apidocs/print_overrides.css">
+    <link rel="shortcut icon" href="{{uiRootPath}}/img/favicon.ico">
+    <script src="{{uiRootPath}}/js/apidocs/lib/_jquery.js"></script>
+    <script src="{{uiRootPath}}/js/apidocs/lib/_jquery.highlight.js"></script>
+    <script src="{{uiRootPath}}/js/apidocs/lib/_lunr.js"></script>
+    <script src="{{uiRootPath}}/js/apidocs/lib/_imagesloaded.min.js"></script>
+    <script src="{{uiRootPath}}/js/apidocs/lib/_energize.js"></script>
+    <script src="{{uiRootPath}}/js/apidocs/app/_lang.js"></script>
+    <script src="{{uiRootPath}}/js/apidocs/app/_search.js"></script>
+    <script src="{{uiRootPath}}/js/apidocs/app/_toc.js"></script>
+    <script src="{{uiRootPath}}/js/apidocs/lib/_nav.js"></script>
+    <script src="{{uiRootPath}}/js/apidocs/lib/_toc.js"></script>
+    <meta name="theme-color" content="#F3F7F9">
+    {{else}}
     <link rel="stylesheet" media="print" href="{{uiRootPath}}/css/print.css">
     <link rel="shortcut icon" href="{{uiRootPath}}/img/favicon.ico">
     {{#if env.SITE_SEARCH_PROVIDER}}
@@ -13,6 +33,7 @@
     <meta name="page-component" content="{{page.component.name}}">
     <meta name="page-version" content="{{page.version}}">
     <meta name="page-url" content="{{page.url}}">
+    {{/if}}
     {{/if}}
     {{#if env.ENABLE_MATOMO}}
     <!-- Matomo -->

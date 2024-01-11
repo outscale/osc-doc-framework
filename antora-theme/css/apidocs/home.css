@@ -1,0 +1,67 @@
+:root {
+  --outscale-blue: #19233e;
+  --outscale-red: #eb595d;
+  --outscale-yellow: #f5dc6a;
+  --outscale-yellow-darker: #dcc55f;
+  --outscale-light-blue: #b8dbd2;
+  --outscale-light-blue-darker: #a5c4bc;
+  --color-primary: #19233e;
+  --color-lightGrey: #d2d6dd;
+  --color-grey: #747681;
+  --color-darkGrey: #3f4144;
+  --color-error: #d43939;
+  --color-success: #28bd14;
+  --grid-maxWidth: 120rem;
+  --grid-gutter: 2.5rem;
+  --font-size: 1.6rem;
+  --font-family: 'Montserrat', sans-serif;
+  --color-secondary: #eb595d;
+}
+
+body {
+  background-color: #f3f7f9;
+  padding-top: 70px;
+  margin: 0;
+  font-family: var(--font-family);
+  font-size: var(--font-size);
+  line-height: 1.6;
+}
+
+h4 {
+  color: var(--color-secondary);
+}
+
+.col {
+  padding-left: 25px;
+  padding-right: 25px;
+}
+
+.card {
+  border-radius: 0;
+  width: 100%;
+}
+
+.button {
+  border-radius: 0;
+  margin: 5px;
+}
+
+.button.primary:hover {
+  opacity: 1;
+  color: #c3e1d9;
+}
+
+.button.outline.primary:hover {
+  background-color: var(--outscale-yellow);
+  color: #19233e;
+}
+
+.is-right {
+  flex-wrap: wrap;
+}
+
+@media (max-width: 685px) {
+  body {
+    padding-top: 180px;
+  }
+}

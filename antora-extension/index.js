@@ -4,13 +4,6 @@ const resolveResource = require('@antora/content-classifier/lib/util/resolve-res
 module.exports.register = function ({ config }) {
   const logger = this.getLogger('@outscale/antora-extension')
 
-  this.once('beforeProcess', () => {
-    try {
-      require('mac-ca')
-    }
-    catch (e) {}
-  })
-
   this.once('contentAggregated', ({ contentAggregate }) => {
     for (let i = 0, length = contentAggregate.length; i < length; i++) {
       const files = contentAggregate[i].files

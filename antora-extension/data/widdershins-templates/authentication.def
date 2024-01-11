@@ -1,0 +1,39 @@
+{{ {
+
+function getAuthenticationStr(data) {
+    let list = '';
+    for (let s in data.security) {
+        let count = 0;
+        for (let sse in Object.keys(data.security[s])) {
+            let secName = Object.keys(data.security[s])[sse];
+            if (secName === 'ApiKeyAuth' || secName === 'ApiKeyAuthSec') {
+                secName = 'access key/secret key';
+            }
+            else if (secName === 'BasicAuth') {
+                secName = 'login/password';
+            }
+            let sep = (count > 0) ? ' & ' : ', or ';
+            list += (list ? sep : '') + '<a href="#authentication-schemes">' + secName + '</a>';
+            let scopes = data.security[s][secName];
+            if (Array.isArray(scopes) && (scopes.length > 0)) {
+                list += ' ( ' + data.translations.secDefScopes + ': ';
+                for (let scope in scopes) {
+                    list += scopes[scope] + ' ';
+                }
+                list += ')';
+            }
+            count++;
+        }
+        if (count === 0) { /* 'null' security */
+            list += (list ? ', ' : '') + data.translations.secDefNone;
+        }
+    }
+    return list;
+}
+
+} }}
+
+<aside class="warning">
+This action needs to be authenticated by
+{{= getAuthenticationStr(data) }}.
+</aside>
