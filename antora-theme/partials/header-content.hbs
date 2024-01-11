@@ -40,7 +40,7 @@
                   </ul>
               </li>
               {{/if}}
-              {{#if env.SITE_SEARCH_PROVIDER}}
+              {{#if (and env.SITE_SEARCH_PROVIDER (ne page.attributes.role 'apidocs'))}}
               <form id="search-field" class="right entry field has-filter" action="{{#if page.attributes.en}}Recherche.html{{else}}Search.html{{/if}}" autocomplete="off">
                   <a>
                     <input id="search-input" name="q" type="text" placeholder="{{page.attributes.search-text}}"><button type="submit" value=""></button>

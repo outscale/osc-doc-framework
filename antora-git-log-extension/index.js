@@ -23,6 +23,7 @@ module.exports.register = function ({ config: {format = '%cd'} }) {
         const content = pages[j].contents.toString()
         let info = getInfoFromGitLogs(pages[j], gitLogs)
         info = parseIncludes(pages[j], content, info, gitLogs, contentCatalog)
+        if (info === undefined) console.log(pages[j])
         pages[j].contents = Buffer.from(`:page-gitlog: ${formatTime(info)}\n\n${content}`)
       }
     }

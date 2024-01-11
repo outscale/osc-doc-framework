@@ -1,0 +1,183 @@
+{{ {
+
+function evaluateResponses(data) {
+    for (let resp in data.operation.responses) {
+        if (!resp.startsWith('x-')) {
+            let response = data.operation.responses[resp];
+            for (let ct in response.content) {
+                let contentType = response.content[ct];
+                if (contentType.examples || contentType.example) {return getResponseExamples(data);}
+                else if (contentType.schema) {return data.utils.getResponseExamples(data);}
+            }
+        }
+    }
+}
+
+function getResponseExamples(data) {
+    let content = '';
+    let examples = [];
+    for (let resp in data.operation.responses) {
+        if (!resp.startsWith('x-')) {
+            let response = data.operation.responses[resp];
+            for (let ct in response.content) {
+                let contentType = response.content[ct];
+                let cta = [ct];
+                /* support embedded examples */
+                if (contentType.examples) {
+                    for (let ctei in contentType.examples) {
+                        let example = contentType.examples[ctei];
+                        examples.push({ summary: example.summary || response.summary, value: _convertExample(example.value), cta: cta });
+                    }
+                }
+                else if (contentType.example) {
+                    examples.push({ summary: resp + ' ' + data.translations.response, value: _convertExample(contentType.example), cta: cta });
+                }
+            }
+        }
+    }
+    let lastDesc = '';
+    for (let example of examples) {
+        if (example.summary && example.summary !== lastDesc) {
+            content += '```bash\n';
+            content += '# ' + example.summary + '\n';
+            content += '```\n\n';
+            lastDesc = example.summary + '\n';
+        }
+        if (_doContentType(example.cta, 'json')) {
+            content += '```json\n';
+            content += data.utils.safejson(example.value, null, 2) + '\n';
+            content += '```\n\n';
+        }
+        if (_doContentType(example.cta, 'yaml')) {
+            content += '```yaml\n';
+            content += yaml.stringify(example.value) + '\n';
+            content += '```\n\n';
+        }
+        if (_doContentType(example.cta, 'text')) {
+            content += '```\n';
+            content += JSON.stringify(example.value) + '\n';
+            content += '```\n\n';
+        }
+        let xmlObj = example.value;
+        if (example.xmlWrap) {
+            xmlObj = {};
+            xmlObj[example.xmlWrap] = example.value;
+        }
+        if ((typeof xmlObj === 'object') && _doContentType(example.cta, 'xml')) {
+            content += '```xml\n';
+            content += xml.getXml(JSON.parse(data.utils.safejson(xmlObj)), '@', '', true, '  ', false) + '\n';
+            content += '```\n\n';
+        }
+    }
+    return content;
+}
+
+function _convertExample(ex) {
+    if (typeof ex === 'string') {
+        try {
+            return yaml.parse(ex);
+        }
+        catch (e) {
+            return ex;
+        }
+    }
+    else return ex;
+}
+
+function _doContentType(ctTypes, ctClass) {
+    const contentTypes = {
+        xml: ['^(application|text|image){1}\\/(.*\\+){0,1}xml(;){0,1}(\\s){0,}(charset=.*){0,}$'],
+        json: ['^(application|text){1}\\/(.*\\+){0,1}json(;){0,1}(\\s){0,}(charset=.*){0,}$'],
+        yaml: ['application/x-yaml', 'text/x-yaml'],
+        form: ['multipart/form-data', 'application/x-www-form-urlencoded', 'application/octet-stream'],
+        text: ['text/plain', 'text/html']
+    };
+    for (let type of ctTypes) {
+        for (let target of contentTypes[ctClass]||[]) {
+            if (type.match(target)) return true;
+        }
+    }
+    return false;
+}
+
+function printEnum(p) {
+    let s = '';
+    if (p.schema.enum) {
+        s += '<br />Possible values: `' + p.schema.enum.join('`, `') + '`.';
+    }
+    return s;
+}
+
+function getCallName(operationUniqueName) {
+    return data.operationUniqueName.split('__').slice(-1)[0];
+}
+
+} }}
+
+{{ data.responses = data.utils.getResponses(data); }}
+{{ data.responseSchemas = false; }}
+{{~ data.responses :response }}
+{{ if (response.content) data.responseSchemas = true; }}
+{{~}}
+
+{{= data.tags.section }}
+<h3 id="{{=data.operationUniqueSlug}}-responses">Responses</h3>
+
+|Status|Meaning|Description|Schema|
+|---|---|---|---|
+{{~ data.responses :r}}|{{=r.status}}|{{=r.meaning}}|{{=r.description || 'none'}}|{{=r.schema}}|
+{{~}}
+
+{{? data.responseSchemas }}
+> Example responses<a name="{{= getCallName(data.operationUniqueName) }}-res-example.json"></a>
+
+{{= evaluateResponses(data) }}
+{{?}}
+
+{{ data.responseSchemas = false; }}
+{{~ data.responses :response }}
+{{ if (response.content && !response.$ref && !data.utils.isPrimitive(response.type)) data.responseSchemas = true; }}
+{{~}}
+{{? data.responseSchemas }}
+<h3 id="{{=data.operationUniqueSlug}}-responseschema">Response Schema</h3>
+{{~ data.responses :response}}
+{{? response.content && !response.$ref && !data.utils.isPrimitive(response.type)}}
+{{? Object.keys(response.content).length }}
+{{ var responseKey = Object.keys(response.content)[0]; }}
+{{ var responseSchema = response.content[responseKey].schema; }}
+{{ var blocks = data.utils.schemaToArray(responseSchema,0,{trim:true,join:true},data); }}
+
+{{? blocks[0].rows.length || blocks[0].title }}
+Status Code **{{=response.status}}**
+
+{{~ blocks :block}}
+{{? block.title }}*{{=block.title}}*
+{{?}}
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+{{~block.rows :p}}|{{=p.displayName}}|{{=p.safeType}}|{{=p.required}}|{{=p.restrictions||'none'}}|{{=p.description||'none'}}|
+{{~}}
+{{~}}
+{{?}}
+
+{{?}}
+
+{{ data.response = response; }}
+{{#def.links}}
+
+{{?}}
+{{~}}
+{{?}}
+
+{{ data.responseHeaders = data.utils.getResponseHeaders(data); }}
+{{? data.responseHeaders.length }}
+
+### Response Headers
+
+|Status|Header|Type|Format|Description|
+|---|---|---|---|---|
+{{~ data.responseHeaders :h}}|{{=h.status}}|{{=h.header}}|{{=h.type}}|{{=h.format||''}}|{{=h.description||'none'}}|
+{{~}}
+
+{{?}}
+{{= data.tags.endSection }}

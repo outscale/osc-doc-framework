@@ -23,8 +23,10 @@ module.exports.register = function () {
     for (let i = 0, length = components.length; i < length; i++) {
       const versions = components[i].versions
       for (let j = 0, length = versions.length; j < length; j++) {
-        createSearchPage(contentCatalog, versions[j], config[versions[j].name])
-        createOpenSearchFile(contentCatalog, versions[j], config[versions[j].name], playbook)
+        if (config[versions[j].name].enabled) {
+          createSearchPage(contentCatalog, versions[j], config[versions[j].name])
+          createOpenSearchFile(contentCatalog, versions[j], config[versions[j].name], playbook)
+        }
       }
     }
   })

@@ -1,0 +1,58 @@
+{{ {
+
+function concatenateSomeParameterOneOfs(parameters) {
+    for (var i = 0, length = parameters.length; i < length; i++) {
+        const p = parameters[i];
+        if (p.schema.oneOf) {
+            let types = [];
+            const formats = [];
+            let k = i + 1;
+            while (parameters[k] && parameters[k].depth === p.depth + 1) {
+                types.push(parameters[k].schema.type);
+                formats.push(parameters[k].schema.format);
+                k++;
+            }
+            types = [...new Set(types)];
+            if (types.length === 1) {
+                p.safeType = types + ' (' + formats.join(' or ') + ')';
+                k = i + 1;
+                while (parameters[k] && p && parameters[k].depth === p.depth + 1) {
+                    parameters[k]._temp = 'parameter_to_remove';
+                    k++;
+                }
+            }
+        }
+    }
+    parameters = parameters.filter( (n) => {return '_temp' in n === false} );
+    return parameters;
+}
+data.parameters = concatenateSomeParameterOneOfs(data.parameters);
+
+function cleanType(type) {
+    return type.replace(/\b\(/, ' (');
+}
+
+function cleanParameterDescription(description) {
+    if (description) return description.replace(/\n/g, '');
+    else return 'none';
+}
+
+function printEnum(p) {
+    let s = '';
+    if (p.schema.enum) {
+        s += '<br />Possible values: `' + p.schema.enum.join('`, `') + '`.';
+    }
+    return s;
+}
+
+} }}
+
+{{= data.tags.section }}
+<h3 id="{{=data.operationUniqueSlug}}-parameters">Available Parameters</h3>
+
+|Name|Type|Required|Description|
+|---|---|---|---|
+{{~ data.parameters :p}}|{{=p.name}}|{{= cleanType(p.safeType) }}|{{=p.required}}|{{= cleanParameterDescription(p.description) }}|
+{{~}}
+
+{{= data.tags.endSection }}

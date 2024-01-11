@@ -2,6 +2,8 @@
   <div class="content {{page.attributes.tocposition}}">
 {{#if (eq page.layout '404')}}
 {{> article-404}}
+{{else if (eq page.attributes.role 'apidocs')}}
+{{{page.contents}}}
 {{else}}
 {{> toc}}
 {{> article}}

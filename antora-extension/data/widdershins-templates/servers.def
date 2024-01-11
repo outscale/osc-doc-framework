@@ -1,0 +1,28 @@
+{{ {
+
+function getServers(data) {
+    let content = '';
+    for (let s in data.api.servers) {
+        const server = data.api.servers[s];
+        content += '- <a href="' + server.url + '">' + server.url + '</a>';
+        if (server.description) {content += ' (' + server.description + ')';}
+        content += '\n';
+        for (let v in server.variables) {
+            const variable = server.variables[v];
+            content += '  - Where **{' + v + '}** ';
+            if (variable.description) {content += ' (' + variable.description + ')';}
+            content += ' is:\n';
+            for (e of variable.enum) {
+                content += '    - ' + e;
+                if (variable.default === e) {content += ' (default)';}
+                content += '\n';
+            }
+        }
+    }
+    return content;
+}
+
+} }}
+
+Base URLs:
+{{= getServers(data) }}

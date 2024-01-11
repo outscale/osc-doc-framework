@@ -1,0 +1,301 @@
+{{ {
+
+function generateShellExamples(data) {
+    let s = '';
+    let commonPart = '';
+    const securitySchemes = data.operation.security && data.operation.security.length;
+    const examples = Object.entries(data.bodyParameter.exampleValues);
+    const apiName = data.host.slice(0, -1);
+
+    for (let security of data.security) {
+        if ('ApiKeyAuth' in security || 'ApiKeyAuthSec' in security) {
+            s += '# You need Curl version 7.75 or later to use the --aws-sigv4 option\n\n';
+            break
+        }
+    }
+
+    for (let [key, value] of examples) {
+        if (key === 'customExamples') {
+            for (let n = 0, length = value.length; n < length; n++) {
+                if (value[n]) {
+                    if (value[n].summary) {
+                        s += '# ' + value[n].summary + '\n\n';
+                    }
+                    else {
+                        for (let security of data.security) {
+                            if ('BasicAuth' in security) {
+                                s += '# Example with access key/secret key authentication\n\n';
+                            }
+                        }
+                    }
+                    commonPart = getCommonPart(apiName, data);
+                    s += commonPart;
+                    if (securitySchemes !== 0) {
+                        s += '  --user $OSC_ACCESS_KEY:$OSC_SECRET_KEY \\\n';
+                        if (apiName === 'api') {
+                            s += "  --aws-sigv4 'osc' \\\n";
+                        }
+                        else {
+                            s += "  --aws-sigv4 'aws:amz' \\\n";
+                        }
+                    }
+                    exampleContent = getExampleContent(value[n], apiName, data);
+                    exampleContent = exampleContent.replace('"AuthenticationMethod": "string"', '"AuthenticationMethod": "accesskey"');
+                    exampleContent = exampleContent.replace(/ +"Login": "string",?\n/, '');
+                    exampleContent = exampleContent.replace(/ +"Password": "string",?\n/, '');
+                    exampleContent = exampleContent.replace('"Password": "$OSC_PASSWORD"', '"Password": "\'$OSC_PASSWORD\'"');
+                    exampleContent = exampleContent.replace(/,(\n +\})/, '$1');
+                    s += exampleContent;
+                    exampleContent = getExampleContent(value[n], apiName, data);
+                    if (length > 1 && n < length-1) {
+                        s += '```\n';
+                        s += '```shell\n';
+                    }
+                }
+            }
+        }
+    }
+    for (let security of data.security) {
+        if ('BasicAuth' in security) {
+            if (apiName == 'api') {
+                for (let [key, value] of examples) {
+                    if (key === 'customExamples') {
+                        s += '\n\n```\n';
+                        s += '```shell\n';
+                        s += '# Example with login/password authentication\n\n';
+                        s += commonPart;
+                        s += '  --header "Authorization: Basic $(echo -n "$OSC_EMAIL:$OSC_PASSWORD" | base64)" \\\n';
+                        s += '  --header "X-Osc-Date: $(TZ=GMT date +%Y%m%dT%H%M%SZ)" \\\n';
+                        s += exampleContent;
+                    }
+                }
+            }
+            else if (apiName == 'icu') {
+                for (let [key, value] of examples) {
+                    if (key === 'customExamples') {
+                        s += '\n\n```\n';
+                        s += '```shell\n';
+                        s += '# Example with login/password authentication\n\n';
+                        s += commonPart;
+                        exampleContent = exampleContent.replace('"AuthenticationMethod": "string"', '"AuthenticationMethod": "password"');
+                        exampleContent = exampleContent.replace('"Login": "string"', '"Login": "\'$OSC_EMAIL\'"');
+                        exampleContent = exampleContent.replace('"Password": "string"', '"Password": "\'$OSC_PASSWORD\'"');
+                        s += exampleContent;
+                    }
+                }
+            }
+        }
+    }
+
+    return s;
+}
+
+function getCommonPart(apiName, data) {
+    let s = '';
+    if (apiName === 'api') {
+        s += 'curl -X ' + data.methodUpper + ' ' + data.url + data.requiredQueryString + ' \\\n';
+    }
+    else if (apiName === 'icu' || apiName === 'directlink' || apiName === 'kms') {
+        s += 'curl -X ' + data.methodUpper + ' ' + data.baseUrl + ' \\\n';
+    }
+    else {
+        s += 'curl ' + data.baseUrl + ' \\\n';
+    }
+    s = s.replace('{region}', '$OSC_REGION');
+
+    return s;
+}
+
+function getExampleContent(value, apiName, data) {
+    let s = '';
+    const objJson = JSON.parse(value.json);
+    const action = data.url.split('/')[3];
+
+    if (apiName === 'api') {
+    }
+    else if (apiName === 'icu') {
+        s += "  --header 'x-amz-target: TinaIcuService." + action + "' \\\n";
+    }
+    else if (apiName === 'directlink') {
+        s += "  --header 'x-amz-target: OvertureService." + action + "' \\\n";
+    }
+    else if (apiName === 'kms') {
+        s += "  --header 'x-amz-target: TrentService." + action + "' \\\n";
+    }
+    else {
+        s += "  --data-urlencode 'Version=" + data.version + "' \\\n";
+        s += "  --data-urlencode 'Action=" + action + "' \\\n";
+    }
+
+    if (apiName === 'api') {
+        s += "  --header 'Content-Type: application/json' \\\n";
+    }
+    else if (apiName === 'icu' || apiName === 'directlink' || apiName === 'kms') {
+        s += "  --header 'Content-Type: application/x-amz-json-1.1' \\\n";
+    }
+
+    if (apiName === 'api' || apiName === 'icu' || apiName === 'directlink' || apiName === 'kms') {
+        s += "  --data '{\n";
+        for (let [k, v] of Object.entries(objJson)) {
+            /* Make LBU-style '.member.N' parameters start with N=1 instead of 0 */
+            if (k.endsWith('.member.N')) {
+                k = k.slice(0, -1) + '1';
+            }
+            s += '    "' + k + '":';
+            if (typeof v === 'object') {
+                s += ' ' + getJsonStyleObject(v, 2) + ',\n';
+            }
+            else if (isNaN(v)) {
+                s += ' "' + v + '",\n';
+            }
+            else {
+                /* Workaround for DryRun parameter */
+                if (k === 'DryRun' || k === 'dryRun') {
+                    v = 'false';
+                }
+                /* Workaround for strings composed entirely of digits */
+                else if (v !== true && v !== false && !Number.isInteger(v)) {v = '"' + v + '"';}
+                s += ' ' + v + ',\n';
+            }
+        }
+    }
+    else {
+        for (let [key, value] of Object.entries(data.bodyParameter.exampleValues)) {
+            if (key === 'json') {
+                const objJson = JSON.parse(value);
+                for (let [k, v] of Object.entries(objJson)) {
+                    /* Make LBU-style '.member.N' parameters start with N=1 instead of 0 */
+                    if (k.endsWith('.member.N')) {
+                        k = k.slice(0, -1) + '1';
+                    }
+                    if (typeof v === 'object') {
+                        s += getCurlStyleObject(v, 2, k);
+                    }
+                    else if (isNaN(v)) {
+                        s += "  --data-urlencode '" + k + '=' + v + "' \\\n";
+                    }
+                    else {
+                        /* Workaround for DryRun parameter */
+                        if (k === 'DryRun' || k === 'dryRun') {
+                            v = 'false';
+                        }
+                        s += "  --data-urlencode '" + k + '=' + v + "' \\\n";
+                    }
+                }
+            }
+        }
+    }
+    s = s.replace(/, \n/g, ',\n');
+    s = s.replace(/,(\n +(\}|\]))/g, '$1');
+    s = s.replace(/,(,|\])/g, '$1');
+    s = s.replace(/,\n$/, "\n  }'\n\n");
+    s = s.replace(/{\n$/, "{}'\n\n");
+    s = s.replace(/ \\\n$/, '');
+    s = s.replace(/\n\n$/, '\n');
+
+    return s;
+}
+
+function getJsonStyleObject(objectValue, level) {
+    let s = '';
+    let first = true;
+    let arrayType = false;
+    let marging = 2;
+    let spaceChar = ' ';
+    let addNewLine = false;
+
+    level += 1;
+
+    for (let [k1, v1] of Object.entries(objectValue)) {
+
+        if (first) {
+            first = false;
+            if (k1 === '0') {
+                s = '[';
+                arrayType = true;
+            } else {
+                s = '{';
+            }
+        }
+        if (level < 5 && (!arrayType || typeof v1 === 'object'))
+        {
+            s += '\n' + spaceChar.repeat(marging * level);
+        }
+        if (!arrayType) {
+            s += '"' + k1 + '": ';
+        }
+        if (typeof v1 === 'object') {
+            s += getJsonStyleObject(v1, level);
+            addNewLine = true;
+        }
+        else if (isNaN(v1)) {
+            s += '"' + v1 + '"';
+        }
+        else {
+            if (v1 !== true && v1 !== false && !Number.isInteger(v1)) {v1 = '"' + v1 + '"';}
+            s += v1;
+        }
+        s += ', ';
+    }
+
+    if (level >= 5) {
+        s = s.slice(0, -2);
+    }
+    else {
+        s = s.slice(0, -1);
+    }
+
+    level -= 1;
+    if (arrayType) {
+        if (level < 4 && addNewLine) {
+            s += '\n' + spaceChar.repeat(marging * level);
+        }
+        s += ']';
+    } else  {
+        if (level < 4) {
+            s += '\n' + spaceChar.repeat(marging * level);
+        }
+        s += '}';
+    }
+
+    return s;
+}
+
+function getCurlStyleObject(objectValue, level, parentKey) {
+    let s = '';
+
+    for (let [k1, v1] of Object.entries(objectValue)) {
+        if (typeof v1 === 'object') {
+            for (let [k2, v2] of Object.entries(v1)) {
+                if (typeof v2 === 'object') {
+                    for (let [k3, v3] of Object.entries(v2)) {
+                        if (typeof v3 === 'object') {
+                            for (let [k4, v4] of Object.entries(v3)) {
+                                if (typeof v4 === 'object') {
+                                    s += "  --data-urlencode '" + parentKey + '.' + k1 + '.' + k2 + '.' + k3 + '.' + k4 + '.0=' + v4 + "' \\\n";
+                                }
+                                else {
+                                    s += "  --data-urlencode '" + parentKey + '.' + k1 + '.' + k2 + '.' + k3 + '.' + k4 + '=' + v4 + "' \\\n";
+                                }
+                            }
+                        }
+                        else {
+                            s += "  --data-urlencode '" + parentKey + '.' + k1 + '.' + k2 + '.' + k3 + '=' + v3 + "' \\\n";
+                        }
+                    }
+                }
+                else {
+                    s += "  --data-urlencode '" + parentKey + '.' + k1 + '.' + k2 + '=' + v2 + "' \\\n";
+                }
+            }
+        }
+        else {
+            s += "  --data-urlencode '" + parentKey + '.' + k1 + '=' + v1 + "' \\\n";
+        }
+    }
+    s = s.replace(/\.0/g, '.1');
+
+    return s;
+}
+
+} }}{{= generateShellExamples(data)}}
