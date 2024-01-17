@@ -44,6 +44,9 @@ function modifyAsciiDoc (file) {
   text = disambiguateTabIds(/\[\.tab, id="\{cockpit-2\}"\]/g, text)
   text = disambiguateTabIds(/\[\.tab, id="OSC CLI"\]/g, text)
   text = disambiguateTabIds(/\[\.tab, id="AWS CLI"\]/g, text)
+  text = disambiguateTabIds(/\[\.tab, id="Linux"\]/g, text)
+  text = disambiguateTabIds(/\[\.tab, id="macOS"\]/g, text)
+  text = disambiguateTabIds(/\[\.tab, id="Windows"\]/g, text)
 
   if (~file.dirname.indexOf('/pages')) {
     if (~text.indexOf('AWS')) text += '\n\n[#aws-disclaimer]\n{page-awsdisclaimer-text}\n'
