@@ -94,7 +94,7 @@ function localize404Page (filename, playbook) {
   const enPath = playbook.output.dir + '/' + filename + '-en.html'
   const frPath = playbook.output.dir + '/' + filename + '-fr.html'
   if (fs.existsSync(oldPath)) {
-    fs.renameSync(oldPath, enPath)
+    fs.copyFileSync(oldPath, enPath)
     fs.copyFileSync(enPath, frPath)
   }
 }
