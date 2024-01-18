@@ -104,6 +104,9 @@ html {
     display: block;
   }
 
+  header #top-menu {
+    min-height: var(--topbar-height);
+  }
   header #top-menu .entry:not(.logo) {
     display: none;
   }
