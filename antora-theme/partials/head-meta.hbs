@@ -22,6 +22,9 @@
     {{else}}
     <link rel="stylesheet" media="print" href="{{uiRootPath}}/css/print.css">
     <link rel="shortcut icon" href="{{uiRootPath}}/img/favicon.ico">
+    {{#if (eq page.attributes.role 'eim-policy-generator')}}
+    <link rel="stylesheet" href="{{uiRootPath}}/css/outscale-eim-policy-generator.css">
+    {{/if}}
     {{#if env.SITE_SEARCH_PROVIDER}}
     <link rel="search" type="application/opensearchdescription+xml" href="{{siteRootPath}}/{{page.component.name}}/{{#if page.version}}{{page.version}}/{{/if}}{{page.module}}/_xml/opensearch.xml" title="{{#if page.attributes.en}}OUTSCALE Docs FR{{else}}OUTSCALE Docs EN{{/if}}">
     {{#if (eq page.attributes.role 'search')}}

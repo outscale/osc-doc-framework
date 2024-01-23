@@ -8,6 +8,9 @@
     {{#if (ne page.layout '404')}}
     <script src="{{uiRootPath}}/js/outscale-right-sidebar.js"></script>
     <script src="{{uiRootPath}}/js/outscale-tabs.js"></script>
+    {{#if (eq page.attributes.role 'eim-policy-generator')}}
+    <script src="{{uiRootPath}}/js/outscale-eim-policy-generator.js"></script>
+    {{/if}}
     {{#if env.SITE_SEARCH_PROVIDER}}{{> search-scripts}}{{/if}}
     <script async src="{{uiRootPath}}/js/vendor/highlight.js"></script>
     <script async src="{{uiRootPath}}/js/outscale-tooltips.js"></script>

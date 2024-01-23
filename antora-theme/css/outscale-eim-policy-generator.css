@@ -1,0 +1,79 @@
+#eim-policy-generator {
+    margin-bottom: 2em;
+}
+#eim-policy-generator .full-width {
+    display: inline-block;
+    width: calc(100% - 30px);
+}
+#eim-policy-generator legend.full-width {
+    width: 100%;
+}
+#eim-policy-generator [id^=statement-]:not(:last-of-type) {
+    margin-bottom: 1em;
+}
+#eim-policy-generator #add,
+#eim-policy-generator #remove,
+#eim-policy-generator #generate {
+    margin: 1.2em 1em;
+    padding: 0.5em 1em;
+}
+#eim-policy-generator #add,
+#eim-policy-generator #remove {
+    background: #fff;
+    border: 1px solid #d9d9d9;
+}
+#eim-policy-generator #add:hover,
+#eim-policy-generator #add:focus,
+#eim-policy-generator #remove:hover,
+#eim-policy-generator #remove:focus {
+    border-color: #29334a;
+}
+#eim-policy-generator #generate {
+    background: var(--outscale-blue);
+    border: none;
+    color: #fff;
+}
+#eim-policy-generator #generate:hover,
+#eim-policy-generator #generate:focus {
+    background: #29334a;
+}
+#eim-policy-generator #generate:active {
+    background: #080c17;
+}
+#eim-policy-generator #generated {
+    width: 100%;
+}
+#eim-policy-generator .spacing-below {
+    margin-bottom: 1em;
+}
+
+/* Style the button that is used to open and close the collapsible content */
+#eim-policy-generator .collapsible button {
+    background: none;
+    border: none;
+}
+#eim-policy-generator .collapsible {
+    background-color: #eee;
+    color: #444;
+    cursor: pointer;
+    padding: 18px;
+    text-align: left;
+}
+#eim-policy-generator div fieldset {
+    border: none;
+} 
+
+/* Add a background color to the button if it is clicked on (add the .active class with JS), and when you move the mouse over it (hover) */
+#eim-policy-generator .active,
+#eim-policy-generator .collapsible:hover {
+    background-color: #ccc;
+}
+
+/* Style the collapsible content. Note: hidden by default */
+#eim-policy-generator .collapse {
+    padding: 0 18px;
+    display: none;
+    overflow-y: scroll;
+    scrollbar-width: auto;
+    max-height: 590px;
+}
