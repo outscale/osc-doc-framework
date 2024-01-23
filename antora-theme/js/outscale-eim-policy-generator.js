@@ -18,6 +18,7 @@
         "removeLastStatement": {"en": "Remove statement", "fr": "Supprimer la déclaration"},
         "generateJson": {"en": "Generate policy", "fr": "Générer la politique"},
         "errorNeedOneAction": {"en": "Error: You must select at least one action in statement #", "fr": "Erreur : Vous devez sélectionner au moins une action dans la déclaration #"},
+        "disclaimer": {"en": "Note: Make sure you verify that this policy correctly fits your needs before you apply it.", "fr": "Note : Vérifiez bien que cette politique remplit correctement vos besoins avant de l'appliquer."},
     }
     const lang = document.querySelector("html")["lang"]
     const actions = [
@@ -173,6 +174,8 @@
         addButton.blur()
         const generated = document.querySelector("#eim-policy-generator #generated")
         if (generated) generated.remove()
+        const disclaimer = document.querySelector("#eim-policy-generator #disclaimer")
+        if (disclaimer) disclaimer.remove()
         initCollapseFunction("statement-" + num)
     }
     function removeStatement () {
@@ -184,6 +187,8 @@
         if (num - 1 > 1) document.querySelector("#eim-policy-generator #add").before(removeStatementButton())
         const generated = document.querySelector("#eim-policy-generator #generated")
         if (generated) generated.remove()
+        const disclaimer = document.querySelector("#eim-policy-generator #disclaimer")
+        if (disclaimer) disclaimer.remove()
     }
     function generateButton () {
         const button = document.createElement("button")
@@ -207,12 +212,21 @@
     function generate () {
         const existing = document.querySelector("#eim-policy-generator #generated")
         if (existing) existing.remove()
+        const result = generateJsonObject()
+        const jsonObj = result[0]
+        const error = result[1]
         const textarea = document.createElement("textarea")
         textarea.id = "generated"
         textarea.name = "generated"
-        textarea.textContent = generateJsonObject()
+        textarea.textContent = jsonObj
         form.append(textarea)
         textarea.style.height = "calc(" + textarea.scrollHeight + "px + 2em)"
+        if (!error) {
+            const div = document.createElement("div")
+            div.id = "disclaimer"
+            div.textContent = text.disclaimer[lang]
+            form.append(div)
+        }
     }
     function generateJsonObject () {
         const num = document.querySelectorAll("#eim-policy-generator > fieldset").length + 1
@@ -238,9 +252,9 @@
                 "Resource": ["*"],
             }
             obj.Statement.push(Statement)
-            if (selectedActions.length === 0) return text.errorNeedOneAction[lang] + i
+            if (selectedActions.length === 0) return [text.errorNeedOneAction[lang] + i, true]
         }
-        return JSON.stringify(obj, null, 2)
+        return [JSON.stringify(obj, null, 2), false]
     }
 
     const form = document.createElement("form")
