@@ -72,7 +72,13 @@ function getExampleContent(value, data, increment) {
             s += ' ' + getJsonStyleObject(v, 3) + ',\n';
         }
         else if (isNaN(v)) {
-            s += ' "' + v + '",\n';
+            /* EIM policies need to be formatted in a special way */
+            if (v.includes('"')) {
+                s += " '" + v + "',\n";
+            }
+            else {
+                s += ' "' + v + '",\n';
+            }
         }
         else {
             /* Workaround for DryRun parameter */

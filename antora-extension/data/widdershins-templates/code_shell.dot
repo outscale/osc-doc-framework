@@ -146,6 +146,10 @@ function getExampleContent(value, apiName, data) {
                 s += ' ' + getJsonStyleObject(v, 2) + ',\n';
             }
             else if (isNaN(v)) {
+                /* EIM policies need to be formatted in a special way */
+                if (v.includes('"')) {
+                    v = v.replace(/"/g, '\\\"');
+                }
                 s += ' "' + v + '",\n';
             }
             else {

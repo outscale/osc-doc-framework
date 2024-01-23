@@ -90,6 +90,11 @@ function getExampleContent(value, apiName, callName) {
             else if (callName === 'CreateVms' && k === 'UserData') {
                 s += ' "$(base64 -i user_data.txt)" \\\n';
             }
+            /* EIM policies need to be formatted in a special way */
+            else if (callName.includes('Policy') && k === 'Document') {
+                v = v.replace(/"/g, '\\\"');
+                s += " '\"" + v + "\"' \\\n";
+            }
             else {
                 s += ' "' + v + '" \\\n';
             }

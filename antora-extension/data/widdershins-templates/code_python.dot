@@ -45,7 +45,13 @@ function generatePythonExamples(data) {
                             s += '=' + getPythonStyleObject(v, 1) + ',\n';
                         }
                         else if (isNaN(v)) {
-                            s += '="' + v + '",\n';
+                            /* EIM policies need to be formatted in a special way */
+                            if (v.includes('"')) {
+                                s += "='" + v + "',\n";
+                            }
+                            else {
+                                s += '="' + v + '",\n';
+                            }
                         }
                         else {
                             if (v === false) {v = 'False';}
