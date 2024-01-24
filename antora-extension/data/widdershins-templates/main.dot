@@ -71,17 +71,30 @@ function getTagGroup(tag, tagGroups) {
 function concatenateSomePropertyOneOfs(origSchema) {
     const properties = origSchema.properties;
     for (const property of Object.values(properties)) {
+        let types = [];
+        const formats = [];
+        const itemsOneOf = property.items?.oneOf;
+        const oneOf = property.oneOf;
+        if (itemsOneOf) {
+            for (var i = 0, length = itemsOneOf.length; i < length; i++) {
+                types.push(itemsOneOf[i].type);
+                formats.push(itemsOneOf[i].format);
+            }
+        }
         if (property.oneOf) {
-            const oneOf = property.oneOf;
-            let types = [];
-            const formats = [];
             for (var i = 0, length = oneOf.length; i < length; i++) {
                 types.push(oneOf[i].type);
                 formats.push(oneOf[i].format);
             }
+        }
+        if (itemsOneOf || oneOf) {
             types = [...new Set(types)];
             if (types.length === 1) {
                 property.type = types + ' (' + formats.join(' or ') + ')';
+                if (itemsOneOf) {
+                    property.type = '[' + property.type + ']';
+                    delete(property.items.oneOf);
+                }
                 delete(property.oneOf);
             }
         }
