@@ -20,9 +20,10 @@ async function runInCli () {
   fs.writeFileSync(args['--output'], s)
 }
 
-async function runInNode (api, descriptionsFile) {
+async function runInNode (api, descriptionsFile, componentRepo='') {
   const descriptions = await parseCsv(descriptionsFile)
-  api = await insertDescriptions(api, descriptions)
+  const apiName = componentRepo + ' v' + api.info.version
+  api = await insertDescriptions(api, descriptions, apiName)
 
   return api
 }
@@ -51,14 +52,14 @@ async function parseCsv (filepath) {
   }
 }
 
-function insertDescriptions (obj, descriptions) {
+function insertDescriptions (obj, descriptions, apiName) {
   for (const [k, v] of Object.entries(obj)) {
     if (typeof v === 'object') {
-      insertDescriptions(v, descriptions)
+      insertDescriptions(v, descriptions, apiName)
     } else if (k === 'description') {
       obj[k] = descriptions[v] || 'NOT_FOUND'
       if (obj[k] == 'NOT_FOUND') {
-        console.error(ERROR_START + 'NOT_FOUND description: ' + ERROR_END + v)
+        console.error(`${ERROR_START}NOT_FOUND description (${apiName}):${ERROR_END} ${v}`)
       }
     }
   }

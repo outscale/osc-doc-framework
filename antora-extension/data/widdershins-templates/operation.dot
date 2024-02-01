@@ -91,13 +91,9 @@ function generateTabs(language_tabs) {
 {{= data.utils.getCodeSamples(data) }}
 {{?}}
 
-{{? data.parameters && data.parameters.length }}
-{{#def.parameters}}
-{{?}}
-
 {{? !data.options.codeSamples }}
 {{? data.operation.requestBody}}
-> Body parameter
+> Example requests
 
 {{? data.bodyParameter.exampleValues.description }}
 > {{= data.bodyParameter.exampleValues.description }}
@@ -105,6 +101,10 @@ function generateTabs(language_tabs) {
 
 {{= data.utils.getBodyParameterExamples(data) }}
 {{?}}
+{{?}}
+
+{{? data.parameters && data.parameters.length }}
+{{#def.parameters}}
 {{?}}
 
 {{#def.responses}}
