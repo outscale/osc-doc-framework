@@ -21,15 +21,16 @@ async function runInCli () {
   fs.writeFileSync(args['--output'], s)
 }
 
-async function runInNode (api, examplesFile) {
+async function runInNode (api, examplesFile, componentRepo='') {
   const examples = helperFunctions.parseYaml(examplesFile)
-  api = await insertExamples(api, examples)
+  const apiName = componentRepo + ' v' + api.info.version
+  api = await insertExamples(api, examples, apiName)
   // await runOpenapiExamplesValidator(api)
 
   return api
 }
 
-function insertExamples (api, examples) {
+function insertExamples (api, examples, apiName) {
   const paths = api.paths
   for (const path of Object.values(paths)) {
     const op = path.post || path.get
@@ -41,7 +42,7 @@ function insertExamples (api, examples) {
     op.responses['200'].content['application/json'].examples = respExamples
 
     if (!reqExamples || !respExamples) {
-      let msg = ERROR_START + 'NOT_FOUND example: ' + ERROR_END + operationId
+      let msg = `${ERROR_START}NOT_FOUND example (${apiName}):${ERROR_END} ${operationId}`
       if (!reqExamples) {
         msg += ' (request)'
       }

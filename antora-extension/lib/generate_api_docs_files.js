@@ -13,13 +13,13 @@ async function main () {
 
   if (
     !args['--api'] ||
-    !args['--antora-component-path'] ||
+    !args['--antora-component-repo'] ||
     !args['--antora-component-lang'] ||
     !args['--output']
   ) {
     console.log(
       'Please specify --api, [--descriptions], [--examples], [--errors], [--languages], ' +
-        '--antora-component-path, --antora-component-lang, and --output.'
+        '--antora-component-repo, --antora-component-lang, [--no-osc-cli-partials], and --output.'
     )
     process.exit(1)
   }
@@ -29,40 +29,50 @@ async function main () {
   const examplesFile = args['--examples']
   const errorsFile = args['--errors']
   const languages = args['--languages']
-  const componentPath = args['--antora-component-path']
+  const componentRepo = args['--antora-component-repo']
   const componentLanguage = args['--antora-component-lang']
+  const noOscCliPartials = args['--no-osc-cli-partials']
   const outputFolder = args['--output']
 
-  createWorkFolder(outputFolder, componentPath, componentLanguage)
+  createWorkFolder(outputFolder, componentRepo, componentLanguage)
 
   let api = helperFunctions.parseYaml(apiFile)
 
   if (descriptionsFile) {
-    api = await fillApiDescriptions(api, descriptionsFile)
+    api = await fillApiDescriptions(api, descriptionsFile, componentRepo)
   }
 
   if (examplesFile) {
-    api = await fillApiExamples(api, examplesFile)
+    api = await fillApiExamples(api, examplesFile, componentRepo)
   }
 
   const apiMarkdown = await runWiddershins(api, languages)
-  runShins(apiMarkdown, `${outputFolder}/${componentPath}/modules/ROOT/partials/index.html`)
+  runShins(apiMarkdown, `${outputFolder}/${componentRepo}/antora-component/modules/ROOT/partials/${componentRepo}.html`)
 
   if (errorsFile) {
     const errors = helperFunctions.parseYaml(errorsFile)
     const errorsMarkdown = generateErrorMarkdown(errors, api)
-    runShins(errorsMarkdown, `${outputFolder}/${componentPath}/modules/ROOT/partials/errors.html`)
+    runShins(
+      errorsMarkdown,
+      `${outputFolder}/${componentRepo}/antora-component/modules/ROOT/partials/${componentRepo}-errors.html`,
+    )
   }
 
-  generateOscCliPartials(apiMarkdown, api, `${outputFolder}/${componentPath}/modules/ROOT/partials`)
+  if (!noOscCliPartials) {
+    generateOscCliPartials(apiMarkdown, api, `${outputFolder}/${componentRepo}/antora-component/modules/ROOT/partials`)
+  }
 }
 
-function createWorkFolder (outputFolder, componentPath, componentLanguage) {
+function createWorkFolder (outputFolder, componentRepo, componentLanguage) {
   fs.rmSync(outputFolder, { recursive: true, force: true })
-  fs.cpSync(componentPath, `${outputFolder}/${componentPath}`, { recursive: true })
+  fs.cpSync(
+    `${componentRepo}/antora-component`,
+    `${outputFolder}/${componentRepo}/antora-component`,
+    { recursive: true },
+  )
   let componentTemplate = fs.readFileSync(`${componentLanguage}/antora.yml`, 'utf-8')
   componentTemplate = componentTemplate.replace(/name: .+?\n/, `name: ROOT\n`)
-  fs.writeFileSync(`${outputFolder}/${componentPath}/antora.yml`, componentTemplate)
+  fs.writeFileSync(`${outputFolder}/${componentRepo}/antora-component/antora.yml`, componentTemplate)
 }
 
 function runWiddershins (api, languages) {
@@ -86,7 +96,7 @@ function runWiddershins (api, languages) {
 
 function getLanguageTabs (languages) {
   const tabs = []
-  if (languages) {
+  if (languages.trim() !== '\\') {
     const map = {
       console: 'OSC CLI',
       csharp: 'C#',
