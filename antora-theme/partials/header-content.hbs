@@ -7,7 +7,7 @@
               {{#each page.attributes.topmenu}}
               {{#if this.image}}
               <li class="logo entry">
-                  <a href="{{or this.url ../site.url}}"><img src="{{../siteRootPath}}/{{or this.image '_/img/logo.svg'}}" alt="{{@key}}"></a>
+                  <a href="{{or ../page.attributes.corporatesite-url ../site.url}}"><img src="{{../siteRootPath}}/{{or this.image '_/img/logo.svg'}}" alt="{{@key}}"></a>
               </li>
               {{else if (or this.path this.url)}}
               <li class="entry">
