@@ -14,12 +14,11 @@ async function main () {
   if (
     !args['--api'] ||
     !args['--antora-component-repo'] ||
-    !args['--antora-component-lang'] ||
     !args['--output']
   ) {
     console.log(
       'Please specify --api, [--descriptions], [--examples], [--errors], [--languages], ' +
-        '--antora-component-repo, --antora-component-lang, [--no-osc-cli-partials], and --output.'
+        '--antora-component-repo, [--antora-component-lang], [--no-osc-cli-partials], and --output.'
     )
     process.exit(1)
   }
@@ -74,9 +73,11 @@ function createWorkFolder (outputFolder, componentRepo, componentLanguage) {
     `${outputFolder}/${componentRepo}/antora-component`,
     { recursive: true },
   )
-  let componentTemplate = fs.readFileSync(`${componentLanguage}/antora.yml`, 'utf-8')
-  componentTemplate = componentTemplate.replace(/name: .+?\n/, `name: ROOT\n`)
-  fs.writeFileSync(`${outputFolder}/${componentRepo}/antora-component/antora.yml`, componentTemplate)
+  if (componentLanguage) {
+    let componentTemplate = fs.readFileSync(`${componentLanguage}/antora.yml`, 'utf-8')
+    componentTemplate = componentTemplate.replace(/name: .+?\n/, `name: ROOT\n`)
+    fs.writeFileSync(`${outputFolder}/${componentRepo}/antora-component/antora.yml`, componentTemplate)
+  }
 }
 
 function runWiddershins (api, languages) {
