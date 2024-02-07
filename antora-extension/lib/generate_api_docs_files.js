@@ -65,7 +65,7 @@ async function main () {
 function createWorkFolder (outputFolder, componentRepo, componentLanguage) {
   fs.rmSync(outputFolder, { recursive: true, force: true })
   let srcFolder = `${componentRepo}/antora-component`
-  if (!fs.existsSync(src)) {
+  if (!fs.existsSync(srcFolder)) {
     srcFolder = 'antora-component'
   }
   fs.cpSync(
