@@ -14,11 +14,12 @@ async function main () {
   if (
     !args['--api'] ||
     !args['--antora-component-repo'] ||
+    !args['--antora-component-name'] ||
     !args['--output']
   ) {
     console.log(
-      'Please specify --api, [--descriptions], [--examples], [--errors], [--languages], ' +
-        '--antora-component-repo, [--antora-component-lang], [--no-osc-cli-partials], and --output.'
+      'Please specify --api, [--descriptions], [--examples], [--errors], [--languages], --antora-component-repo, ' +
+        '--antora-component-name, [--antora-component-lang], [--no-osc-cli-partials], and --output.'
     )
     process.exit(1)
   }
@@ -30,6 +31,7 @@ async function main () {
   const languages = args['--languages']
   const componentRepo = args['--antora-component-repo']
   const componentLanguage = args['--antora-component-lang']
+  const componentName = args['--antora-component-name']
   const noOscCliPartials = args['--no-osc-cli-partials']
   const outputFolder = args['--output']
 
@@ -46,14 +48,14 @@ async function main () {
   }
 
   const apiMarkdown = await runWiddershins(api, languages)
-  runShins(apiMarkdown, `${outputFolder}/${componentRepo}/antora-component/modules/ROOT/partials/${componentRepo}.html`)
+  runShins(apiMarkdown, `${outputFolder}/${componentRepo}/antora-component/modules/ROOT/pages/${componentName}.adoc`)
 
   if (errorsFile) {
     const errors = helperFunctions.parseYaml(errorsFile)
     const errorsMarkdown = generateErrorMarkdown(errors, api)
     runShins(
       errorsMarkdown,
-      `${outputFolder}/${componentRepo}/antora-component/modules/ROOT/partials/${componentRepo}-errors.html`,
+      `${outputFolder}/${componentRepo}/antora-component/modules/ROOT/pages/${componentName}-errors.adoc`,
     )
   }
 
@@ -139,7 +141,7 @@ function runShins (markdown, outputFile) {
       console.error(err)
     } else {
       fs.mkdirSync(outputFile.split('/').slice(0, -1).join('/'), { recursive: true })
-      fs.writeFileSync(outputFile, html)
+      fs.writeFileSync(outputFile, ':page-role: apidocs\n:noindex:\n\n++++\n' + html + '\n++++\n')
     }
   })
   console.log = turnOnConsoleLog()
