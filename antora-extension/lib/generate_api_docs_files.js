@@ -14,7 +14,7 @@ async function main () {
   if (
     !args['--api'] ||
     !args['--antora-component-repo'] ||
-    !args['--antora-component-name'] ||
+    // !args['--antora-component-name'] ||
     !args['--output']
   ) {
     console.log(
@@ -31,7 +31,12 @@ async function main () {
   const languages = args['--languages']
   const componentRepo = args['--antora-component-repo']
   const componentLanguage = args['--antora-component-lang']
-  const componentName = args['--antora-component-name']
+  let componentName = args['--antora-component-name']
+  // temporary fix for components without this parameter
+  if (!componentName) {
+    componentName = fs.readdirSync(`${outputFolder}/${componentRepo}/antora-component/modules/ROOT/pages/`)
+    componentName = componentName.filter((filename) => !filename.includes('errors'))[0].split('.')[0]
+  }
   const noOscCliPartials = args['--no-osc-cli-partials']
   const outputFolder = args['--output']
 
