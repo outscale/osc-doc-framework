@@ -32,11 +32,6 @@ async function main () {
   const componentRepo = args['--antora-component-repo']
   const componentLanguage = args['--antora-component-lang']
   let componentName = args['--antora-component-name']
-  // temporary fix for components without this parameter
-  if (!componentName) {
-    componentName = fs.readdirSync(`${outputFolder}/${componentRepo}/antora-component/modules/ROOT/pages/`)
-    componentName = componentName.filter((filename) => !filename.includes('errors'))[0].split('.')[0]
-  }
   const noOscCliPartials = args['--no-osc-cli-partials']
   const outputFolder = args['--output']
 
@@ -50,6 +45,12 @@ async function main () {
 
   if (examplesFile) {
     api = await fillApiExamples(api, examplesFile, componentRepo)
+  }
+
+  // temporary fix for components without this parameter
+  if (!componentName) {
+    componentName = fs.readdirSync(`${outputFolder}/${componentRepo}/antora-component/modules/ROOT/pages/`)
+    componentName = componentName.filter((filename) => !filename.includes('errors'))[0].split('.')[0]
   }
 
   const apiMarkdown = await runWiddershins(api, languages)
