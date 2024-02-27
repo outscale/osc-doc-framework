@@ -43,7 +43,19 @@ async function parseCsv (filepath) {
     const descriptions = {}
     for await (const [k, v] of csv) {
       descriptions[k] = v
+      // Temporary fix for some description keys
+      if (k === 'FiltersApiAccessRule_Descriptions') descriptions['FiltersApiAccessRulessRule_Descriptions'] = v
+      if (k === 'FiltersDedicatedGroup_CpuGenerations') descriptions['FiltersDedicatedGroupRequest_CpuGenerations'] = v
+      if (k === 'FiltersDedicatedGroup_DedicatedGroupIds') descriptions['FiltersDedicatedGroupRequest_DedicatedGroupIds'] = v
+      if (k === 'FiltersDedicatedGroup_Names') descriptions['FiltersDedicatedGroupRequest_Names'] = v
+      if (k === 'FiltersDedicatedGroup_SubregionNames') descriptions['FiltersDedicatedGroupRequest_SubregionNames'] = v
+      if (k === 'FiltersKeypair_KeypairTypes') descriptions['FiltersKeypair_KeypairType'] = v
+      if (k === 'CreateLoadBalancerTagsRequest_LoadBalancerNames') descriptions['CreateLoadBalancerTagsRequest_LoadBalancerNames,'] = v
+      if (k === 'DeleteLoadBalancerTagsRequest_LoadBalancerNames') descriptions['DeleteLoadBalancerTagsRequest_LoadBalancerNames,'] = v
     }
+    // Temporary fix for some description key
+    descriptions['ReadCatalogsRequest'] = ' '
+    descriptions['ReadCatalogsResponse'] = ' '
 
     return descriptions
   } catch (err) {
