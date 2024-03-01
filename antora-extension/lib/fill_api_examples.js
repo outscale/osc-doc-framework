@@ -16,7 +16,7 @@ async function runInCli () {
   let api = helperFunctions.parseYaml(args['--api'])
   const examples = helperFunctions.parseYaml(args['--examples'])
   api = insertExamples(api, examples)
-  // await runOpenapiExamplesValidator(api)
+  await runOpenapiExamplesValidator(api)
   const s = helperFunctions.dumpYaml(api)
   fs.writeFileSync(args['--output'], s)
 }
@@ -25,7 +25,7 @@ async function runInNode (api, examplesFile, componentRepo='') {
   const examples = helperFunctions.parseYaml(examplesFile)
   const apiName = componentRepo + ' v' + api.info.version
   api = await insertExamples(api, examples, apiName)
-  // await runOpenapiExamplesValidator(api)
+  await runOpenapiExamplesValidator(api)
 
   return api
 }
