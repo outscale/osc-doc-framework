@@ -35,16 +35,16 @@
   },
   "overrides": {
     "antora": {
-      "glob-stream": "~7.0",
       "gulp-vinyl-zip": "npm:@vscode/gulp-vinyl-zip@~2.5"
     },
     "openapi-examples-validator": {
       "json-schema-ref-parser": "npm:@apidevtools/json-schema-ref-parser@^9.0.9"
     },
+    "glob-parent": "^6.0.0",
     "shins": {
       "ejs": "^3.1.8",
       "markdown-it": "^13.0.0",
-      "sanitize-html": "^2.3.2"
+      "sanitize-html": "^2.12.1"
     },
     "widdershins": {
       "httpsnippet": "^3.0.1",
