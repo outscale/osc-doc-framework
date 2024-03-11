@@ -44,7 +44,9 @@ function concatenateSomeParameterOneOfs(parameters) {
 data.parameters = concatenateSomeParameterOneOfs(data.parameters);
 
 function cleanType(type) {
-    return type.replace(/\b\(/, ' (');
+    type = type.replace(/\b\(/, ' (');
+    type = type.replace('¦null', '');
+    return type;
 }
 
 function cleanParameterDescription(description) {

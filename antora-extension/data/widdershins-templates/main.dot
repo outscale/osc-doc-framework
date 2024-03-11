@@ -103,7 +103,9 @@ function concatenateSomePropertyOneOfs(origSchema) {
 }
 
 function cleanType(type) {
-    return type.replace(/\b\(/, ' (');
+    type = type.replace(/\b\(/, ' (');
+    type = type.replace('¦null', '');
+    return type;
 }
 
 function cleanParameterDescription(description) {
