@@ -13,13 +13,12 @@ async function main () {
 
   if (
     !args['--api'] ||
-    !args['--antora-component-repo'] ||
-    // !args['--antora-component-name'] ||
-    !args['--output']
+    !args['--output-dir'] ||
+    !args['--output-file-stem']
   ) {
     console.log(
-      'Please specify --api, [--descriptions], [--examples], [--errors], [--languages], --antora-component-repo, ' +
-        '--antora-component-name, [--antora-component-lang], [--no-osc-cli-partials], and --output.'
+      'Please specify --api, [--descriptions], [--examples], [--errors], [--languages], [--osc-cli-partials], ' +
+        '--output-dir, and --output-file-stem.'
     )
     process.exit(1)
   }
@@ -29,62 +28,31 @@ async function main () {
   const examplesFile = args['--examples']
   const errorsFile = args['--errors']
   const languages = args['--languages']
-  const componentRepo = args['--antora-component-repo']
-  const componentLanguage = args['--antora-component-lang']
-  let componentName = args['--antora-component-name']
-  const noOscCliPartials = args['--no-osc-cli-partials']
-  const outputFolder = args['--output']
-
-  createWorkFolder(outputFolder, componentRepo, componentLanguage)
+  const oscCliPartials = args['--osc-cli-partials']
+  const outputDir = args['--output-dir']
+  const outputFileStem = args['--output-file-stem']
 
   let api = helperFunctions.parseYaml(apiFile)
 
   if (descriptionsFile) {
-    api = await fillApiDescriptions(api, descriptionsFile, componentRepo)
+    api = await fillApiDescriptions(api, descriptionsFile, outputFileStem)
   }
 
   if (examplesFile) {
-    api = await fillApiExamples(api, examplesFile, componentRepo)
-  }
-
-  // temporary fix for components without this parameter
-  if (!componentName) {
-    componentName = fs.readdirSync(`${outputFolder}/${componentRepo}/antora-component/modules/ROOT/pages/`)
-    componentName = componentName.filter((filename) => !filename.includes('errors'))[0].split('.')[0]
+    api = await fillApiExamples(api, examplesFile, outputFileStem)
   }
 
   const apiMarkdown = await runWiddershins(api, languages)
-  runShins(apiMarkdown, `${outputFolder}/${componentRepo}/antora-component/modules/ROOT/pages/${componentName}.adoc`)
+  runShins(apiMarkdown, `${outputDir}/modules/ROOT/pages/${outputFileStem}.adoc`)
 
   if (errorsFile) {
     const errors = helperFunctions.parseYaml(errorsFile)
     const errorsMarkdown = generateErrorMarkdown(errors, api)
-    runShins(
-      errorsMarkdown,
-      `${outputFolder}/${componentRepo}/antora-component/modules/ROOT/pages/${componentName}-errors.adoc`,
-    )
+    runShins(errorsMarkdown, `${outputDir}/modules/ROOT/pages/${outputFileStem}-errors.adoc`)
   }
 
-  if (!noOscCliPartials) {
-    generateOscCliPartials(apiMarkdown, api, `${outputFolder}/${componentRepo}/antora-component/modules/ROOT/partials`)
-  }
-}
-
-function createWorkFolder (outputFolder, componentRepo, componentLanguage) {
-  fs.rmSync(outputFolder, { recursive: true, force: true })
-  let srcFolder = `${componentRepo}/antora-component`
-  if (!fs.existsSync(srcFolder)) {
-    srcFolder = 'antora-component'
-  }
-  fs.cpSync(
-    srcFolder,
-    `${outputFolder}/${componentRepo}/antora-component`,
-    { recursive: true },
-  )
-  if (componentLanguage) {
-    let componentTemplate = fs.readFileSync(`${componentLanguage}/antora.yml`, 'utf-8')
-    componentTemplate = componentTemplate.replace(/name: .+?\n/, `name: ROOT\n`)
-    fs.writeFileSync(`${outputFolder}/${componentRepo}/antora-component/antora.yml`, componentTemplate)
+  if (oscCliPartials) {
+    generateOscCliPartials(apiMarkdown, api, `${outputDir}/modules/ROOT/partials`)
   }
 }
 

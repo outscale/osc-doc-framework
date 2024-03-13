@@ -20,9 +20,9 @@ async function runInCli () {
   fs.writeFileSync(args['--output'], s)
 }
 
-async function runInNode (api, descriptionsFile, componentRepo='') {
+async function runInNode (api, descriptionsFile, outputFileStem) {
   const descriptions = await parseCsv(descriptionsFile)
-  const apiName = componentRepo + ' v' + api.info.version
+  const apiName = outputFileStem + ' v' + api.info.version
   api = await insertDescriptions(api, descriptions, apiName)
 
   return api
