@@ -21,9 +21,9 @@ async function runInCli () {
   fs.writeFileSync(args['--output'], s)
 }
 
-async function runInNode (api, examplesFile, componentRepo='') {
+async function runInNode (api, examplesFile, outputFileStem) {
   const examples = helperFunctions.parseYaml(examplesFile)
-  const apiName = componentRepo + ' v' + api.info.version
+  const apiName = outputFileStem + ' v' + api.info.version
   api = await insertExamples(api, examples, apiName)
   // await runOpenapiExamplesValidator(api)
 
