@@ -423,7 +423,6 @@ html, body {
   color: #333;
   padding: 0;
   margin: 0;
-  background-color: #F3F7F9;
   height: 100%;
   -webkit-text-size-adjust: none;
   /* Never autoresize text */ }
@@ -582,7 +581,7 @@ html, body {
   margin-left: 230px;
   position: relative;
   z-index: 10;
-  background-color: #F3F7F9;
+  background-color: var(--brandPrimaryDarkBlue50);
   min-height: 100%;
   padding-bottom: 1px; }
   .page-wrapper .dark-box {

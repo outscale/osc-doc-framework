@@ -43,6 +43,15 @@ function concatenateSomeParameterOneOfs(parameters) {
 }
 data.parameters = concatenateSomeParameterOneOfs(data.parameters);
 
+function formatRequired(boolean) {
+    if (boolean) {
+        return ' <mark>(required)</mark>';
+    }
+    else {
+        return '';
+    }
+}
+
 function cleanType(type) {
     type = type.replace(/\b\(/, ' (');
     type = type.replace('¦null', '');
@@ -67,9 +76,9 @@ function printEnum(p) {
 {{= data.tags.section }}
 <h3 id="{{=data.operationUniqueSlug}}-parameters">Available Parameters</h3>
 
-|Name|Type|Required|Description|
-|---|---|---|---|
-{{~ data.parameters :p}}|{{=p.name}}|{{= cleanType(p.safeType) }}|{{=p.required}}|{{= cleanParameterDescription(p.description) }}|
+|Name|Type|Description|
+|---|---|---|
+{{~ data.parameters :p}}|{{=p.name}}{{= formatRequired(p.required) }}|{{= cleanType(p.safeType) }}|{{= cleanParameterDescription(p.description) }}|
 {{~}}
 
 {{= data.tags.endSection }}
