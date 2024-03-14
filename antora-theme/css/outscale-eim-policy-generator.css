@@ -29,16 +29,16 @@
     border-color: #29334a;
 }
 #eim-policy-generator #generate {
-    background: var(--outscale-blue);
+    background: var(--brandPrimaryIndigo500);
     border: none;
     color: #fff;
 }
 #eim-policy-generator #generate:hover,
 #eim-policy-generator #generate:focus {
-    background: #29334a;
+    background: #4151c4;
 }
 #eim-policy-generator #generate:active {
-    background: #080c17;
+    background: var(--brandPrimaryIndigo700);
 }
 #eim-policy-generator #generated {
     width: 100%;

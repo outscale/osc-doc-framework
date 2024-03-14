@@ -1,53 +1,32 @@
 /* place your custom CSS overrides here */
 
-:root {
-    --outscale-blue: #19233e;
-    --outscale-blue-darker: #4b5165;
-    --outscale-red: #eb595d;
-    --outscale-yellow: #f5dc6a;
-    --outscale-yellow-darker: #dcc55f;
-    --outscale-light-blue: #b8dbd2;
-    --outscale-light-blue-darker: #a5c4bc;
-}
-
-
 .toc-wrapper {
-    background-color: var(--outscale-blue-darker);
-}
-
-.toc-link.active{
-    color: var(--outscale-light-blue);
-}
-
-.toc-wrapper .toc-link.active {
-    color: var(--outscale-light-blue-darker);
+    background-color: var(--brandPrimaryDarkBlue500);
 }
 
 h1 {
-    color: var(--outscale-red);
-}
-
-.success {
-    background-color: var(--outscale-yellow);
-    color: black;
+    color: var(--brandPrimaryDarkBlue500);
 }
 
 .toc-wrapper .toc-list-h2 {
-    background-color: var(--outscale-blue-darker);
+    background-color: var(--brandPrimaryDarkBlue500);
+}
+.toc-wrapper .active a {
+    background-color: var(--brandPrimaryDarkBlue400);
 }
 
 .toc-wrapper .lang-selector {
-    background-color: var(--outscale-blue-darker);
+    background-color: var(--brandPrimaryDarkBlue500);
 }
 
 .toc-wrapper .toc-link.active-parent {
-    background-color: var(--outscale-yellow-darker);
-    color: var(--outscale-blue);
+    background-color: var(--brandPrimaryIndigo700) !important;
+    color: #fff;
 }
 
 .toc-wrapper .toc-link.active {
-    background-color: var(--outscale-yellow);
-    color: var(--outscale-blue);
+    background-color: var(--brandPrimaryIndigo500) !important;
+    color: #fff;
 }
 
 .lang-selector, th {

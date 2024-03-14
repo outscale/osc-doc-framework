@@ -123,9 +123,9 @@ function getCallName(operationUniqueName) {
 {{= data.tags.section }}
 <h3 id="{{=data.operationUniqueSlug}}-responses">Responses</h3>
 
-|Status|Meaning|Description|Schema|
-|---|---|---|---|
-{{~ data.responses :r}}|{{=r.status}}|{{=r.meaning}}|{{=r.description || 'none'}}|{{=r.schema}}|
+|Status|Description|Schema|
+|---|---|---|
+{{~ data.responses :r}}|{{=r.status}}|{{=r.description || 'none'}}|{{=r.schema}}|
 {{~}}
 
 {{? data.responseSchemas }}
