@@ -914,6 +914,7 @@ div.tab.active {
   .tooltip:hover .tooltiptext,
   .tooltip:active .tooltiptext {
     visibility: visible;
+    z-index: 10;
   }
 
   #term-box {
