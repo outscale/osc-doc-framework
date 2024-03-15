@@ -7,6 +7,6 @@ $(function() {
   });
 });
 
-window.onpopstate = function() {
-  activateLanguage(getLanguageFromQueryString());
-};
+// window.onpopstate = function() {
+//   activateLanguage(getLanguageFromQueryString());
+// };
