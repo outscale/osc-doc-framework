@@ -658,7 +658,7 @@ code, kbd, pre {
 }
 
 .doc table.tableblock>:not(thead) th,
-.doc table.tableblock td {
+.doc table.tableblock :not(.admonitionblock) > table > tbody > tr > td {
   border:1px solid #e1e1e1;
 }
 .doc table.tableblock thead th {
