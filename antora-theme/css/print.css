@@ -63,8 +63,8 @@ aside.toc.embedded .toc-menu {
 }
 
 #preamble {
-    background: var(--preamble);
-    border: 2px solid var(--preamble);
+    background: var(--neutral100);
+    border: 2px solid var(--neutral100);
 }
 #preamble #preamble {
     border: none;
@@ -72,7 +72,6 @@ aside.toc.embedded .toc-menu {
 
 .tableblock th,
 .tableblock > tbody > tr > td,
-.doc .listingblock .title,
 .doc pre.highlight code {
     border: 1px solid black !important;
     box-shadow: initial;
@@ -114,32 +113,32 @@ img,
     border-radius: initial;
 }
 .doc .admonitionblock.note td.content {
-    background: var(--admonition-note);
-    border: 2px solid var(--admonition-note);
+    background: var(--feedbackInformation100);
+    border: 2px solid var(--feedbackInformation100);
 }
 .doc .admonitionblock.tip td.content {
-    background: var(--admonition-tip);
-    border: 2px solid var(--admonition-tip);
+    background: var(--feedbackSuccess100);
+    border: 2px solid var(--feedbackSuccess100);
 }
 .doc .admonitionblock.important td.content {
-    background: var(--admonition-important);
-    border: 2px solid var(--admonition-important);
+    background: var(--feedbackWarning100);
+    border: 2px solid var(--feedbackWarning100);
 }
 .doc .admonitionblock.warning td.content {
-    background: var(--admonition-warning);
-    border: 2px solid var(--admonition-warning);
+    background: var(--feedbackError100);
+    border: 2px solid var(--feedbackError100);
 }
 .doc .admonitionblock.note td.content a::after {
-    border-bottom-color: var(--admonition-note);
+    border-bottom-color: var(--feedbackInformation100);
 }
 .doc .admonitionblock.tip td.content a::after {
-    border-bottom-color: var(--admonition-tip);
+    border-bottom-color: var(--feedbackSuccess100);
 }
 .doc .admonitionblock.important td.content a::after {
-    border-bottom-color: var(--admonition-important);
+    border-bottom-color: var(--feedbackWarning100);
 }
 .doc .admonitionblock.warning td.content a::after {
-    border-bottom-color: var(--admonition-warning);
+    border-bottom-color: var(--feedbackError100);
 }
 
 .doc *:not(.search-result-document-hit) > a,
