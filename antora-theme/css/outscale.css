@@ -140,8 +140,10 @@ html {
   main > .content {
     max-width: 82rem;
   }
-  .doc {
+  .doc, .tableblock td {
     background: #fff;
+  }
+  .doc {
     border: 1px solid var(--brandPrimaryDarkBlue100);
     padding: 2rem;
   }
