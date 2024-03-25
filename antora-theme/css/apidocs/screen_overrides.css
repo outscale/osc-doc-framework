@@ -1,5 +1,7 @@
 :root {
   --outscale-blue-darker: #4b5165;
+  --search-bar-height: 23.38px;
+  --search-bar-vertical-margin: 24px;
 }
 
 main > .content {
@@ -53,7 +55,7 @@ main > .content {
 }
 .toc-wrapper > .search {
   border-bottom: 1px solid #00000011;
-  margin-bottom: 24px;
+  margin-bottom: var(--search-bar-vertical-margin);
 }
 .toc-wrapper > .search::before {
   left: 22px;
@@ -77,7 +79,7 @@ main > .content {
 .toc-wrapper > .search input {
   background: #fff;
   color: #333;
-  height: 23.38px;
+  height: var(--search-bar-height);
   width: 90%;
   border: 1px solid #dbdbdb;
   border-radius: 0.1em;
@@ -117,7 +119,7 @@ div .highlight {
   /*overflow-x: hidden;*/
 }
 .toc-wrapper .toc-list-h1#toc {
-  height: 87%;
+  height: calc(100% - 10px - 10px - var(--search-bar-height) - 30px - 0.5em - 0.5em - var(--search-bar-vertical-margin) - var(--search-bar-vertical-margin) - 1px);
   overflow-x: hidden;
   overflow-y: auto;
   box-sizing: border-box;
@@ -251,7 +253,7 @@ h3 + p + blockquote a {
 
 .toc-wrapper .lang-selector {
   display: block;
-  margin-bottom: 24px;
+  margin-bottom: var(--search-bar-vertical-margin);
 }
 
 .toc-wrapper .logo {
