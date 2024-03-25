@@ -66,8 +66,8 @@ main > .content {
   position: absolute;
   width: 20px;
   height: 23px;
-  left: 194px;
-  top: 10px;
+  right: 16px;
+  top: 9px;
   color: #333;
   content: "×";
   font-size: 20px;
