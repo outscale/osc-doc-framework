@@ -15,7 +15,7 @@ async function runInCli () {
 
   let api = helperFunctions.parseYaml(args['--api'])
   const examples = helperFunctions.parseYaml(args['--examples'])
-  api = insertExamples(api, examples)
+  api = insertExamples(api, examples, args['--api'])
   if (process.env.OPENAPI_EXAMPLES_VALIDATOR === "true") {
     await runOpenapiExamplesValidator(api)
   }

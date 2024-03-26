@@ -15,7 +15,7 @@ async function runInCli () {
 
   let api = helperFunctions.parseYaml(args['--api'])
   const descriptions = await parseCsv(args['--descriptions'])
-  api = await insertDescriptions(api, descriptions)
+  api = await insertDescriptions(api, descriptions, args['--api'])
   const s = helperFunctions.dumpYaml(api)
   fs.writeFileSync(args['--output'], s)
 }
