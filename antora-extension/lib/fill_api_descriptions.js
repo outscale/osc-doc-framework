@@ -69,8 +69,8 @@ function insertDescriptions (obj, descriptions, apiName) {
     if (typeof v === 'object') {
       insertDescriptions(v, descriptions, apiName)
     } else if (k === 'description') {
-      obj[k] = descriptions[v] || 'NOT_FOUND'
-      if (obj[k] == 'NOT_FOUND') {
+      obj[k] = descriptions[v] || '**NOT_FOUND description: ' + v + '**'
+      if (obj[k] == '**NOT_FOUND description: ' + v + '**') {
         console.error(`${ERROR_START}NOT_FOUND description (${apiName}):${ERROR_END} ${v}`)
       }
     }
