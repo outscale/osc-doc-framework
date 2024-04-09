@@ -170,6 +170,11 @@ div .highlight {
 #toc a[href^="#authentication"] {
   margin-bottom: 1em;
 }
+#toc a[href$="errors"],
+#toc a[href$="error-codes"] {
+  margin-top: -1em;
+  margin-bottom: 1em;
+}
 
 .dark-box .lang-selector {
   display: none;
