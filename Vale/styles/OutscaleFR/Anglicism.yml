@@ -1,0 +1,8 @@
+extends: substitution
+message: Consider using '%s', as '%s' is usually an anglicism.
+level: warning
+scope: text
+ignorecase: true
+swap:
+  retourn.+?\b: renvoyer
+  statut: état
