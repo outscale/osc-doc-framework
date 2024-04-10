@@ -1,9 +1,15 @@
 extends: substitution
-message: Use '%s' instead of '%s'.
+message: Use the phrase '%s' instead of '%s'.
 level: error
 scope: text
+ignorecase: true
 swap:
-  Email: E-mail
-  Emails: E-mail
+  back-end: backend
+  back-ends: backends
   email: e-mail
-  emails: e-mail
+  emails: e-mails
+  front-end: frontend
+  front-ends: frontends
+  upload.+?\b: déposer
+  '(?<!en )suivant cette syntaxe': en suivant cette syntaxe
+  "pour plus d'informations?": pour en savoir plus

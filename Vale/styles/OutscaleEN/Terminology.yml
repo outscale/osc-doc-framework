@@ -2,8 +2,12 @@ extends: substitution
 message: Use '%s' instead of '%s'.
 level: error
 scope: text
+ignorecase: true
 swap:
-  E-mail: Email
-  E-mails: Email
+  back-end: backend
+  back-ends: backends
   e-mail: email
-  e-mails: email
+  e-mails: emails
+  front-end: frontend
+  front-ends: frontends
+  'click on': click
