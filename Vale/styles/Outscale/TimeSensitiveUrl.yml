@@ -3,4 +3,4 @@ message: "Don't link to this URL as it contains a date (it is bound to change ev
 level: error
 scope: raw
 raw:
-- 'https://(en|fr)\.outscale\.com/wp-content/uploads/\d\d\d\d/.+?pdf'
+- 'https://((en|fr)\.outscale\.com|outscale-1eecc\.kxcdn\.com)/wp-content/uploads/\d\d\d\d/.+?pdf'
