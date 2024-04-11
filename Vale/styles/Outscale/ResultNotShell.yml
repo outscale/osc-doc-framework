@@ -1,0 +1,6 @@
+extends: existence
+message: "Result samples can't be in the Shell language, as Shell by nature refers to a type of user input. Use the true language of this result instead, such as `json` or `text`."
+level: error
+scope: raw
+raw:
+- '\.(Result sample|Exemple de résultat)\n\[source,shell\]\n----\n'
