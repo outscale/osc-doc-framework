@@ -5,13 +5,18 @@ scope: heading
 match: $sentence
 exceptions:
 # OUTSCALE something names
+- OUTSCALE
 - Key Management Service
 - Marketplace
 - Monitoring Services
 - Object Storage
 
+# Acronyms
+- OMI
+- OSC CLI
+- AWS CLI
+
 # Other things
-- ''
 - '[a-z]+-[a-z]+-[0-9]+[a-z]?'
 - Availability Zones?
 - Cloud
