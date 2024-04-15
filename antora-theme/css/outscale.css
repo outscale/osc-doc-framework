@@ -627,13 +627,22 @@ html {
   box-shadow:inset 0 0 1.75px #e1e1e1;
   font-style:normal;
   letter-spacing:initial;
+  margin-top: 1rem;
   padding: .075rem .5rem;
 }
 .doc .listingblock code {
   background-color: #1e2224 !important;
+  box-shadow: none !important;
+  -webkit-box-shadow: none !important;
   color: #fff;
   font-size: 12px;
   line-height: 1.5;
+}
+.doc .listingblock + .listingblock {
+  margin-top: 0;
+}
+.doc .listingblock + .listingblock .content:first-child code {
+  padding-top: 0;
 }
 code, kbd, pre {
   font-family: 'Fira Mono', monospace;
@@ -695,6 +704,17 @@ i.fa.icon-note::before {color: var(--feedbackInformation300); content: "\f05a"; 
 i.fa.icon-tip::before {color: var(--feedbackSuccess300); content: "\f058"; font-size: 1.1em;}
 i.fa.icon-important::before {color: var(--feedbackWarning300); content: "\f071";}
 i.fa.icon-warning::before {color: var(--feedbackError300); content: "\f071";}
+
+.language-shell .hljs-meta:before {
+  content: "$ ";
+  color: #999;
+  font-weight: 600;
+  pointer-events: none;
+  margin-left: -1.2em;
+}
+.doc pre.highlight > code.language-shell {
+  padding-left: 1.875em;
+}
 
 .fa-check {
   color: var(--feedbackSuccess300);
