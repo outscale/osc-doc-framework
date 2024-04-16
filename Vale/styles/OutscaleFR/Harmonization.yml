@@ -10,6 +10,6 @@ swap:
   emails: e-mails
   front-end: frontend
   front-ends: frontends
-  upload.+?\b: déposer
+  upload[aeiouy]+?\b: déposer
   '(?<!en )suivant cette syntaxe': en suivant cette syntaxe
   "pour plus d'informations?": pour en savoir plus

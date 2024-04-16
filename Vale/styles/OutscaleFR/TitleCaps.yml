@@ -4,19 +4,7 @@ level: error
 scope: heading
 match: $sentence
 exceptions:
-# OUTSCALE something names
-- OUTSCALE
-- Key Management Service
-- Marketplace
-- Monitoring Services
-- Object Storage
-
-# Acronyms
-- OMI
-- OSC CLI
-- AWS CLI
-
-# Other things
+- '[A-Z][A-Z]+'
 - '[a-z]+-[a-z]+-[0-9]+[a-z]?'
 - Availability Zones?
 - Cloud
@@ -31,6 +19,7 @@ exceptions:
 - Microsoft
 - Net
 - Oracle
+- OUTSCALE (Key Management Service|Marketplace|Monitoring Services|Object Storage)
 - Read\w+
 - Red Hat
 - Régions?
