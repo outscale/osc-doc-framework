@@ -290,7 +290,8 @@ h3 + p + blockquote a {
     margin-top: 44px;
   }
 } */
-.page-wrapper .lang-selector a:link {
+.page-wrapper .lang-selector a:link,
+.page-wrapper .lang-selector a:visited {
   color: #fff;
   text-decoration: none;
 }
