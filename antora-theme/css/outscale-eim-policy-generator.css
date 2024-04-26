@@ -40,7 +40,12 @@
 #eim-policy-generator #generate:active {
     background: var(--brandPrimaryIndigo700);
 }
-#eim-policy-generator #generated {
+#eim-policy-generator label[for^="generated-"] {
+    display: block;
+    cursor: text;
+}
+#eim-policy-generator [id^="generated-"] {
+    margin-bottom: 1rem;
     width: 100%;
 }
 #eim-policy-generator .spacing-below {
