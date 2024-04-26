@@ -262,7 +262,7 @@
             .replace(/(:|,)/g, "$1 ")
             .replace(/(\[)(?=\})/g, "$1 ")
             .replace(/(?<=\})(\])/g, " $1")
-            .replace(/"/g, '\\"') + "'\""
+            .replace(/"/g, '\\"') + "\"'"
     }
     function appendTextArea (form, jsonObj, name, margin) {
         const textarea = document.createElement("textarea")
