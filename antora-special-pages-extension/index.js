@@ -50,7 +50,7 @@ module.exports.register = function () {
           const newPath = playbook.output.dir + '/' + file.out.basename
           if (fs.existsSync(oldPath)) fs.renameSync(oldPath, newPath)
           let text = fs.readFileSync(newPath, { encoding: 'utf8' })
-          text = text.replace(/"\.\.\/\.\.\//g, '"')
+          text = text.replace(/"\.\.\/\.\.\//g, '"/')
           fs.writeFileSync(newPath, text)
         }
       }
@@ -92,7 +92,7 @@ function getConfig (playbook, componentName, config={}, searchEnabled) {
         + ':page-layout: 404\n\n'
         + '[discrete]\n'
         + "=== Nous avons cherché partout, mais nous n'avons pas trouvé votre page.\n\n"
-        + "link:{page-component-name}/{page-module}/Accueil.html[Retour à l'Accueil, role=action-button]"
+        + "link:/{page-component-name}/{page-module}/Accueil.html[Retour à l'Accueil, role=action-button]"
       ),
     }
   }
@@ -104,7 +104,7 @@ function getConfig (playbook, componentName, config={}, searchEnabled) {
         + ':page-layout: 404\n\n'
         + '[discrete]\n'
         + '=== We looked everywhere, but we could not find your page.\n\n'
-        + 'link:{page-component-name}/{page-module}/Home.html[Back to Home, role=action-button]'
+        + 'link:/{page-component-name}/{page-module}/Home.html[Back to Home, role=action-button]'
       ),
     }
   }
