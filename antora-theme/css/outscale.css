@@ -553,6 +553,22 @@ html {
   color: var(--brandPrimaryIndigo600);
 }
 
+a.action-button {
+  padding: 0.5em 1em;
+  background: var(--brandPrimaryIndigo500);
+  border: none;
+  color: #fff;
+  text-decoration: none;
+}
+a.action-button:hover,
+a.action-button:focus {
+  background: #4151c4;
+  color: #fff;
+}
+a.action-button:active {
+  background: var(--brandPrimaryIndigo700);
+}
+
 #preamble {
   background: var(--neutral100);
   padding: 0.5em 0.75em;
@@ -748,6 +764,14 @@ i.fa.icon-warning::before {color: var(--feedbackError300); content: "\f071";}
   footer.footer a {
     color: #fff;
   }
+}
+
+.paragraph.img404 {
+  text-align: right;
+  margin: 1.4em 12% 0 0;
+}
+.paragraph.img404 img {
+  margin: 0 auto;
 }
 
 

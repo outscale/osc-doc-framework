@@ -3,9 +3,9 @@
     <script src="{{uiRootPath}}/js/apidocs/app/copy-to-clipboard.js"></script>
     {{else}}
     <script src="{{uiRootPath}}/js/site-navigation-data.js"></script>
+    {{#if (ne page.layout '404')}}
     <script src="{{uiRootPath}}/js/nav.js"></script>
     <script src="{{uiRootPath}}/js/site.js" id="site-script" data-ui-root-path="{{{uiRootPath}}}"></script>
-    {{#if (ne page.layout '404')}}
     <script src="{{uiRootPath}}/js/outscale-right-sidebar.js"></script>
     <script src="{{uiRootPath}}/js/outscale-tabs.js"></script>
     {{#if (eq page.attributes.role 'eim-policy-generator')}}
@@ -16,6 +16,10 @@
     <script async src="{{uiRootPath}}/js/outscale-extra-highlight.js"></script>
     <script async src="{{uiRootPath}}/js/outscale-tooltips.js"></script>
     <script async src="{{uiRootPath}}/js/outscale-print.js"></script>
+    {{else}}
+    <script src="{{uiRootPath}}/js/site.js" id="site-script" data-ui-root-path="{{{uiRootPath}}}"></script>
+    <script src="{{uiRootPath}}/js/outscale-right-sidebar.js"></script>
+    <script async src="{{uiRootPath}}/js/outscale-404.js"></script>
     {{/if}}
     {{#if env.ENABLE_ZENDESK}}<script id="ze-snippet" src="https://static.zdassets.com/ekr/snippet.js?key=b9e69bdf-fdfc-4d4f-91f9-46da5525c4ff"> </script>{{/if}}
     {{/if}}

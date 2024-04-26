@@ -32,7 +32,7 @@
     <meta name="page-role" content="{{page.attributes.role}}">
     {{/if}}
     {{/if}}
-    {{#if page.component}}
+    {{#if (and page.component (ne page.layout '404'))}}
     <meta name="page-component" content="{{page.component.name}}">
     <meta name="page-version" content="{{page.version}}">
     <meta name="page-url" content="{{page.url}}">

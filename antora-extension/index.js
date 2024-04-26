@@ -32,7 +32,6 @@ module.exports.register = function ({ config }) {
   this.once('sitePublished', ({ playbook }) => {
     moveJsFileToSubdir('search-index.js', playbook)
     moveJsFileToSubdir('site-navigation-data.js', playbook)
-    localize404Page('404', playbook)
   })
 }
 
@@ -86,15 +85,4 @@ function moveJsFileToSubdir (filename, playbook) {
   const oldPath = playbook.output.dir + '/' + filename
   const newPath = playbook.output.dir + '/' + playbook.ui.outputDir + '/js/' + filename
   if (fs.existsSync(oldPath)) fs.renameSync(oldPath, newPath)
-}
-
-function localize404Page (filename, playbook) {
-  // Quick solution, to be improved
-  const oldPath = playbook.output.dir + '/' + filename + '.html'
-  const enPath = playbook.output.dir + '/' + filename + '-en.html'
-  const frPath = playbook.output.dir + '/' + filename + '-fr.html'
-  if (fs.existsSync(oldPath)) {
-    fs.copyFileSync(oldPath, enPath)
-    fs.copyFileSync(enPath, frPath)
-  }
 }
