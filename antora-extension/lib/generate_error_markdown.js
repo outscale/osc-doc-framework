@@ -17,7 +17,13 @@ function generateErrorMarkdown (errors, api) {
   md += '|Code|Type|Description|HTTP status|\n'
   md += '|---|---|---|---|\n'
 
-  for (const [k, v] of Object.entries(errors)) {
+  let errors_to_treat;
+  if ('errors' in errors) {
+    errors_to_treat = errors.errors;
+  } else {
+    errors_to_treat = errors;
+  }
+  for (const [k, v] of Object.entries(errors_to_treat)) {
     md += '|`' + k + '`|`' + v.error_code + '`|**' + v.description.split('\n') + '**'
     if (v.error_message) md += ': ' + v.error_message.replace(/(?<=\w+)\.(?=\w+)/g, '\\.')
     md += '|' + v.http_code + '|\n'
