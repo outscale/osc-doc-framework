@@ -47,13 +47,11 @@
     _paq.push(['trackPageView']);
     _paq.push(['enableLinkTracking']);
     (function() {
-        var u="https://{{env.MATOMO_DOMAIN}}/";
-        _paq.push(['setTrackerUrl', u+'matomo.php']);
+        _paq.push(['setTrackerUrl', 'https://{{env.MATOMO_DOMAIN}}/matomo.php']);
         _paq.push(['setSiteId', '{{env.MATOMO_SITE_ID}}']);
         _paq.push(['HeatmapSessionRecording::disable']);
-        var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
-        g.async=true; g.src='//cdn.matomo.cloud/{{env.MATOMO_DOMAIN}}/matomo.js'; s.parentNode.insertBefore(g,s);
     })();
     </script>
+    <script async defer src="{{uiRootPath}}/js/vendor/matomo.min.js"></script>
     <!-- End Matomo Code -->
     {{/if}}
