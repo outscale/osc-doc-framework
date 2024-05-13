@@ -259,7 +259,7 @@
     function convertToJsonStr (jsonObj) {
         return "'\"" + jsonObj
             .replace(/\n| /g, "")
-            .replace(/(:|,)/g, "$1 ")
+            .replace(/(":|,)/g, "$1 ")
             .replace(/(\[)(?=\})/g, "$1 ")
             .replace(/(?<=\})(\])/g, " $1")
             .replace(/"/g, '\\"') + "\"'"
