@@ -105,13 +105,15 @@
   --topbar-logo-width: 230px;
   --sidebar-width: 20rem;
   --sidebar-width-smaller: 15rem;
+
+  --font-size-default: 15px;
 }
 
 html {
-  font-size: 15px;
+  font-size: var(--font-size-default);
 }
 .doc {
-  font-size: 15px;
+  font-size: var(--font-size-default);
   line-height: 25px;
 }
 
@@ -709,6 +711,27 @@ code, kbd, pre {
 .toc .toc-menu a {
  color: var(--neutral800);
 }
+
+.openblock .content details summary {
+  border: 1px #ccc solid;
+  color: var(--brandPrimaryDarkBlue500) !important;
+  cursor: pointer;
+  font-size: var(--font-size-default) !important;
+  font-style: initial !important;
+  margin-left: -1rem;
+  padding: 18px 1.5rem !important;
+  text-align: left;
+}
+
+.openblock .content details summary::before {
+  top: 1.6rem;
+  left: 0.5rem;
+}
+
+.openblock .content details summary:hover {
+  background-color: #eee;
+}
+
 .toc .toc-menu a:hover {
  color: inherit;
  text-decoration: underline;
