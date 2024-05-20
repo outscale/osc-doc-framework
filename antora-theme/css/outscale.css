@@ -142,7 +142,7 @@ html {
   main > .content {
     max-width: 82rem;
   }
-  .doc, .tableblock td {
+  .doc, .tableblock td:not(.icon) {
     background: #fff;
   }
   .doc {
