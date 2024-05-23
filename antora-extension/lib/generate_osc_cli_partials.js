@@ -83,8 +83,7 @@ function formatDescription (description) {
     // Add line break before lists
     description = description.replace(/((\n\*+ .+)+)/g, '\n$1')
     // Convert links
-    description = description.replace(/\[(.+?)\]\((#.+?)\)/g, 'https://docs.outscale.com/api$2[$1]')
-    description = description.replace(/\[(.+?)\]\((.+?)\)/g, '$2[$1]')
+    description = description.replace(/\[(.+?)\]\((.+?)\)/g, convertLink)
     // Unescape pipe characters
     description = description.replace(/\\\|/g, '|')
     // Convert admonitions
@@ -93,6 +92,14 @@ function formatDescription (description) {
   }
 
   return description
+}
+
+function convertLink(match, p1, p2) {
+  if (match.includes('](#')) {
+    return 'https://docs.outscale.com/api' + p2 + '[' + p1 + ']'
+  } else {
+    return p2 + '[' + p1 + ']'
+  }
 }
 
 function getRef (ref, schemas, level, options = {}) {
