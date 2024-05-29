@@ -37,6 +37,7 @@ module.exports.register = function ({ config }) {
     addQueryParamToRedirect(outputDir + '/fr/userguide/Notes-de-releases-Cockpit.html', '?f=Cockpit')
     addQueryParamToRedirect(outputDir + '/en/userguide/OUTSCALE-Marketplace-Release-Notes.html', '?f=Marketplace')
     addQueryParamToRedirect(outputDir + '/fr/userguide/Notes-de-releases-OUTSCALE-Marketplace.html', '?f=Marketplace')
+    updateRobotsTxt('robots.txt', playbook)
   })
 }
 
@@ -96,4 +97,12 @@ function addQueryParamToRedirect (filename, queryParam) {
   let text = fs.readFileSync(filename, 'utf-8')
   text = text.replace(/(?<=(location=|url=|<a href=)(.+?)\.html)/g, queryParam)
   fs.writeFileSync(filename, text)
+}
+
+function updateRobotsTxt (filename, playbook) {
+  const path = playbook.output.dir + '/' + filename
+  if (fs.existsSync(path)) {
+    const text = fs.readFileSync(path, 'utf-8')
+    fs.writeFileSync(path, text + '\nSitemap: ' + playbook.site.url + '/sitemap.xml\n')
+  }
 }
