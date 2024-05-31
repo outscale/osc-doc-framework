@@ -69,7 +69,7 @@ function getTagGroup(tag, tagGroups) {
 }
 
 function concatenateSomePropertyOneOfs(origSchema) {
-    const properties = origSchema.properties;
+    const properties = origSchema.properties || {};
     for (const property of Object.values(properties)) {
         let types = [];
         const formats = [];
