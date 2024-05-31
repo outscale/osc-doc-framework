@@ -74,6 +74,7 @@ main > .content {
 }
 .toc-wrapper #input-search-close::before {
   content: "×";
+  cursor: pointer;
   margin-left: 4px;
 }
 .toc-wrapper > .search input {
