@@ -141,6 +141,15 @@ function getSecondPartOfIntro(description) {
     }
 }
 
+function printPattern(p) {
+    let s = p.schema.items?.pattern || p.schema.pattern || '';
+    if (s) {
+        s = s.replace(/\|/g, '\\|');
+        s = '<br /><span>Pattern: `' + s + '`</span>';
+    }
+    return s;
+}
+
 data.resources = convertToToc(data.api,data);
 data.version = (data.api.info && data.api.info.version && typeof data.api.info.version === 'string' && (data.api.info.version.toLowerCase().startsWith('v') || data.api.info.version.match('[0-9]{4}-[0-9]{2}-[0-9]{2}')) ? data.api.info.version : 'v'+data.api.info.version);
 
@@ -227,7 +236,7 @@ data.version = (data.api.info && data.api.info.version && typeof data.api.info.v
 
 {{? block.rows.length}}|Name|Type|Description|
 |---|---|---|{{?}}
-{{~ block.rows :p}}|{{=p.displayName}}|{{= cleanType(p.safeType) }}|{{= cleanParameterDescription(p.description) }}|
+{{~ block.rows :p}}|{{=p.displayName}}|{{= cleanType(p.safeType) }}|{{= cleanParameterDescription(p.description) }}{{= printPattern(p) }}|
 {{~}}
 {{~}}
 {{? (blocks[0].rows.length === 0) && (blocks.length === 1) }}

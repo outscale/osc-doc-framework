@@ -33,6 +33,11 @@ h1 {
     font-weight: 500;
 }
 
+.api table br + span {
+    display: block;
+    margin-top: 0.5rem;
+}
+
 b, strong {
     font-weight: 600;
 }
