@@ -111,6 +111,7 @@ function cleanType(type) {
 
 function cleanParameterDescription(description) {
     if (description) return description.replace(/\n/g, '');
+    else return '';
 }
 
 function printEnum(p) {

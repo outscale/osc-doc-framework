@@ -125,7 +125,7 @@ function getCallName(operationUniqueName) {
 
 |Status|Description|Schema|
 |---|---|---|
-{{~ data.responses :r}}|{{=r.status}}|{{=r.description}}|{{=r.schema}}|
+{{~ data.responses :r}}|{{=r.status}}|{{=r.description || ''}}|{{=r.schema}}|
 {{~}}
 
 {{? data.responseSchemas }}
@@ -155,7 +155,7 @@ Status Code **{{=response.status}}**
 {{?}}
 |Name|Type|Required|Restrictions|Description|
 |---|---|---|---|---|
-{{~block.rows :p}}|{{=p.displayName}}|{{=p.safeType}}|{{=p.required}}|{{=p.restrictions||'none'}}|{{=p.description}}|
+{{~block.rows :p}}|{{=p.displayName}}|{{=p.safeType}}|{{=p.required}}|{{=p.restrictions||'none'}}|{{=p.description||''}}|
 {{~}}
 {{~}}
 {{?}}
@@ -176,7 +176,7 @@ Status Code **{{=response.status}}**
 
 |Status|Header|Type|Format|Description|
 |---|---|---|---|---|
-{{~ data.responseHeaders :h}}|{{=h.status}}|{{=h.header}}|{{=h.type}}|{{=h.format||''}}|{{=h.description}}|
+{{~ data.responseHeaders :h}}|{{=h.status}}|{{=h.header}}|{{=h.type}}|{{=h.format||''}}|{{=h.description||''}}|
 {{~}}
 
 {{?}}
