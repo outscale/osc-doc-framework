@@ -60,7 +60,6 @@ function cleanType(type) {
 
 function cleanParameterDescription(description) {
     if (description) return description.replace(/\n/g, '');
-    else return 'none';
 }
 
 function printEnum(p) {
