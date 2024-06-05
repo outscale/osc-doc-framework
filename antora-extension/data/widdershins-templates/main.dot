@@ -223,25 +223,34 @@ data.version = (data.api.info && data.api.info.version && typeof data.api.info.v
 {{ var blocks = data.utils.schemaToArray(origSchema,-1,{trim:true,join:true},data); }}
 
 {{~ blocks :block}}
-{{? block.title }}{{= block.title}}{{= '\n\n'}}{{?}}
+
+{{? block===blocks[0] }}
+{{= data.tags.section }}
+{{?}}
+
 {{? block.externalDocs}}
 <a href="{{=block.externalDocs.url}}">{{=block.externalDocs.description||'External documentation'}}</a>
 {{?}}
 
-{{? block===blocks[0] }}
-{{= data.tags.section }}
+{{? (block.rows.length === 1 && block.rows[0].name === '*anonymous*') }}
+
+|Type|Description|
+|---|---|
+{{~ block.rows :p}}|{{= cleanType(p.safeType) }}|{{= cleanParameterDescription(p.description) }}{{= printPattern(p)}}|
+{{~}}
+
+{{??}}
+
+{{? block.title }}
+{{= block.title}}{{= '\n\n'}}
+{{?}}
 
 ### Properties
-{{?}}
 
-{{? block.rows.length}}|Name|Type|Description|
-|---|---|---|{{?}}
+|Name|Type|Description|
+|---|---|---|
 {{~ block.rows :p}}|{{=p.displayName}}|{{= cleanType(p.safeType) }}|{{= cleanParameterDescription(p.description) }}{{= printPattern(p) }}|
 {{~}}
-{{~}}
-{{? (blocks[0].rows.length === 0) && (blocks.length === 1) }}
-*None*
-{{?}}
 
 > Schema
 {{? data.options.yaml }}
@@ -250,6 +259,9 @@ data.version = (data.api.info && data.api.info.version && typeof data.api.info.v
 ```json
 {{=data.utils.safejson(data.utils.getSample(schema,data.options,{quiet:true},data.api),null,2)}}{{?}}
 ```
+{{~}}
+
+{{?}}
 
 {{= data.tags.endSection }}
 

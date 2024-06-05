@@ -226,6 +226,9 @@ div .highlight {
 .api > pre + h1, .api > blockquote + h1, .api > pre + h2, .api > blockquote + h2, .api > pre + h3, .api > pre + h4, .api > blockquote + h4, .api > pre + h5, .api > blockquote + h5, .api > pre + h6, .api > blockquote + h6, .api > pre + p, .api > blockquote + p, .api > pre + table, .api > blockquote + table, .api > pre + ul, .api > blockquote + ul, .api > pre + ol, .api > blockquote + ol, .api > pre + aside, .api > blockquote + aside, .api > pre + dl, .api > blockquote + dl {
   margin-top: 28px;
 }
+.api >  h2 + a + a + a + a + table {
+  margin-top: 0.8em;
+}
 a.offset-up {
   position: relative;
   top: calc(-28px - 3.2em);
