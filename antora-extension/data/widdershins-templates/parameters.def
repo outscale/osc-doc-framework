@@ -54,6 +54,7 @@ function formatRequired(boolean) {
 
 function cleanType(type) {
     type = type.replace(/\b\(/, ' (');
+    type = type.replace(/\)\(/, ') (');
     type = type.replace('¦null', '');
     return type;
 }
