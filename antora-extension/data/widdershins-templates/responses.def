@@ -128,7 +128,7 @@ function getCallName(operationUniqueName) {
 {{~ data.responses :r}}|{{=r.status}}|{{=r.description || ''}}|{{=r.schema}}|
 {{~}}
 
-{{? data.responseSchemas }}
+{{? data.responseSchemas && Object.keys(response.content).length }}
 > Example responses<a name="{{= getCallName(data.operationUniqueName) }}-res-example.json"></a>
 
 {{= evaluateResponses(data) }}
@@ -138,7 +138,7 @@ function getCallName(operationUniqueName) {
 {{~ data.responses :response }}
 {{ if (response.content && !response.$ref && !data.utils.isPrimitive(response.type)) data.responseSchemas = true; }}
 {{~}}
-{{? data.responseSchemas }}
+{{? data.responseSchemas && Object.keys(response.content).length }}
 <h3 id="{{=data.operationUniqueSlug}}-responseschema">Response Schema</h3>
 {{~ data.responses :response}}
 {{? response.content && !response.$ref && !data.utils.isPrimitive(response.type)}}
