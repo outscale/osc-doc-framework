@@ -713,7 +713,7 @@ code, kbd, pre {
  color: var(--neutral800);
 }
 
-.openblock .content details summary {
+.doc details summary {
   border: 1px #ccc solid;
   color: var(--brandPrimaryDarkBlue500) !important;
   cursor: pointer;
@@ -724,12 +724,12 @@ code, kbd, pre {
   text-align: left;
 }
 
-.openblock .content details summary::before {
+.doc details summary::before {
   top: 1.6rem;
   left: 0.5rem;
 }
 
-.openblock .content details summary:hover {
+.doc details summary:hover {
   background-color: #eee;
 }
 
