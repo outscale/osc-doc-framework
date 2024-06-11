@@ -154,32 +154,32 @@
     }
   }
 
-  function addRightSidebarBox () {
-    const tocMenu = document.querySelector('.toc.sidebar .toc-menu')
-    const box = document.createElement('div')
-    box.id = 'term-box'
+  // function addRightSidebarBox () {
+  //   const tocMenu = document.querySelector('.toc.sidebar .toc-menu')
+  //   const box = document.createElement('div')
+  //   box.id = 'term-box'
 
-    const div = document.createElement('div')
-    div.className = 'paragraph'
-    const p = document.createElement('p')
-    // const strong = document.createElement('strong')
-    // strong.textContent = 'Note:'
-    // p.append(strong)
-    div.append(p)
+  //   const div = document.createElement('div')
+  //   div.className = 'paragraph'
+  //   const p = document.createElement('p')
+  //   // const strong = document.createElement('strong')
+  //   // strong.textContent = 'Note:'
+  //   // p.append(strong)
+  //   div.append(p)
 
-    const div2 = document.createElement('div')
-    div2.className = 'ulist'
-    const ul = document.createElement('ul')
-    const li = document.createElement('li')
-    const p2 = document.createElement('p')
-    p2.innerHTML = (TEXT_SIDEBAR[LANG] || TEXT_SIDEBAR.en)
-    li.append(p2)
-    ul.append(li)
-    div2.append(ul)
+  //   const div2 = document.createElement('div')
+  //   div2.className = 'ulist'
+  //   const ul = document.createElement('ul')
+  //   const li = document.createElement('li')
+  //   const p2 = document.createElement('p')
+  //   p2.innerHTML = (TEXT_SIDEBAR[LANG] || TEXT_SIDEBAR.en)
+  //   li.append(p2)
+  //   ul.append(li)
+  //   div2.append(ul)
 
-    box.append(div, div2)
-    tocMenu.prepend(box)
-  }
+  //   box.append(div, div2)
+  //   tocMenu.prepend(box)
+  // }
 
   // The main function
   function wrapText (container, text) {
@@ -201,5 +201,5 @@
     removeExtraTooltips(value, section[5])
     removeExtraTooltips(value, section[6])
   })
-  addRightSidebarBox()
+  // addRightSidebarBox()
 })()
