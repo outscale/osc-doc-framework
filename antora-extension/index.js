@@ -32,6 +32,11 @@ module.exports.register = function ({ config }) {
   this.once('sitePublished', ({ playbook }) => {
     moveJsFileToSubdir('search-index.js', playbook)
     moveJsFileToSubdir('site-navigation-data.js', playbook)
+    const outputDir = playbook.output.dir
+    addQueryParamToRedirect(outputDir + '/en/userguide/Cockpit-Release-Notes.html', '?f=Cockpit')
+    addQueryParamToRedirect(outputDir + '/fr/userguide/Notes-de-releases-Cockpit.html', '?f=Cockpit')
+    addQueryParamToRedirect(outputDir + '/en/userguide/OUTSCALE-Marketplace-Release-Notes.html', '?f=Marketplace')
+    addQueryParamToRedirect(outputDir + '/fr/userguide/Notes-de-releases-OUTSCALE-Marketplace.html', '?f=Marketplace')
   })
 }
 
@@ -85,4 +90,10 @@ function moveJsFileToSubdir (filename, playbook) {
   const oldPath = playbook.output.dir + '/' + filename
   const newPath = playbook.output.dir + '/' + playbook.ui.outputDir + '/js/' + filename
   if (fs.existsSync(oldPath)) fs.renameSync(oldPath, newPath)
+}
+
+function addQueryParamToRedirect (filename, queryParam) {
+  let text = fs.readFileSync(filename, 'utf-8')
+  text = text.replace(/(?<=(location=|url=|<a href=)(.+?)\.html)/g, queryParam)
+  fs.writeFileSync(filename, text)
 }
