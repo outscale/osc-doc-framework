@@ -18,6 +18,9 @@
     <script src="{{uiRootPath}}/js/vendor/jstable.es5.min.js"></script>
     <script async src="{{uiRootPath}}/js/outscale-tables.js"></script>
     <script async src="{{uiRootPath}}/js/outscale-print.js"></script>
+    {{#if (eq page.attributes.role 'release-notes')}}
+    <script async src="{{uiRootPath}}/js/release-notes.js"></script>
+    {{/if}}
     {{else}}
     <script src="{{uiRootPath}}/js/site.js" id="site-script" data-ui-root-path="{{{uiRootPath}}}"></script>
     <script src="{{uiRootPath}}/js/outscale-right-sidebar.js"></script>

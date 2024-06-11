@@ -1,6 +1,5 @@
 const cheerio = require('cheerio')
 const fs = require('fs')
-const ospath = require('path')
 
 const specialPagesNames = []
 
@@ -13,6 +12,7 @@ module.exports.register = function () {
   })
 
   this.on('uiLoaded', async ({ uiCatalog, playbook }) => {
+    addJsFile('release-notes.js', uiCatalog, playbook.ui.outputDir)
     if (searchEnabled) {
       addJsFile('search-page.js', uiCatalog, playbook.ui.outputDir)
     }
@@ -73,9 +73,11 @@ function isSearchEnabled(extensions) {
 }
 
 function addJsFile (filename, uiCatalog, uiOutputDir) {
+  const srcPath = __dirname + '/data/js/' + filename
   uiCatalog.addFile({
-    contents: fs.readFileSync(ospath.join(__dirname, 'data/js/' + filename)),
-    out: { path: uiOutputDir + '/js/' + filename},
+    contents: fs.readFileSync(srcPath),
+    path: srcPath,
+    out: { path: uiOutputDir + '/js/' + filename },
   })
 }
 
