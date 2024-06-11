@@ -6,7 +6,8 @@ module.exports.register = function ({
     copyrightName = 'Outscale SAS',
     sectionSelector = 'div.sect2',
     titleSelector = 'h3',
-    descriptionSelector = '.ulist',
+    sectionSelector_v2 = 'div.sect1',
+    titleSelector_v2 = 'h2',
   },
 }) {
   this.once('beforePublish', ({ playbook, contentCatalog, siteCatalog }) => {
@@ -17,18 +18,27 @@ module.exports.register = function ({
     const sources = []
 
     for (let i = 0, length = pages.length; i < length; i++) {
-      if (pages[i].asciidoc.attributes['page-rssfeed'] === 'true') sources.push(pages[i])
+      if (
+        pages[i].asciidoc.attributes['page-rssfeed'] === 'true' ||
+        pages[i].asciidoc.attributes['page-rssfeed'] === 'v1' ||
+        pages[i].asciidoc.attributes['page-rssfeed'] === 'v2'
+      ) sources.push(pages[i])
     }
 
     for (let i = 0, length = sources.length; i < length; i++) {
-      const rssPath = sources[i].out.dirname + '/_rss/' + sources[i].out.basename.replace('.html', '.xml')
+      let rssPath = sources[i].out.dirname + '/_rss/' + sources[i].out.basename.replace('.html', '.xml')
+      rssPath = rssPath.replace('-old-page', '').replace('-ancienne-page', '')
       const htmlContent = sources[i].contents.toString()
       const link = $(htmlContent)('link[rel=canonical]').attr('href')
       const language = $(htmlContent)('html').attr('lang')
+      let selectors = [sectionSelector, titleSelector]
+      if (sources[i].asciidoc.attributes['page-rssfeed'] === 'v2') {
+        selectors = [sectionSelector_v2, titleSelector_v2]
+      }
 
       let rss = '<?xml version="1.0" encoding="UTF-8"?>\n<rss version="2.0">\n<channel>\n'
       rss += addCommonPart(htmlContent, link, language, copyrightName)
-      rss += addItems(htmlContent, link, language, sectionSelector, titleSelector, descriptionSelector, logger)
+      rss += addItems(htmlContent, link, language, selectors, logger)
       rss += '</channel>\n</rss>'
 
       const rssFile = new Vinyl({
@@ -63,17 +73,20 @@ function addCommonPart (htmlContent, link, language, copyrightName) {
   return rss
 }
 
-function addItems (htmlContent, link, language, sectionSelector, titleSelector, descriptionSelector, logger) {
+function addItems (htmlContent, link, language, selectors, logger) {
+  const [sectionSelector, titleSelector] = selectors
   let rss = ''
 
   const sections = $(htmlContent)(sectionSelector)
   for (let i = 0, length = sections.length; i < length; i++) {
     const section = sections[i]
-    const sectionContent = $(section).html()
-    const title = $(sectionContent)(titleSelector).text()
-    const anchor = $(sectionContent)(titleSelector + ' > a').attr('href')
+    const title = $(section)(titleSelector).html().replace(/<.+> */, '')
+    const anchor = $(section)(titleSelector + ' > a').attr('href')
     const baseUrl = link.substring(0, link.lastIndexOf(link.replace(/.+\//g, '')))
-    const pubDate = getDate(sectionContent, link, language, title, logger)
+    const pubDate = getDate(section, link, language, title, logger)
+    const metadatas = $(section)('.metadata')
+    const categories = getCategories(metadatas)
+    metadatas.remove()
 
     $(section)(titleSelector).remove()
     let description = $(section).html()
@@ -86,6 +99,9 @@ function addItems (htmlContent, link, language, sectionSelector, titleSelector, 
     rss += '    <guid>' + link + anchor + '</guid>\n'
     rss += '    <description><![CDATA[' + description + ']]></description>\n'
     rss += '    <pubDate>' + pubDate + '</pubDate>\n'
+    for (let j = 0, length = categories.length; j < length; j++) {
+      rss += '    <category>' + categories[j] + '</category>\n'
+    }
     rss += '  </item>\n'
   }
 
@@ -125,7 +141,20 @@ function throwError (link, title, logger) {
   const pageName = link.replace(/^.+\/(.+)\.html/, '$1.adoc')
   logger.error(
     'In "' + pageName + '", the date in the "' + title + '" section is not correctly formatted.'
-    + 'You can use placeholder elements if you don\'t know the final date yet,'
-    + 'but there still has to be three elements in the date (for example: "October XX, 2023").')
+    + ' You can use placeholder elements if you don\'t know the final date yet,'
+    + ' but there still has to be three elements in the date (for example: "June XX, 2024").')
   process.exit(1)
+}
+
+function getCategories (metadatas) {
+  const categories = []
+  for (let i = 0, length = metadatas.length; i < length; i++) {
+    const spans = $(metadatas[i])('span')
+    for (let j = 0, length = spans.length; j < length; j++) {
+      const cat = $(spans[j]).text()
+      if (!(categories.includes(cat))) categories.push(cat)
+    }
+  }
+
+  return categories
 }
