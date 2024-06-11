@@ -1092,10 +1092,10 @@ div.tab.active {
 
 /* Release notes */
 
-.content.release-notes .metadata .ulist {
+.content.release-notes .tags .ulist {
   margin-top: 2px;
 }
-.content.release-notes .metadata ul {
+.content.release-notes .tags ul {
   list-style: none;
   padding: 0;
 }
@@ -1117,8 +1117,8 @@ div.tab.active {
 
 .content.release-notes .doc h2,
 .content.release-notes .doc h3,
-.content.release-notes .sect1 .sectionbody > *:not(.metadata):not(.sect2),
-.content.release-notes .sect2 > *:not(.metadata) {
+.content.release-notes .sect1 .sectionbody > *:not(.tags):not(.sect2),
+.content.release-notes .sect2 > *:not(.tags) {
   padding-left: var(--release-notes-tags-column);
 }
 .content.release-notes .doc h2,
@@ -1137,8 +1137,8 @@ div.tab.active {
 .content.release-notes .sectionbody .sect2 {
   position: relative;
 }
-.content.release-notes .sectionbody > .metadata,
-.content.release-notes .sectionbody .sect2 > .metadata {
+.content.release-notes .sectionbody > .tags,
+.content.release-notes .sectionbody .sect2 > .tags {
   position: absolute;
   top: 0;
   padding-right: 0.75em;

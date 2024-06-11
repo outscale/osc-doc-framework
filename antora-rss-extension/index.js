@@ -84,9 +84,9 @@ function addItems (htmlContent, link, language, selectors, logger) {
     const anchor = $(section)(titleSelector + ' > a').attr('href')
     const baseUrl = link.substring(0, link.lastIndexOf(link.replace(/.+\//g, '')))
     const pubDate = getDate(section, link, language, title, logger)
-    const metadatas = $(section)('.metadata')
-    const categories = getCategories(metadatas)
-    metadatas.remove()
+    const tags = $(section)('.tags')
+    const categories = getCategories(tags)
+    tags.remove()
 
     $(section)(titleSelector).remove()
     let description = $(section).html()
@@ -146,10 +146,10 @@ function throwError (link, title, logger) {
   process.exit(1)
 }
 
-function getCategories (metadatas) {
+function getCategories (tags) {
   const categories = []
-  for (let i = 0, length = metadatas.length; i < length; i++) {
-    const spans = $(metadatas[i])('span')
+  for (let i = 0, length = tags.length; i < length; i++) {
+    const spans = $(tags[i])('span')
     for (let j = 0, length = spans.length; j < length; j++) {
       const cat = $(spans[j]).text()
       if (!(categories.includes(cat))) categories.push(cat)

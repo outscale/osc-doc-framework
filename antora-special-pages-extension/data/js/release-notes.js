@@ -3,7 +3,7 @@
   function getTags () {
     const array = []
     const textContents = []
-    const tags = document.querySelectorAll(".metadata span:not(.date)")
+    const tags = document.querySelectorAll(".tags span:not(.date)")
     for (let tag of tags) {
       let s = tag.textContent
       if (!textContents.includes(s)) {
@@ -136,7 +136,7 @@
     }
 
     for (entry of entries) {
-      const entryTags = entry.querySelectorAll(".metadata span:not(.date)")
+      const entryTags = entry.querySelectorAll(".tags span:not(.date)")
       entry.style.display = "none"
       for (let entryTag of entryTags) {
         if (filters.includes(entryTag.textContent) || !filters.length) {
