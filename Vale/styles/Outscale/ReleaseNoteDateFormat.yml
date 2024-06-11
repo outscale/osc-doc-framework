@@ -1,6 +1,6 @@
 extends: existence
-message: "In these release notes, the date \"%s\" is not correctly formatted. You can use placeholder elements if you don't know the final date yet, but there still has to be three elements in the date (for example: October XX, 2023)."
+message: "In this release note, the section title \"%s\" is missing a date. It should be formatted, for example: \"== #April 5, 2063# Something Something\""
 level: error
 scope: raw
 raw:
-- '(?<=:page-rssfeed: true[\s\S.]+)(?<==== )([A-zÀ-ÿ-\d]+),* (\d\d\d\d)'
+- '(?<=:page-rssfeed: v2\n[\s\S.]+\n)(== [^#]+?)(?=\n)'
