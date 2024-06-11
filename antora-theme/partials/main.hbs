@@ -1,5 +1,5 @@
 <main class="article">
-  <div class="content {{page.attributes.tocposition}}">
+  <div class="content {{page.attributes.tocposition}}{{#if (eq page.attributes.role 'release-notes')}} release-notes{{/if}}">
 {{#if (eq page.layout '404')}}
 {{> article-404}}
 {{else if (eq page.attributes.role 'apidocs')}}
