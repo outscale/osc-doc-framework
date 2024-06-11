@@ -1125,7 +1125,7 @@ div.tab.active {
 .content.release-notes .doc h3 {
   margin: calc(var(--main-margin) - var(--main-font-size)) 0 0;
 }
-.content.release-notes .sect2:not([style="display: none;"]) + .sect2 h3 {
+.content.release-notes .sect2 + .sect2 h3 {
   margin: var(--main-margin) 0 0;
 }
 .content.release-notes .sect1 {
