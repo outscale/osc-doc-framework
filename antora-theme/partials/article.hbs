@@ -1,6 +1,6 @@
 <article class="doc">
 {{#with page.title}}
-<h1 class="page">{{{this}}}{{#if (eq ../page.attributes.rssfeed 'v2')}}{{#if (eq ../page.attributes.component-name 'fr')}} <span>(aussi disponibles au <a href="{{{rsslink ../page.attributes.relative-src-path}}}">format RSS</a>)</span>{{else}} <span>(also available in <a href="{{{rsslink ../page.attributes.relative-src-path}}}">RSS format</a>)</span>{{/if}}{{/if}}</h1>
+<h1 class="page">{{{this}}}{{#if (eq ../page.attributes.rssfeed 'v2')}}{{#if (eq ../page.attributes.component-name 'fr')}} <span class="title-bracket">(aussi disponibles au <a href="{{{rsslink ../page.attributes.relative-src-path}}}">format RSS</a>)</span>{{else}} <span class="title-bracket">(also available in <a href="{{{rsslink ../page.attributes.relative-src-path}}}">RSS format</a>)</span>{{/if}}{{/if}}</h1>
 {{/with}}
 {{{page.contents}}}
 <div class="sidebar-button paragraph"><a onclick="printPage()"><strong>{{#if page.attributes.en}}{{or page.attributes.printthispage-text "Exporter en PDF"}}{{else}}{{or page.attributes.printthispage-text "Export to PDF"}}{{/if}}</strong> <i class="fa fa-file-pdf-o"></i></a></div>

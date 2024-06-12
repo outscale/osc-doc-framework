@@ -529,7 +529,7 @@ html {
 .doc > h1.page:first-child {
   font-size: 32px;
 }
-.doc > h1 span {
+.doc > h1 .title-bracket {
   font-size: 16px;
 }
 
