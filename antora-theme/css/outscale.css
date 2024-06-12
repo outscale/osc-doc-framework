@@ -1213,3 +1213,5 @@ div.tab.active {
 #filterbox ul + ul {
   margin-top: 0.75em;
 }
+
+.doc .removed {display: none;} /* Temporary */
