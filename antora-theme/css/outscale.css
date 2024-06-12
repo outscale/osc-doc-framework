@@ -529,6 +529,10 @@ html {
 .doc > h1.page:first-child {
   font-size: 32px;
 }
+.doc > h1 span {
+  font-size: 16px;
+}
+
 .doc h2 {
   font-size: 24px;
   font-weight: 600;
@@ -1129,6 +1133,7 @@ div.tab.active {
   margin: var(--main-margin) 0 0;
 }
 .content.release-notes .sect1 {
+  margin-top: 3rem !important;
   margin-bottom: 5rem;
   min-height: 14rem;
 }
