@@ -3,7 +3,7 @@
   function getTags () {
     const array = []
     const textContents = []
-    const tags = document.querySelectorAll(".tags span:not(.date)")
+    const tags = document.querySelectorAll(".tags span")
     for (let tag of tags) {
       let s = tag.textContent
       if (!textContents.includes(s)) {
@@ -11,14 +11,23 @@
         array.push(tag)
       }
     }
+    array.sort(sortFunction1)
+    array.sort(sortFunction2)
 
-    return array.sort(sortFunction)
+    return array
   }
 
-  function sortFunction (a, b) {
-    if (a.className === "added" || b.className === "added") return 1
+  function sortFunction1 (a, b) {
     const c = a.textContent
     const d = b.textContent
+    if (c < d) return -1
+    if (c > d) return 1
+    return 0
+  }
+
+  function sortFunction2 (a, b) {
+    const c = a.className
+    const d = b.className
     if (c < d) return -1
     if (c > d) return 1
     return 0
@@ -136,7 +145,7 @@
     }
 
     for (entry of entries) {
-      const entryTags = entry.querySelectorAll(".tags span:not(.date)")
+      const entryTags = entry.querySelectorAll(".tags span")
       entry.style.display = "none"
       for (let entryTag of entryTags) {
         if (filters.includes(entryTag.textContent) || !filters.length) {
