@@ -890,6 +890,7 @@ i.fa.icon-warning::before {color: var(--feedbackError300); content: "\f071";}
 
 .toc .toc-menu h3,
 .mobile-only h3,
+.toc.sidebar .paragraph strong,
 .sidebar-button.paragraph strong {
   color: #333;
   font-size: .9rem;
