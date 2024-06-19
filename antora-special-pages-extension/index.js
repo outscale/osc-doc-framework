@@ -215,9 +215,3 @@ function removeSpecialPagesFromSitemaps (path, playbook) {
     fs.writeFileSync(outputPath, data.xml())
   }
 }
-
-function moveFileToRoot (filename, playbook) {
-  const oldPath = playbook.output.dir + '/' + filename
-  const newPath = playbook.output.dir + '/' + playbook.ui.outputDir + '/js/' + filename
-  if (fs.existsSync(oldPath)) fs.renameSync(oldPath, newPath)
-}
