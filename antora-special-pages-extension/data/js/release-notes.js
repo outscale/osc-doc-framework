@@ -1,4 +1,7 @@
 (function () {
+  const mobileThreshold = 1024
+  const introSelector = ".sect1"
+  const tocMenuSelector = ".toc.sidebar .toc-menu div"
 
   function getTags () {
     const array = []
@@ -34,7 +37,7 @@
   }
 
   function createMenu (tags) {
-    const tocMenu = document.querySelector(".toc.sidebar .toc-menu")
+    const tocMenu = document.querySelector(introSelector)
     const h3 = document.createElement("h3")
     const button = document.createElement("button")
     const div = document.createElement("div")
@@ -67,7 +70,8 @@
     }
     h3.append(button)
     div.append(h3, ul1, ul2)
-    tocMenu.prepend(div)
+    tocMenu.before(div)
+    moveMenu()
   }
 
   function urlUpdaterFunction () {
@@ -183,6 +187,17 @@
     return [sect1s, entries]
   }
 
+  function moveMenu () {
+    const filterbox = document.querySelector("#filterbox")
+    if (window.innerWidth < mobileThreshold) {
+      document.querySelector(introSelector).before(filterbox)
+      filterbox.classList.add("mobile-only")
+    } else {
+      document.querySelector(tocMenuSelector).before(filterbox)
+      filterbox.classList.remove("mobile-only")
+    }
+  }
+
   const tags = getTags()
   let checkboxes, closeButton
   if (tags.length) {
@@ -191,6 +206,7 @@
     closeButton = getCloseButton()
     checkboxUpdaterFunction()
     window.addEventListener("popstate", checkboxUpdaterFunction)
+    window.matchMedia(`(min-width: ${mobileThreshold}px)`).addEventListener("change", moveMenu)
   }
 
 })()

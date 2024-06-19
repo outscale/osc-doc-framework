@@ -11,13 +11,14 @@
   border-radius: 0.1em;
   line-height: 1.5;
   padding: 0 0.25em;
-  width: 210px;
+  width: 180px;
   position: relative;
   z-index: 1000;
 }
 
 #search-field > a {
   max-height: var(--topbar-height);
+  padding-left: 0;
 }
 
 #search-field [type=submit] {
@@ -33,11 +34,6 @@
   border: none;
   z-index: 1000;
 }
-@media screen and (min-width: 1301px) {
-  #search-field [type=submit] {
-    right: 24px;
-  }
-}
 #search-field [type=submit]:after {
   display: none;
 }
@@ -48,6 +44,17 @@
   right: 5px;
   color: #333;
   font: normal normal normal 14px/1 FontAwesome;
+}
+@media screen and (min-width: 1301px) {
+  #search-field {
+    width: 210px;
+  }
+  #search-field [type=submit] {
+    right: 34px;
+  }
+  #search-field [type=submit]:before {
+    right: 5px;
+  }
 }
 #search-input:focus + [type=submit]:before,
 #search-field [type=submit]:focus:before,
