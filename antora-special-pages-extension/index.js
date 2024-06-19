@@ -40,6 +40,15 @@ module.exports.register = function () {
     }
   })
 
+  this.once('documentsConverted', ({ contentCatalog }) => {
+    const files = contentCatalog.getFiles()
+    for (let j = 0, length = files.length; j < length; j++) {
+      if (files[j].asciidoc?.attributes['page-role'] === 'release-notes') {
+        files[j].contents = disambiguateSubsectionIds(files[j].contents)
+      }
+    }
+  })
+
   this.on('sitePublished', ({ siteCatalog, contentCatalog, playbook }) => {
     fs.unlinkSync(playbook.output.dir + '/' + '404.html')
     for (let i = 0, length = specialPagesNames.length; i < length; i++) {
@@ -203,6 +212,13 @@ function createOpenSearchFile (contentCatalog, component, config, playbook) {
       path: component.name + '/' + component.version + '/' + config.module + '/_xml/opensearch.xml',
     }
   })
+}
+
+function disambiguateSubsectionIds (contents) {
+  let text = contents.toString()
+  text = text.replace(/<h([3-6]) id=".+?"><a.*?><\/a>/g, '<h$1>')
+
+  return Buffer.from(text)
 }
 
 function removeSpecialPagesFromSitemaps (path, playbook) {
