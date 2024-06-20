@@ -94,9 +94,11 @@ function moveJsFileToSubdir (filename, playbook) {
 }
 
 function addQueryParamToRedirect (filename, queryParam) {
-  let text = fs.readFileSync(filename, 'utf-8')
-  text = text.replace(/(?<=(location=|url=|<a href=)(.+?)\.html)/g, queryParam)
-  fs.writeFileSync(filename, text)
+  if (fs.existsSync(filename)) {
+    let text = fs.readFileSync(filename, 'utf-8')
+    text = text.replace(/(?<=(location=|url=|<a href=)(.+?)\.html)/g, queryParam)
+    fs.writeFileSync(filename, text)
+  }
 }
 
 function updateRobotsTxt (filename, playbook) {
