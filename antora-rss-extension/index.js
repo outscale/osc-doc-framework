@@ -59,7 +59,7 @@ function addCommonPart (htmlContent, link, language, copyrightName) {
   const description = $(htmlContent)('#preamble div:first-child > p')
     .text().trim()
     .replace('This page', 'This feed')
-    .replace('Cette page', 'Ce flux')
+    .replace('Cette page', 'Ce flux') || title
   const copyrightYear = new Date().getFullYear()
   const pubDate = new Date().toUTCString()
 
