@@ -85,7 +85,7 @@ function getExampleContent(value, apiName, callName) {
             }
             /* It can be useful to directly encode some parameters to Base64 */
             else if (callName === 'CreateKeypair' && k === 'PublicKey') {
-                s += ' "$(base64 -i key_name.pub)" \\\n';
+                s += ' "$(cat key_name.pub)" \\\n';
             }
             else if (callName === 'CreateVms' && k === 'UserData') {
                 s += ' "$(base64 -i user_data.txt)" \\\n';
