@@ -86,6 +86,8 @@ function formatDescription (description) {
     description = description.replace(/\[(.+?)\]\((.+?)\)/g, convertLink)
     // Unescape pipe characters
     description = description.replace(/\\\|/g, '|')
+    // Correctly render monospace when it is a single space character
+    description = description.replace(/\B` `\B/g, '`` ``')
     // Convert admonitions
     description = description.replace(/(?<=\n)(\*\*)?(\[[A-Z]+?\])(\*\*)?( \+)?\n+?([\s\S]+)$/g, '$2\n====\n$5\n====')
     description = description.replace(/> (\*\*)?(\[[A-Z]+\])(\*\*)?( \+)?\n+?> (.+\n)/g, '$2\n====\n$5\n====')
