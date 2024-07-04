@@ -40,11 +40,13 @@ function createOscCliSections (api, codeSamples, outputFolder) {
 
     s += 'This command contains the following attributes that you need to specify:\n\n'
     const reqRef = post.requestBody.content['application/json'].schema['x-widdershins-oldRef'].split('/').pop()
-    s += getRef(reqRef, schemas, 1, { request: true }) + '\n\n\n'
+    s += '// tag::request-parameters[]\n\n'
+    s += getRef(schemas[reqRef], 1, true) + '\n'
+    s += '// end::request-parameters[]\n\n\n\n'
 
     s += 'The **' + operation + '** command returns the following elements:\n\n'
     const respRef = post.responses['200'].content['application/json'].schema['x-widdershins-oldRef'].split('/').pop()
-    s += getRef(respRef, schemas, 1, { response: true, getRequired: false }) + '\n\n\n'
+    s += getRef(schemas[respRef], 1, false) + '\n\n\n'
 
     // s += (
     //     ".Result sample\n[source,json]\n----\n"
@@ -76,7 +78,7 @@ function formatMainDescription (description, operation) {
 }
 
 function formatDescription (description) {
-  if (description !== 'NOT_FOUND') {
+  if (description) {
     // Convert line breaks
     description = description.replace(/(<\/?br ?\/?>){2,}/g, '\n')
     description = description.replace(/<\/?br ?\/?>\n?/g, ' +\n')
@@ -104,44 +106,24 @@ function convertLink(match, p1, p2) {
   }
 }
 
-function getRef (ref, schemas, level, options = {}) {
-  const { request, response, getDescription = true, getRequired = true } = options
-  const schema = schemas[ref]
+function getRef (schema, level, requestFlag) {
   let s = ''
-  if (request) {
-    s += '// tag::request-parameters[]\n\n'
-  }
-  if (getDescription === true && schema.description && schema.description !== ref) {
-    s += ' ' + formatDescription(schema.description) + '\n'
-  }
-  const properties = schema.properties
+  const properties = schema.properties || schema.items?.properties || {}
   for (const [k, v] of Object.entries(properties)) {
-    if (request && level == 1) {
+    if (requestFlag) {
       s += '// tag::' + k + '[]\n'
     }
     s += '*'.repeat(level) + ' `' + k + '`:'
-    if (getRequired === true) {
-      if ((schema.required && schema.required.includes(k) === false) || schema.required === undefined) {
+    if (requestFlag) {
+      if ((schema.required?.includes(k) === false) || schema.required === undefined) {
         s += ' (optional)'
       }
     }
-    if (v.description) {
-      s += ' ' + formatDescription(v.description) + '\n'
-    }
-    if (v.$ref) {
-      const ref = v.$ref.split('/').pop()
-      s += getRef(ref, schemas, level + 1, { getDescription: true, getRequired })
-    }
-    if (v.items && v.items.$ref) {
-      const ref = v.items.$ref.split('/').pop()
-      s += getRef(ref, schemas, level + 1, { getDescription: false, getRequired })
-    }
-    if (request && level == 1) {
+    s += ' ' + formatDescription(v.description) + '\n'
+    s += getRef(v, level + 1, requestFlag)
+    if (requestFlag) {
       s += '// end::' + k + '[]\n'
     }
-  }
-  if (request) {
-    s += '// end::request-parameters[]\n\n'
   }
 
   return s
