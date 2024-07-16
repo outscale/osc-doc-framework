@@ -106,19 +106,20 @@
         var results = resultsOperations.concat(resultsOtherOperations, resultsSchemas)
         $.each(results, function (index, result) {
           var elem = document.getElementById(result.ref);
+          var text = $(elem).text().replace(" Deprecated", "");
           if (
             !result.ref.startsWith('tocs') && (
               result.ref.toLowerCase().endsWith(searchInput.value.toLowerCase()) ||
               result.ref.toLowerCase().endsWith(searchInput.value.toLowerCase() + 's')
             )
           ) {
-            searchResults.append("<li><a href='#" + result.ref + "' class='main-result'>" + $(elem).text() + "</a></li>");
+            searchResults.append("<li><a href='#" + result.ref + "' class='main-result'>" + text + "</a></li>");
           }
           else if (!result.ref.startsWith('tocs')) {
-            searchResults.append("<li><a href='#" + result.ref + "' class='other-result'>" + $(elem).text() + "</a></li>");
+            searchResults.append("<li><a href='#" + result.ref + "' class='other-result'>" + text + "</a></li>");
           }
           else if (result.ref.startsWith('tocs')) {
-            searchResults.append("<li><a href='#" + result.ref + "' class='other-result'>(Schema) " + $(elem).text() + "</a></li>");
+            searchResults.append("<li><a href='#" + result.ref + "' class='other-result'>(Schema) " + text + "</a></li>");
           }
         });
         highlight.call(searchInput);

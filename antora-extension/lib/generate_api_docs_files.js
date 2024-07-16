@@ -114,6 +114,7 @@ function runShins (markdown, outputFile) {
     if (err) {
       console.error(err)
     } else {
+      html = customizeDeprecatedCalls(html)
       fs.mkdirSync(outputFile.split('/').slice(0, -1).join('/'), { recursive: true })
       fs.writeFileSync(outputFile, ':page-role: apidocs\n:noindex:\n\n++++\n' + html + '\n++++\n')
     }
@@ -127,6 +128,17 @@ function turnOffConsoleLog () {
 
 function turnOnConsoleLog () {
   return CONSOLE_LOG
+}
+
+function customizeDeprecatedCalls (html) {
+  const matches = html.matchAll(/(<h2 id="(.+?)".*?>.+?)<\/h2>\n<aside class="deprecated">.+?<\/aside>/g)
+  for (const match of matches) {
+    html = html.replace(match[0], match[1] + ' <span class="deprecated">Deprecated</span></h2>')
+    const re = new RegExp('(<a href="#' + match[2] + '".+?)</a>')
+    html = html.replace(re, '$1 <span class="deprecated">Deprecated</span></a>')
+  }
+
+  return html
 }
 
 main()
