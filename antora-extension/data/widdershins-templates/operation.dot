@@ -37,7 +37,16 @@ function removeRequestBodyStructure(data) {
 }
 
 function getCallName(operationUniqueName) {
-    return data.operationUniqueName.split('__').slice(-1)[0];
+    return operationUniqueName.split('__').slice(-1)[0];
+}
+
+function getDeprecatedState(description) {
+    const match = description.match('Deprecated:');
+    if (match) {
+        /* Placeholder tag which is further transformed by antora-extension/lib/generate_api_docs_files.js */
+        return '<aside class="deprecated">Deprecated</aside>\n';
+    }
+    return '';
 }
 
 function generateTabs(language_tabs) {
@@ -56,10 +65,9 @@ function generateTabs(language_tabs) {
 {{= data.tags.section }}
 
 ## {{= getCallName(data.operationUniqueName) }}
+{{= getDeprecatedState(data.operation.description) }}
 
-{{? data.operation.operationId}}
-<a id="opId{{=data.operation.operationId}}"></a>
-{{?}}
+<a id="opId{{=data.operation.operationId || data.operation.UniqueName}}"></a>
 
 {{ data.methodUpper = data.method.verb.toUpperCase(); }}
 {{ data.url = data.utils.slashes(data.baseUrl + data.method.path); }}

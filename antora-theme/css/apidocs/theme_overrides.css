@@ -41,3 +41,19 @@ h1 {
 b, strong {
     font-weight: 600;
 }
+
+.deprecated {
+  border-radius: 2px;
+  border-style: solid;
+  border-width: 1px;
+  margin: 2.5px 0.25rem;
+  padding: 0 0.75rem;
+  white-space: nowrap;
+
+  background: var(--feedbackWarning100);
+  border-color: var(--feedbackWarning300);
+  color: var(--feedbackWarning500);
+}
+.toc-link.deprecated {
+  padding: 0 0.5rem;
+}
