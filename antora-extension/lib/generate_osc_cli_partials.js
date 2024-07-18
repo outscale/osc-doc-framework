@@ -77,7 +77,7 @@ function formatMainDescription (description, operation) {
   return description
 }
 
-function formatDescription (description) {
+function formatDescription (description, isList=false) {
   if (description) {
     // Convert line breaks
     description = description.replace(/(<\/?br ?\/?>){2,}/g, '\n')
@@ -93,6 +93,10 @@ function formatDescription (description) {
     // Convert admonitions
     description = description.replace(/(?<=\n)(\*\*)?(\[[A-Z]+?\])(\*\*)?( \+)?\n+?([\s\S]+)$/g, '$2\n====\n$5\n====')
     description = description.replace(/> (\*\*)?(\[[A-Z]+\])(\*\*)?( \+)?\n+?> (.+\n)/g, '$2\n====\n$5\n====')
+    if (isList) {
+      // Adjust admonitions in parameter lists
+      description = description.replace(/^(\[WARNING\]\n====)/g, '\n+\n$1')
+    }
   }
 
   return description
@@ -119,7 +123,7 @@ function getRef (schema, level, requestFlag) {
         s += ' (optional)'
       }
     }
-    s += ' ' + formatDescription(v.description) + '\n'
+    s += ' ' + formatDescription(v.description, isList=true) + '\n'
     s += getRef(v, level + 1, requestFlag)
     if (requestFlag) {
       s += '// end::' + k + '[]\n'

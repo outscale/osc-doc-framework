@@ -233,10 +233,16 @@ a.offset-up {
   position: relative;
   top: calc(-28px - 3.2em);
 }
-.api > p + blockquote p {
+.api > p + blockquote p,
+.api blockquote.admonition-in-table > p {
   background-color: var(--feedbackError100);
   color: var(--neutral1000);
   font-weight: 600;
+}
+.api blockquote.admonition-in-table {
+  margin-left: 0;
+  margin-bottom: 1em;
+  z-index: initial !important;
 }
 
 h3 + p + blockquote {

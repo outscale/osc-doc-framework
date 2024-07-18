@@ -40,11 +40,11 @@ function getCallName(operationUniqueName) {
     return operationUniqueName.split('__').slice(-1)[0];
 }
 
-function getDeprecatedState(description) {
-    const match = description.match('Deprecated:');
+function getDeprecateState(description) {
+    const match = description.match('Deprecation:');
     if (match) {
         /* Placeholder tag which is further transformed by antora-extension/lib/generate_api_docs_files.js */
-        return '<aside class="deprecated">Deprecated</aside>\n';
+        return '----Deprecation----';
     }
     return '';
 }
@@ -65,7 +65,7 @@ function generateTabs(language_tabs) {
 {{= data.tags.section }}
 
 ## {{= getCallName(data.operationUniqueName) }}
-{{= getDeprecatedState(data.operation.description) }}
+{{= getDeprecateState(data.operation.description) }}
 
 <a id="opId{{=data.operation.operationId || data.operation.UniqueName}}"></a>
 

@@ -106,7 +106,7 @@
         var results = resultsOperations.concat(resultsOtherOperations, resultsSchemas)
         $.each(results, function (index, result) {
           var elem = document.getElementById(result.ref);
-          var text = $(elem).text().replace(" Deprecated", "");
+          var text = $(elem).text().replace(" Deprecation", "");
           if (
             !result.ref.startsWith('tocs') && (
               result.ref.toLowerCase().endsWith(searchInput.value.toLowerCase()) ||

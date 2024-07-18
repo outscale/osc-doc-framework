@@ -102,6 +102,15 @@ function concatenateSomePropertyOneOfs(origSchema) {
     return origSchema;
 }
 
+function getDeprecateState(description) {
+    const match = description.match('Deprecation:');
+    if (match) {
+        /* Placeholder tag which is further transformed by antora-extension/lib/generate_api_docs_files.js */
+        return '----Deprecation----';
+    }
+    return '';
+}
+
 function cleanType(type) {
     type = type.replace(/\b\(/, ' (');
     type = type.replace(/\)\(/, ') (');
@@ -250,7 +259,7 @@ data.version = (data.api.info && data.api.info.version && typeof data.api.info.v
 
 |Name|Type|Description|
 |---|---|---|
-{{~ block.rows :p}}|{{=p.displayName}}|{{= cleanType(p.safeType) }}|{{= cleanParameterDescription(p.description) }}{{= printPattern(p) }}|
+{{~ block.rows :p}}|{{=p.displayName}}{{= getDeprecateState(p.description) }}|{{= cleanType(p.safeType) }}|{{= cleanParameterDescription(p.description) }}{{= printPattern(p) }}|
 {{~}}
 
 > Schema

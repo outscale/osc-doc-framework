@@ -43,6 +43,15 @@ function concatenateSomeParameterOneOfs(parameters) {
 }
 data.parameters = concatenateSomeParameterOneOfs(data.parameters);
 
+function getDeprecateState(description) {
+    const match = description.match('Deprecation:');
+    if (match) {
+        /* Placeholder tag which is further transformed by antora-extension/lib/generate_api_docs_files.js */
+        return '----Deprecation----';
+    }
+    return '';
+}
+
 function formatRequired(boolean) {
     if (boolean) {
         return ' <mark>(required)</mark>';
@@ -88,7 +97,7 @@ function printPattern(p) {
 
 |Name|Type|Description|
 |---|---|---|
-{{~ data.parameters :p}}|{{=p.name}}{{= formatRequired(p.required) }}|{{= cleanType(p.safeType) }}|{{= cleanParameterDescription(p.description) }}{{= printPattern(p) }}|
+{{~ data.parameters :p}}|{{=p.name}}{{= formatRequired(p.required) }}{{= getDeprecateState(p.description) }}|{{= cleanType(p.safeType) }}|{{= cleanParameterDescription(p.description) }}{{= printPattern(p) }}|
 {{~}}
 
 {{= data.tags.endSection }}
