@@ -8,7 +8,7 @@ image:https://docs.outscale.com/fr/userguide/_images/Project-Graduated-green.svg
 
 == Prerequisites
 
-* You need to install `node` 16.0.0 or later from the https://nodejs.org/en/[official Node.js website] or via the https://github.com/nvm-sh/nvm[Node Version Manager (`nvm`)].
+* You need to install `node` 20.0.0 or later from the https://nodejs.org/en/[official Node.js website] or via the https://github.com/nvm-sh/nvm[Node Version Manager (`nvm`)].
 * You need to create an Antora documentation project. For more information, see the https://docs.antora.org/antora/latest/[official Antora documentation].
 
 
@@ -35,10 +35,9 @@ ui:
 antora:
   extensions:
     - require: ./node_modules/@antora/lunr-extension
-    - require: ./node_modules/@outscale/osc-doc-framework/antora-search-page-extension
+    - require: ./node_modules/@outscale/osc-doc-framework/antora-special-pages-extension
     - require: ./node_modules/antora-navigator-extension
     - require: ./node_modules/@outscale/osc-doc-framework/antora-extension
-    - require: ./node_modules/@outscale/osc-doc-framework/antora-git-log-extension
     - require: ./node_modules/@outscale/osc-doc-framework/antora-rss-extension
 ----
 
