@@ -38,6 +38,7 @@ main > .content {
   line-height: 1.5;
 }
 .toc-wrapper {
+  font-weight: normal;
   padding-top: 50px;
 }
 @media screen and (min-width: 1301px) {
