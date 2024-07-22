@@ -114,7 +114,7 @@ function runShins (markdown, outputFile) {
     if (err) {
       console.error(err)
     } else {
-      html = postProcessDeprecationTags(html)
+      html = postProcessDeprecateTags(html)
       html = postProcessAdmonitionsInTables(html)
       fs.mkdirSync(outputFile.split('/').slice(0, -1).join('/'), { recursive: true })
       fs.writeFileSync(outputFile, ':page-role: apidocs\n:noindex:\n\n++++\n' + html + '\n++++\n')
@@ -131,17 +131,17 @@ function turnOnConsoleLog () {
   return CONSOLE_LOG
 }
 
-function postProcessDeprecationTags (html) {
-  const headingsWithADeprecationTag = new RegExp('(<h2.*?>.+?)(<\/h2>)\n<p*?>(----Deprecation----)<\/p>', 'g')
-  html = html.replace(headingsWithADeprecationTag, '$1$3$2')
+function postProcessDeprecateTags (html) {
+  const headingsWithADeprecateTag = new RegExp('(<h2.*?>.+?)(<\/h2>)\n<p*?>(----Deprecated----)<\/p>', 'g')
+  html = html.replace(headingsWithADeprecateTag, '$1$3$2')
 
-  let idMatches = html.matchAll(/(?<=<h2 id=").+?(?=".+----Deprecation----)/g)
+  let idMatches = html.matchAll(/(?<=<h2 id=").+?(?=".+----Deprecated----)/g)
   for (const idMatch of idMatches) {
     const linksInLeftMenu = new RegExp('(<a href="#' + idMatch[0] + '".+?)(</a>)', 'g')
-    html = html.replace(linksInLeftMenu, '$1----Deprecation----$2')
+    html = html.replace(linksInLeftMenu, '$1----Deprecated----$2')
   }
 
-  html = html.replace(/----Deprecation----/g, ' <span class="deprecation">Deprecation</span>')
+  html = html.replace(/----Deprecated----/g, ' <span class="deprecated">Deprecated</span>')
 
   return html
 }

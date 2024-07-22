@@ -42,7 +42,7 @@ b, strong {
     font-weight: 600;
 }
 
-.deprecation {
+.deprecated {
   border-radius: 2px;
   border-style: solid;
   border-width: 1px;
@@ -54,6 +54,6 @@ b, strong {
   border-color: var(--feedbackWarning300);
   color: var(--feedbackWarning500);
 }
-.toc-link.deprecation {
+.toc-link.deprecated {
   padding: 0 0.5rem;
 }

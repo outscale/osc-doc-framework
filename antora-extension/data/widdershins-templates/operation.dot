@@ -41,10 +41,10 @@ function getCallName(operationUniqueName) {
 }
 
 function getDeprecateState(description) {
-    const match = description.match('Deprecation:');
+    const match = description.match('Deprecated:');
     if (match) {
         /* Placeholder tag which is further transformed by antora-extension/lib/generate_api_docs_files.js */
-        return '----Deprecation----';
+        return '----Deprecated----';
     }
     return '';
 }
