@@ -1128,12 +1128,12 @@ div.tab.active {
 .content.release-notes h1 .title-bracket {
   white-space: nowrap;
 }
-.content.release-notes .sect1 h2 mark {
+.content.release-notes .sect1 h2 strong {
   background: none;
   color: var(--brandPrimaryDarkBlue500);
   font-weight: normal;
 }
-.content.release-notes .sect1 h2 mark,
+.content.release-notes .sect1 h2 strong,
 .content.release-notes .sect1 h2 .anchor {
   font-size: 24px;
   font-weight: 600;
@@ -1141,11 +1141,11 @@ div.tab.active {
 }
 
 @media screen and (min-width: 800px) {
-  .content.release-notes .sect1 h2 mark {
+  .content.release-notes .sect1 h2 strong {
     position: absolute;
   }
 
-  .content.release-notes .sect1 h2 mark,
+  .content.release-notes .sect1 h2 strong,
   .content.release-notes .sect1 h2 .anchor {
     left: 0;
     top: 13px;

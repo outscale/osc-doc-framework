@@ -29,13 +29,16 @@ filters:
 - misconfiguring
 - multiline
 - multiselect
+- mv
 - netmask
 - openssl
 - passthrough
 - peering
 - plaintext
 - preconfigure
+- presign
 - pseudocode
+- rb
 - reassociate
 - reassociating
 - reassociation

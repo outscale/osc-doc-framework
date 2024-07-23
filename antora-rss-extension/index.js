@@ -109,10 +109,17 @@ function addItems (htmlContent, link, language, selectors, logger) {
 }
 
 function getDate (sectionContent, link, language, title, logger) {
-  const m = $(sectionContent)
+  let m = $(sectionContent)
     .text()
-    .match(/([A-zÀ-ÿ-\d]+) ([A-zÀ-ÿ-\d]+),* (\d\d\d\d)/)
-  if (!m) throwError(link, title, logger)
+    .match(/(?<month>\w+) (?<day>[X\d]{1,2}), (?<year>\d{4})/)
+
+  if (language === 'fr') {
+    m = $(sectionContent)
+      .text()
+      .match(/(?<day>[X\d]{1,2}) (?<month>[A-zÀ-ÿ]+) (?<year>\d{4})/)   
+  }
+
+  if (!m) throwError(language, link, title, logger)
 
   if (language === 'fr') {
     const frToEn = {
@@ -129,20 +136,27 @@ function getDate (sectionContent, link, language, title, logger) {
       novembre: 'November',
       décembre: 'December',
     }
-    m[2] = frToEn[m[2]]
+    m.groups.month = frToEn[m.groups.month]
   }
 
-  const date = new Date(m[1] + ' ' + m[2] + ' ' + m[3] + ' 00:00:00 GMT').toUTCString()
-  if (date === 'Invalid Date') throwError(link, title, logger)
+  const date = new Date(m.groups.day + ' ' + m.groups.month + ' ' + m.groups.year + ' 00:00:00 GMT').toUTCString()
+  if (date === 'Invalid Date') throwError(language, link, title, logger)
   else return date
 }
 
-function throwError (link, title, logger) {
+function throwError (language, link, title, logger) {
   const pageName = link.replace(/^.+\/(.+)\.html/, '$1.adoc')
+  let s1 = 'March 15, 2024'
+  let s2 = 'March XX, 2024'
+  if (language === 'fr') {
+    s1 = '15 mars 2024'
+    s2 = 'XX mars 2024'
+  }
   logger.error(
-    'In "' + pageName + '", the date in the "' + title + '" section is not correctly formatted.'
-    + ' You can use placeholder elements if you don\'t know the final date yet,'
-    + ' but there still has to be three elements in the date (for example: "June XX, 2024").')
+    'In "' + pageName + '", the date format is incorrect in the section "' + title + '".'
+    + ' The date has to be, for example, "' + s1 + '". (But you can use "XX" as placeholder for the day number'
+    + ' if you don\'t know the final date yet, for example "' + s2 + '".)'
+  )
   process.exit(1)
 }
 

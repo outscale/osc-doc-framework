@@ -1,6 +1,0 @@
-extends: existence
-message: "In this release note, the section title \"%s\" is missing a date. It should be formatted, for example: \"== #April 5, 2063# Something Something\""
-level: error
-scope: raw
-raw:
-- '(?<=:page-rssfeed: v2\n[\s\S.]+\n)(== [^#]+?)(?=\n)'

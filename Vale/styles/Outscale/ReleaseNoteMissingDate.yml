@@ -1,0 +1,6 @@
+extends: existence
+message: "In this release note, the date is missing in the section title '%s'. It should be formatted, for example: '== *April 5, 2063* Something Something'."
+level: error
+scope: raw
+raw:
+- '(?<=:page-rssfeed: v2\n[\s\S.]+\n)(== [^\*]+?)(?=\n)'

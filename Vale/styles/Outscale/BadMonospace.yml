@@ -1,0 +1,10 @@
+
+extends: existence
+message: "Missing space in '%s'."
+level: error
+scope: raw
+nonword: true
+tokens:
+- '\B`[^` ]+?`\b\S+'
+- '\S+\b`[^` ]+?`\B'
+- '\S+\b`[^` ]+?`\b\S+'
