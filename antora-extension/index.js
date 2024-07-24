@@ -1,8 +1,13 @@
+const checkUpdate = require('./lib/update-checker')
 const fs = require('fs')
 const resolveResource = require('@antora/content-classifier/lib/util/resolve-resource')
 
 module.exports.register = function ({ config }) {
   const logger = this.getLogger('@outscale/antora-extension')
+
+  this.once('contextStarted', () => {
+    if (!process.env.CI && config.updateChecker === true) checkUpdate()
+  })
 
   this.once('contentAggregated', ({ contentAggregate }) => {
     for (let i = 0, length = contentAggregate.length; i < length; i++) {
