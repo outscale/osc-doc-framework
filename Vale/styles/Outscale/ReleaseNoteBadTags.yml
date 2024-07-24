@@ -1,0 +1,7 @@
+extends: existence
+message: "In the release note entry '%s', the tags list is badly formatted. The tags should be in a bullet list and there should be two bullets."
+level: error
+scope: raw
+raw:
+- '==+ .+(?=\n+\[\.tags\]\n--\n[^\*])|'
+- '==+ .+(?=\n+\[\.tags\]\n--\n(.+\n){3,}--)'

@@ -1,5 +1,5 @@
 extends: existence
-message: "In this release note, the date is missing in the section title '%s'. It should be formatted, for example: '== *April 5, 2063* Something Something'."
+message: "In the release note entry '%s', the date is missing in the section title. It should be formatted, for example: '== *April 5, 2063* Something Something'."
 level: error
 scope: raw
 raw:
