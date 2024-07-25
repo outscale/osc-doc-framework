@@ -172,7 +172,8 @@ div .highlight {
   background: rgba(0, 0, 0, 0.01);
 }
 
-#toc a[href^="#authentication"] {
+#toc a[href^="#pagination"],
+#toc a[href^="#pagination-tutorial"] {
   margin-bottom: 1em;
 }
 #toc li:not(:first-child) a[href$="errors"],
