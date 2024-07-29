@@ -1,7 +1,7 @@
 {
   "private": true,
   "name": "@outscale/osc-doc-framework",
-  "version": "1.12.1",
+  "version": "1.13.0",
   "description": "This package contains tooling used to generate OUTSCALE documentations.",
   "repository": {
     "type": "git",
