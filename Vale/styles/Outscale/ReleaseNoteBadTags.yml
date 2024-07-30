@@ -1,7 +1,13 @@
 extends: existence
-message: "In the release note entry '%s', the tags list is badly formatted. The tags should be in a bullet list and there should be two bullets."
+message: "In the release note entry '%s', the tags list is badly formatted. Ensure the following: 1/ the tags should be in a bullet list; 2/ there should be two bullets; 3/ if there are subsections, the tags should be inside the subsections."
 level: error
 scope: raw
 raw:
+#  1/ the tags should be in a bullet list
 - '==+ .+(?=\n+\[\.tags\]\n--\n[^\*])|'
-- '==+ .+(?=\n+\[\.tags\]\n--\n(.+\n){3,}--)'
+
+#  2/ there should be two bullets
+- '==+ .+(?=\n+\[\.tags\]\n--\n(.+\n){3,}--)|'
+
+#  3/ if there are subsections, the tags should be inside the subsections
+- '== .+(?=\n+\[\.tags\]\n--\n[\s\S]+?--\n+=== )'
