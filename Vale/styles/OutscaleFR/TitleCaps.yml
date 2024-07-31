@@ -19,7 +19,7 @@ exceptions:
 - Microsoft
 - Net
 - Oracle
-- OUTSCALE (Key Management Service|Marketplace|Monitoring Services|Object Storage)
+- (d')?OUTSCALE (Key Management Service|Marketplace|Monitoring Services|Object Storage)
 - Read\w+
 - Red Hat
 - Régions?
