@@ -1,5 +1,6 @@
 const Vinyl = require('vinyl')
 const cheerio = require('cheerio')
+const expandPath = require('@antora/expand-path-helper')
 
 module.exports.register = function ({
   config: {
@@ -91,7 +92,11 @@ function addItems (htmlContent, link, language, selectors, logger) {
     $(section)(titleSelector).remove()
     let description = $(section).html()
     description = description.replace(/\n/g, '')
-    description = description.replace(/href="(?!http)/g, 'href="' + baseUrl)
+    const matches = description.matchAll(/(href|src)="(?<URL>(?!http).+?)"/g)
+    for (const match of matches) {
+      const absoluteUrl = expandPath(match.groups.URL, { cwd: baseUrl })
+      description = description.replace(match.groups.URL, absoluteUrl)
+    }
 
     rss += '  <item>\n'
     rss += '    <title>' + title + '</title>\n'
