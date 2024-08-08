@@ -1,0 +1,6 @@
+extends: existence
+message: "Please replace 'https://docs.outscale.com/<API_NAME>' with 'xref:ROOT::<API_NAME>.adoc'. This will make the link relative and thus compatible with local generation and internal previews, unlike the absolute URL."
+level: error
+scope: raw
+raw:
+- 'https://docs\.[^ ]*?outscale\.com/(api|fcu|lbu|eim|icu|directlink|oos|okms|kms)(-errors)?(/|\.html)?'
