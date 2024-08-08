@@ -93,9 +93,29 @@ function printPattern(p) {
 } }}
 
 {{= data.tags.section }}
-<h3 id="{{=data.operationUniqueSlug}}-parameters">Available Parameters</h3>
+<h3 id="{{=data.operationUniqueSlug}}-parameters">Request Parameters</h3>
 
-|Name|Type|Description|
+{{? data.options.codeSamples || data.operation["x-code-samples"] }}
+{{= generateTabs(data.options.language_tabs) }}
+
+> Examples<a name="{{= getCallName(data.operationUniqueName) }}-req-example.sh"></a>
+
+{{= data.utils.getCodeSamples(data) }}
+{{?}}
+
+{{? !data.options.codeSamples }}
+{{? data.operation.requestBody}}
+> Examples
+
+{{? data.bodyParameter.exampleValues.description }}
+> {{= data.bodyParameter.exampleValues.description }}
+{{?}}
+
+{{= data.utils.getBodyParameterExamples(data) }}
+{{?}}
+{{?}}
+
+|Request Parameter|Type|Description|
 |---|---|---|
 {{~ data.parameters :p}}|{{=p.name}}{{= formatRequired(p.required) }}{{= getDeprecateState(p.description) }}|{{= cleanType(p.safeType) }}|{{= cleanParameterDescription(p.description) }}{{= printPattern(p) }}|
 {{~}}
