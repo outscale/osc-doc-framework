@@ -104,7 +104,7 @@ function formatDescription (description, isList=false) {
 
 function convertLink(match, p1, p2) {
   if (match.includes('](#')) {
-    return 'https://docs.outscale.com/api' + p2 + '[' + p1 + ']'
+    return 'xref:ROOT::api.adoc' + p2 + '[' + p1 + ']'
   } else {
     return p2 + '[' + p1 + ']'
   }
