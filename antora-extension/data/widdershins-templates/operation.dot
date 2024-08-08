@@ -29,9 +29,78 @@ function supportMultipleExamples(data) {
     return data;
 }
 
-function removeRequestBodyStructure(data) {
-    if (data.bodyParameter.schema && data.options.omitBody && data.bodyParameter.schema["x-widdershins-oldRef"]) {
-        data.parameters.shift();
+function fakeProdConsForResponse(data) {
+    data.consumes = [];
+    data.bodyResponse = {};
+    let op = data.method.operation;
+    let first = Object.keys(op.responses)[0];
+    for (var rp in op.responses[first].content) {
+        data.consumes.push(rp);
+        data.bodyResponse.present = true;
+        data.bodyResponse.contentType = rp;
+        if (op.responses[first].content[rp].schema) {
+            let schema = op.responses[first].content[rp].schema;
+            if (schema['x-widdershins-oldRef']) {
+                data.bodyResponse.refName = schema['x-widdershins-oldRef'].replace('#/components/schemas/', '');
+            }
+            else {
+                if ((schema.type === 'array') && (schema.items) && (schema.items['x-widdershins-oldRef'])) {
+                    data.bodyResponse.refName = schema.items['x-widdershins-oldRef'].replace('#/components/schemas/', '');
+                }
+
+            }
+        }
+        data.bodyResponse.schema = op.responses[first].content[rp].schema;
+    }
+}
+
+function fakeBodyResponse(data) {
+    if (!data.firstResponse) data.firstResponse = [];
+    let bodyParams = [];
+    if (data.bodyResponse.schema) {
+        let param = {};
+        param.in = 'body';
+        param.schema = data.bodyResponse.schema;
+        param.name = 'body';
+        if (data.operation.requestBody) {
+            param.required = data.operation.requestBody.required || false;
+            param.description = data.operation.requestBody.description;
+            if (data.options.useBodyName && data.operation['x-body-name']) {
+                param.name = data.operation['x-body-name'];
+            }
+        }
+        param.refName = data.bodyResponse.refName;
+        if (!data.options.omitBody || param.schema["x-widdershins-oldRef"]) {
+            bodyParams.push(param);
+        }
+
+        if ((param.schema.type === 'object') && (data.options.expandBody || (!param.schema["x-widdershins-oldRef"]))) {
+            let offset = (data.options.omitBody ? -1 : 0);
+            let props = data.utils.schemaToArray(data.bodyResponse.schema, offset, { trim: true }, data);
+
+            for (let block of props) {
+                for (let prop of block.rows) {
+                    let param = {};
+                    param.in = 'body';
+                    param.schema = prop.schema;
+                    param.name = prop.displayName;
+                    param.required = prop.required;
+                    param.description = prop.description;
+                    param.safeType = prop.safeType;
+                    param.depth = prop.depth;
+                    bodyParams.push(param);
+                }
+            }
+        }
+
+        if (!data.firstResponse || !Array.isArray(data.firstResponse)) data.firstResponse = [];
+        data.firstResponse = data.firstResponse.concat(bodyParams);
+    }
+}
+
+function omitBody(data, body, object) {
+    if (data[body].schema && data.options.omitBody && data[body].schema["x-widdershins-oldRef"]) {
+        data[object].shift();
     }
     return data;
 }
@@ -72,8 +141,11 @@ function generateTabs(language_tabs) {
 {{ data.methodUpper = data.method.verb.toUpperCase(); }}
 {{ data.url = data.utils.slashes(data.baseUrl + data.method.path); }}
 {{ data.parameters = data.operation.parameters; }}
+{{ data.firstResponse = data.operation.firstResponse; }}
 {{ data.utils.fakeProdCons(data); supportMultipleExamples(data); }}
-{{ data.utils.fakeBodyParameter(data); removeRequestBodyStructure(data); }}
+{{ data.utils.fakeBodyParameter(data); omitBody(data, 'bodyParameter', 'parameters'); }}
+{{ fakeProdConsForResponse(data); }}
+{{ fakeBodyResponse(data); omitBody(data, 'bodyResponse', 'firstResponse'); }}
 {{ data.utils.mergePathParameters(data); }}
 {{ data.utils.getParameters(data); }}
 
@@ -90,26 +162,6 @@ function generateTabs(language_tabs) {
 {{#def.authentication_none}}
 {{?}}
 {{= data.tags.endSection }}
-
-{{? data.options.codeSamples || data.operation["x-code-samples"] }}
-{{= generateTabs(data.options.language_tabs) }}
-
-> Code samples<a name="{{= getCallName(data.operationUniqueName) }}-req-example.sh"></a>
-
-{{= data.utils.getCodeSamples(data) }}
-{{?}}
-
-{{? !data.options.codeSamples }}
-{{? data.operation.requestBody}}
-> Example requests
-
-{{? data.bodyParameter.exampleValues.description }}
-> {{= data.bodyParameter.exampleValues.description }}
-{{?}}
-
-{{= data.utils.getBodyParameterExamples(data) }}
-{{?}}
-{{?}}
 
 {{? data.parameters && data.parameters.length }}
 {{#def.parameters}}

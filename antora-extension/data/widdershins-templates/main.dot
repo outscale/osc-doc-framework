@@ -255,9 +255,7 @@ data.version = (data.api.info && data.api.info.version && typeof data.api.info.v
 {{= block.title}}{{= '\n\n'}}
 {{?}}
 
-### Properties
-
-|Name|Type|Description|
+|Property|Type|Description|
 |---|---|---|
 {{~ block.rows :p}}|{{=p.displayName}}{{= getDeprecateState(p.description) }}|{{= cleanType(p.safeType) }}|{{= cleanParameterDescription(p.description) }}{{= printPattern(p) }}|
 {{~}}

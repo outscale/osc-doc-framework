@@ -14,22 +14,23 @@ main > .content {
   color: var(--neutral1000);
   padding: 0 60px;
 }
-.api h1 {
-  border-color: #e1e1e1;
+.api h1, .api h2, .api h3, .api h4, .api h5, .api h6 {
+  color: var(--brandPrimaryDarkBlue500);
+  font-weight: 500;
 }
 .api > h1:first-of-type {
   margin-top: -3rem;
   padding-top: 5rem;
 }
-
-.api h1, .api h2, .api h3, .api h4, .api h5, .api h6 {
-  color: var(--brandPrimaryDarkBlue500);
-  font-weight: 500;
+.api h1 {
+  border-color: #e1e1e1;
   font-size: 24px;
 }
-
-.api h2, .api h3, .api h4, .api h5, .api h6 {
+.api h2 {
   font-size: 20px;
+}
+.api h3, .api h4, .api h5, .api h6 {
+  font-size: 17px;
 }
 
 .api code, .api pre {
@@ -49,6 +50,9 @@ main > .content {
     font-size: 12px;
     width: 300px;
     box-sizing: border-box;
+  }
+  .page-wrapper {
+    margin-left: 300px;
   }
 }
 .toc-wrapper a {
@@ -187,15 +191,6 @@ div .highlight {
   display: none;
 }
 
-/* @media screen and (max-width: 1300px) { */
-  .dark-box {
-    display: none;
-  }
-  .api > h1, .api > h2, .api > h3, .api > h4, .api > h5, .api > h6, .api > p, .api > table, .api > ul, .api > ol, .api > aside, .api > dl {
-    margin-right: 0;
-  }
-/* } */
-
 .api h1 {
   padding-top: 2.5em;
 }
@@ -205,24 +200,6 @@ div .highlight {
   padding-bottom: 0;
 }
 
-/* @media screen and (max-width: 1300px) { */
-  .api pre,
-  .api blockquote,
-  .page-wrapper .lang-selector {
-    width: auto;
-    float: none;
-    margin: 0px 20px 0px 20px;
-  }
-/* } */
-
-/* @media screen and (min-width: 1301px) {
-  :not(.lang-selector):not(table) + blockquote {
-    float: initial;
-    position: initial;
-    margin: 1.5em calc(50% + 1.5em) 20px 1.5em;
-    width: initial;
-  }
-} */
 
 .api pre {
   padding-top: 8.25px;
@@ -231,12 +208,21 @@ div .highlight {
 .api > pre + h1, .api > blockquote + h1, .api > pre + h2, .api > blockquote + h2, .api > pre + h3, .api > pre + h4, .api > blockquote + h4, .api > pre + h5, .api > blockquote + h5, .api > pre + h6, .api > blockquote + h6, .api > pre + p, .api > blockquote + p, .api > pre + table, .api > blockquote + table, .api > pre + ul, .api > blockquote + ul, .api > pre + ol, .api > blockquote + ol, .api > pre + aside, .api > blockquote + aside, .api > pre + dl, .api > blockquote + dl {
   margin-top: 28px;
 }
-.api >  h2 + a + a + a + a + table {
-  margin-top: 0.8em;
+.api table + p,
+.api pre + p,
+.api details + p {
+  margin-top: 15px;
 }
 a.offset-up {
   position: relative;
   top: calc(-28px - 3.2em);
+}
+.api h2[id^="tocs_"] + .offset-up + .offset-up + .offset-up + .offset-up + p {
+  margin-top: 1em;
+  margin-bottom: 2.5em;
+}
+.api h2[id^="tocs_"] + .offset-up + .offset-up + .offset-up + .offset-up + table {
+  margin-top: 2.5em;
 }
 .api > p + blockquote p,
 .api blockquote.admonition-in-table > p {
@@ -286,25 +272,12 @@ h3 + p + blockquote a {
   left: 300px;
 }
 
-@media screen and (min-width: 1301px) {
-  .page-wrapper {
-    margin-left: 300px;
-  }
-}
-
 .page-wrapper .lang-selector {
   position: initial;
   background-color: var(--outscale-blue-darker);
   border-bottom: 5px solid #2E3336;
   font-size: 12px;
 }
-/* @media screen and (min-width: 1301px) {
-  .page-wrapper .lang-selector {
-    float:right;
-    width: 50%;
-    margin-top: 44px;
-  }
-} */
 .page-wrapper .lang-selector a:link,
 .page-wrapper .lang-selector a:visited {
   color: #fff;
@@ -323,6 +296,9 @@ h3 + p + blockquote a {
 .api table td:first-child {
   white-space: nowrap;
 }
+.api table td {
+  max-width: 54.2rem;
+}
 
 .api pre.highlight.tab:not(.tab-bash):not(.tab-json) {
   display: none;
@@ -338,12 +314,6 @@ h3 + p + blockquote a {
   padding-bottom: 0.6em;
   margin: 1.5em 20px;
 }
-
-/* @media screen and (min-width: 1301px) {
-  .api aside {
-    margin: 1.5em calc(50% + 1.5em) 20px 1.5em;
-  }  
-} */
 
 .api aside.warning {
   background-color: var(--feedbackError100);
@@ -374,6 +344,16 @@ color: var(--brandPrimaryIndigo600);
 .api .search-highlight {
   border: none;
   background: #f7e63366;
+}
+
+.api summary::-webkit-details-marker {
+  display: none;
+}
+.api details summary pre {
+  padding-bottom: 10px !important;
+}
+.api details:not([open]) summary code:after {
+  content: ' (click to expand)';
 }
 
 @media (max-width: 1023px) {
@@ -542,6 +522,46 @@ color: var(--brandPrimaryIndigo600);
   position: relative;
   z-index: -1;
 }
+
+/* @media screen and (max-width: 1300px) { */
+  .dark-box {
+    display: none;
+  }
+  .api > h1, .api > h2, .api > h3, .api > h4, .api > h5, .api > h6, .api > p, .api > table, .api > ul, .api > ol, .api > aside, .api > dl {
+    margin-right: 0;
+  }
+
+  .api pre,
+  .api blockquote,
+  .page-wrapper .lang-selector {
+    width: auto;
+    float: none;
+    margin: 0px 20px 0px 20px;
+  }
+/* } */
+/* @media screen and (min-width: 1301px) {
+  .api aside {
+    margin: 1.5em calc(50% + 1.5em) 20px 1.5em;
+  }  
+  .reqresp {
+    display: flex;
+  }
+  .reqresp .examples {
+	  order: 1;
+    width: 50%;
+    position: sticky;
+    height: 100%;
+    top: var(--topbar-height);
+  }
+  .reqresp .examples > * {
+    width: 100%;
+  }
+  .reqresp table {
+	  order: 0;
+    height: fit-content;
+    width: 50%;
+  }
+} */
 
 #errors + div {
   padding: 0 28px;

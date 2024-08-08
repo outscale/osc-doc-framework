@@ -42,7 +42,8 @@ async function main () {
     api = await fillApiExamples(api, examplesFile, outputFileStem)
   }
 
-  const apiMarkdown = await runWiddershins(api, languages)
+  let apiMarkdown = await runWiddershins(api, languages)
+  apiMarkdown = postProcessIndentsAfterWiddershins(apiMarkdown)
   runShins(apiMarkdown, `${outputDir}/modules/ROOT/pages/${outputFileStem}.adoc`)
 
   if (errorsFile) {
@@ -101,6 +102,38 @@ function getLanguageTabs (languages) {
   return tabs
 }
 
+function postProcessIndentsAfterWiddershins (apiMarkdown) {
+  const tables = apiMarkdown.match(/(?<=\n)\|[\s\S]+?\|(?=\n\n)/g)
+  for (const table of tables) {
+    const lines = table.split('\n')
+    for (let i = 0; i < lines.length; i++) {
+      const indents = lines[i].matchAll(/»/g)
+      for (const indent of indents) {
+        let k
+        for (k = i + 1; k < lines.length && lines[k].substring(indent.index, indent.index + 1) === '»'; k++) {}
+        for (k = k - 1; k > i && lines[k].substring(indent.index + 1, indent.index + 2) === '»'; k--) {
+          lines[k] = lines[k].substring(0, indent.index) + '▉' + lines[k].substring(indent.index + 1)
+        }
+      }
+      const rightIndent = lines[i].match(/»(?= )/)
+      if (rightIndent) {
+        let pipe = '├'
+        if (i + 1 === lines.length || lines[i + 1].substring(rightIndent.index, rightIndent.index + 1) !== '»') {
+          pipe = '└'
+        }
+        lines[i] = lines[i].substring(0, rightIndent.index) + pipe + lines[i].substring(rightIndent.index + 1)
+      }
+    }
+    let newTable = lines.join('\n').replace(/»/g, '│')
+    if (newTable.includes('$')) {
+      newTable = newTable.replace(/\$/g, '$$$$')
+    }
+    apiMarkdown = apiMarkdown.replace(table, newTable)
+  }
+
+  return apiMarkdown
+}
+
 function runShins (markdown, outputFile) {
   console.log = turnOffConsoleLog()
 
@@ -114,6 +147,8 @@ function runShins (markdown, outputFile) {
     if (err) {
       console.error(err)
     } else {
+      html = postProcessIndentsAfterShins(html)
+      html = postProcessCollapsibles(html)
       html = postProcessDeprecateTags(html)
       html = postProcessAdmonitionsInTables(html)
       fs.mkdirSync(outputFile.split('/').slice(0, -1).join('/'), { recursive: true })
@@ -123,12 +158,30 @@ function runShins (markdown, outputFile) {
   console.log = turnOnConsoleLog()
 }
 
-function turnOffConsoleLog () {
-  return function () {}
+function postProcessIndentsAfterShins (html) {
+  function replacer1 (match, p1) {
+    return '<td class="indent-' + p1.length + '">' + p1.replace(/[├│└▉]/g, replacer2)
+  }
+  function replacer2 (match, offset) {
+    let type
+    if (match === '│') type = 'pipe'
+    else if (match === '├') type = 'pipe node'
+    else if (match === '└') type = 'pipe node last'
+    else if (match === '▉') return ''
+    return '<span class="' + type + ' indent-' + (offset + 1) + '"></span>'
+  }
+  html = html.replace(/<td>([├│└▉]+?) /g, replacer1)
+
+  return html
 }
 
-function turnOnConsoleLog () {
-  return CONSOLE_LOG
+function postProcessCollapsibles (html) {
+  html = html.replace(/<p>----details-start( open)?----<\/p>/g, '<details$1>')
+  html = html.replace(/<p>----summary-start----<\/p>/g, '<summary>')
+  html = html.replace(/<p>----summary-end----<\/p>/g, '</summary>')
+  html = html.replace(/<p>----details-end----<\/p>/g, '</details>')
+
+  return html
 }
 
 function postProcessDeprecateTags (html) {
@@ -153,6 +206,14 @@ function postProcessAdmonitionsInTables (html) {
   )
 
   return html
+}
+
+function turnOffConsoleLog () {
+  return function () {}
+}
+
+function turnOnConsoleLog () {
+  return CONSOLE_LOG
 }
 
 main()

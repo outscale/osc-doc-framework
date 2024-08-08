@@ -1,5 +1,9 @@
 /* place your custom CSS overrides here */
 
+:root {
+  --base-indent: 20px;
+}
+
 .toc-wrapper {
     background-color: var(--brandPrimaryDarkBlue500);
 }
@@ -57,3 +61,33 @@ b, strong {
 .toc-link.deprecated {
   padding: 0 0.5rem;
 }
+
+.api table td {
+  position: relative;
+}
+span.pipe {
+  border-left: 1px solid var(--neutral700);
+  position: absolute;
+  top: -0.5em;
+  bottom: 0;
+  left: 0;
+}
+span.pipe.last {
+  height: 31.5px;
+}
+span.pipe.node:after {
+  content: "–";
+  color: var(--neutral700);
+  position: absolute;
+  top: 18px;
+  left: -1px;
+}
+.indent-1 {padding-left: calc(var(--base-indent) * 1.5) !important; margin-left: var(--base-indent);}
+.indent-2 {padding-left: calc(var(--base-indent) * 2.5) !important; margin-left: calc(var(--base-indent) * 2);}
+.indent-3 {padding-left: calc(var(--base-indent) * 3.5) !important; margin-left: calc(var(--base-indent) * 3);}
+.indent-4 {padding-left: calc(var(--base-indent) * 4.5) !important; margin-left: calc(var(--base-indent) * 4);}
+.indent-5 {padding-left: calc(var(--base-indent) * 5.5) !important; margin-left: calc(var(--base-indent) * 5);}
+.indent-6 {padding-left: calc(var(--base-indent) * 6.5) !important; margin-left: calc(var(--base-indent) * 6);}
+.indent-7 {padding-left: calc(var(--base-indent) * 7.5) !important; margin-left: calc(var(--base-indent) * 7);}
+.indent-8 {padding-left: calc(var(--base-indent) * 8.5) !important; margin-left: calc(var(--base-indent) * 8);}
+.indent-9 {padding-left: calc(var(--base-indent) * 9.5) !important; margin-left: calc(var(--base-indent) * 9);}

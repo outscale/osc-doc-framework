@@ -38,9 +38,17 @@ function getResponseExamples(data) {
     let lastDesc = '';
     for (let example of examples) {
         if (example.summary && example.summary !== lastDesc) {
+            if (example.summary === examples[0].summary) {
+                content += '----details-start open----\n\n';
+            }
+            else {
+                content += '----details-start----\n\n';
+            }
+            content += '----summary-start----\n';
             content += '```bash\n';
             content += '# ' + example.summary + '\n';
             content += '```\n\n';
+            content += '----summary-end----\n';
             lastDesc = example.summary + '\n';
         }
         if (_doContentType(example.cta, 'json')) {
@@ -67,6 +75,9 @@ function getResponseExamples(data) {
             content += '```xml\n';
             content += xml.getXml(JSON.parse(data.utils.safejson(xmlObj)), '@', '', true, '  ', false) + '\n';
             content += '```\n\n';
+        }
+        if (example.summary && example.summary !== lastDesc) {
+            content += '----details-end----\n\n';
         }
     }
     return content;
@@ -100,10 +111,53 @@ function _doContentType(ctTypes, ctClass) {
     return false;
 }
 
+function printResponse200(response) {
+    if (response.schema === 'None') {
+        return '**Response ' + response.status + '**:';
+    }
+    return '**Response ' + response.status + '** (' + response.schema + '):';
+}
+
+function printErrorResponses(responses) {
+    let s = '';
+    if (responses.length) {
+        s += 'Other responses:\n';
+        for (const response of responses) {
+            s += '* **Response ' + response.status + '** (' + response.schema + ')';
+            if (response.description) {
+                s += ': ' + response.description;
+            }
+            s += '\n';
+        }
+    }
+    return s;
+}
+
+function cleanType(type) {
+    type = type.replace(/\b\(/, ' (');
+    type = type.replace(/\)\(/, ') (');
+    type = type.replace('¦null', '');
+    return type;
+}
+
+function cleanParameterDescription(description) {
+    if (description) return description.replace(/\n/g, '');
+    else return '';
+}
+
 function printEnum(p) {
     let s = '';
     if (p.schema.enum) {
         s += '<br />Possible values: `' + p.schema.enum.join('`, `') + '`.';
+    }
+    return s;
+}
+
+function printPattern(p) {
+    let s = p.schema.items?.pattern || p.schema.pattern || '';
+    if (s) {
+        s = s.replaceAll('|', '\\|');
+        s = '<br /><span>Pattern: `' + s + '`</span>';
     }
     return s;
 }
@@ -121,17 +175,24 @@ function getCallName(operationUniqueName) {
 {{~}}
 
 {{= data.tags.section }}
-<h3 id="{{=data.operationUniqueSlug}}-responses">Responses</h3>
-
-|Status|Description|Schema|
-|---|---|---|
-{{~ data.responses :r}}|{{=r.status}}|{{=r.description || ''}}|{{=r.schema}}|
-{{~}}
+<h3 id="{{=data.operationUniqueSlug}}-responses">Response Elements</h3>
 
 {{? data.responseSchemas && Object.keys(response.content).length }}
-> Example responses<a name="{{= getCallName(data.operationUniqueName) }}-res-example.json"></a>
+> Examples<a name="{{= getCallName(data.operationUniqueName) }}-res-example.json"></a>
 
 {{= evaluateResponses(data) }}
+{{?}}
+
+{{= printResponse200(data.responses.splice(0, 1)[0]) }}
+
+{{? data.firstResponse.length }}
+|Response Element|Type|Description|
+|---|---|---|
+{{~ data.firstResponse :p}}|{{=p.name}}{{= getDeprecateState(p.description) }}|{{= cleanType(p.safeType) }}|{{= cleanParameterDescription(p.description) }}{{= printPattern(p) }}|
+{{~}}
+
+{{??}}
+Returns an empty body.
 {{?}}
 
 {{ data.responseSchemas = false; }}
@@ -180,4 +241,7 @@ Status Code **{{=response.status}}**
 {{~}}
 
 {{?}}
+
+{{= printErrorResponses(data.responses) }}
+
 {{= data.tags.endSection }}
