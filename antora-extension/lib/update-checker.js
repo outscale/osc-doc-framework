@@ -10,8 +10,12 @@ const ref = 'main'
 async function checkUpdate () {
   const log = await git.log({ fs, dir, depth: 1 })
   const localCommitId = log[0].oid
+  let url = await git.getConfig({ fs, dir, path: 'remote.origin.url' })
+  if (url.startsWith('git@')) {
+    url = url.replace(/git@(.+?):/, 'https://$1/')
+  }
 
-  const fetch = await git.fetch({ fs, http, onAuth, dir, singleBranch: true, ref, depth: 1, singleBranch: true })
+  const fetch = await git.fetch({ fs, http, onAuth, dir, url, singleBranch: true, ref, depth: 1, singleBranch: true })
   const remoteCommitId = fetch.fetchHead
 
   if (localCommitId !== remoteCommitId) {
