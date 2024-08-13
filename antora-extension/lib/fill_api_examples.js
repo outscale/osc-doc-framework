@@ -16,9 +16,7 @@ async function runInCli () {
   let api = helperFunctions.parseYaml(args['--api'])
   const examples = helperFunctions.parseYaml(args['--examples'])
   api = insertExamples(api, examples, args['--api'])
-  if (process.env.OPENAPI_EXAMPLES_VALIDATOR === "true") {
-    await runOpenapiExamplesValidator(api)
-  }
+  await runOpenapiExamplesValidator(api)
   const s = helperFunctions.dumpYaml(api)
   fs.writeFileSync(args['--output'], s)
 }
@@ -27,9 +25,7 @@ async function runInNode (api, examplesFile, outputFileStem) {
   const examples = helperFunctions.parseYaml(examplesFile)
   const apiName = outputFileStem + ' v' + api.info.version
   api = await insertExamples(api, examples, apiName)
-  if (process.env.OPENAPI_EXAMPLES_VALIDATOR === "true") {
-    await runOpenapiExamplesValidator(api)
-  }
+  await runOpenapiExamplesValidator(api)
 
   return api
 }
@@ -73,7 +69,7 @@ async function runOpenapiExamplesValidator (api) {
     if (e.params.additionalProperty) msg += " ('" + e.params.additionalProperty + "')"
     console.error(msg)
   }
-  if (result.errors.length > 0) {
+  if (process.env.OPENAPI_EXAMPLES_VALIDATOR === "true" && result.errors.length > 0) {
     process.exit(1)
   }
 }
