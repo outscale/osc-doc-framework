@@ -4,6 +4,7 @@
     const lbuActions = ["elasticloadbalancing:*", ["elasticloadbalancing:Describe*"], "elasticloadbalancing:AddTags", "elasticloadbalancing:ConfigureHealthCheck", "elasticloadbalancing:CreateAppCookieStickinessPolicy", "elasticloadbalancing:CreateLBCookieStickinessPolicy", "elasticloadbalancing:CreateLoadBalancer", "elasticloadbalancing:CreateLoadBalancerListeners", "elasticloadbalancing:CreateLoadBalancerPolicy", "elasticloadbalancing:DeleteLoadBalancer", "elasticloadbalancing:DeleteLoadBalancerListeners", "elasticloadbalancing:DeleteLoadBalancerPolicy", "elasticloadbalancing:DeregisterInstancesFromLoadBalancer", "elasticloadbalancing:DescribeInstanceHealth", "elasticloadbalancing:DescribeLoadBalancerAttributes", "elasticloadbalancing:DescribeLoadBalancers", "elasticloadbalancing:DescribeTags", "elasticloadbalancing:ModifyLoadBalancerAttributes", "elasticloadbalancing:RegisterInstancesWithLoadBalancer", "elasticloadbalancing:RemoveTags", "elasticloadbalancing:SetLoadBalancerListenerSSLCertificate", "elasticloadbalancing:SetLoadBalancerPoliciesForBackendServer", "elasticloadbalancing:SetLoadBalancerPoliciesOfListener"]
     const eimActions = ["iam:*", ["iam:Get*", "iam:List*"], "iam:AddUserToGroup", "iam:AttachGroupPolicy", "iam:AttachUserPolicy", "iam:CreateAccessKey", "iam:CreateGroup", "iam:CreatePolicy", "iam:CreatePolicyVersion", "iam:CreateUser", "iam:DeleteAccessKey", "iam:DeleteGroup", "iam:DeleteGroupPolicy", "iam:DeletePolicy", "iam:DeletePolicyVersion", "iam:DeleteServerCertificate", "iam:DeleteUser", "iam:DeleteUserPolicy", "iam:DetachGroupPolicy", "iam:DetachUserPolicy", "iam:GetGroup", "iam:GetGroupPolicy", "iam:GetPolicy", "iam:GetPolicyVersion", "iam:GetServerCertificate", "iam:GetUser", "iam:GetUserPolicy", "iam:ListAccessKeys", "iam:ListAttachedGroupPolicies", "iam:ListAttachedUserPolicies", "iam:ListGroupPolicies", "iam:ListGroups", "iam:ListGroupsForUser", "iam:ListPolicies", "iam:ListPolicyVersions", "iam:ListServerCertificates", "iam:ListUserPolicies", "iam:ListUsers", "iam:PutGroupPolicy", "iam:PutUserPolicy", "iam:RemoveUserFromGroup", "iam:SetDefaultPolicyVersion", "iam:UpdateAccessKey", "iam:UpdateGroup", "iam:UpdateServerCertificate", "iam:UpdateUser", "iam:UploadServerCertificate"]
     const directlinkActions = ["directconnect:*", ["directconnect:Describe*"], "directconnect:AllocatePrivateVirtualInterface", "directconnect:ConfirmPrivateVirtualInterface", "directconnect:CreateConnection", "directconnect:CreatePrivateVirtualInterface", "directconnect:DeleteConnection", "directconnect:DeleteVirtualInterface", "directconnect:DescribeConnections", "directconnect:DescribeLocations", "directconnect:DescribeVirtualGateways", "directconnect:DescribeVirtualInterfaces"]
+    const policyMaxLength = 5120
     const text = {
         "api": {"en": "OUTSCALE API", "fr": "API OUTSCALE"},
         "allowDeny": {"en": "Allow or deny:", "fr": "Autoriser ou interdire :"},
@@ -21,7 +22,11 @@
         "generateJson": {"en": "Generate policy", "fr": "Générer la politique"},
         "labelJson": {"en": "JSON:", "fr": "JSON :"},
         "labelJsonString": {"en": "JSON string (for use with OSC CLI):", "fr": "JSON dans une chaîne de texte (pour utilisation avec OSC CLI) :"},
-        "errorNeedOneAction": {"en": "Error: You must select at least one action in statement #", "fr": "Erreur : Vous devez sélectionner au moins une action dans la déclaration #"},
+        "error": {"en": "Error in statement #", "fr": "Erreur dans la déclaration #"},
+        "errorNeedOneAction": {"en": ": You must select at least one action.", "fr": " : Vous devez sélectionner au moins une action."},
+        "errorPolicyTooLong_1": {"en": ": The specified policy is too long (", "fr": " : La politique spécifiée est trop longue ("},
+        "errorPolicyTooLong_2": {"en": " characters not counting whitespaces). The maximum length for a policy is ", "fr": " caractères sans compter les espaces blancs). La longueur maximale d'une politique est de "},
+        "errorPolicyTooLong_3": {"en": " characters not counting whitespaces.", "fr": " caractères sans compter les espaces blancs."},
         "disclaimer": {"en": "Note: Make sure you verify that this policy correctly fits your needs before you apply it.", "fr": "Note : Vérifiez bien que cette politique remplit correctement vos besoins avant de l'appliquer."},
     }
     const lang = document.querySelector("html")["lang"]
@@ -255,7 +260,13 @@
                 "Resource": ["*"],
             }
             obj.Statement.push(Statement)
-            if (selectedActions.length === 0) return [text.errorNeedOneAction[lang] + i, true]
+            if (selectedActions.length === 0) {
+                return [text.error[lang] + i + text.errorNeedOneAction[lang], true]
+            }
+            const length = JSON.stringify(Statement).length
+            if (length > policyMaxLength) {
+                return [text.error[lang] + i + text.errorPolicyTooLong_1[lang] + length + text.errorPolicyTooLong_2[lang] + policyMaxLength + text.errorPolicyTooLong_3[lang], true]
+            }
         }
         return [JSON.stringify(obj, null, 2), false]
     }
