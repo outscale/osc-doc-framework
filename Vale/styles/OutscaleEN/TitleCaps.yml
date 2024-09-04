@@ -11,6 +11,7 @@ exceptions:
 - fGPUs?
 - inWebo
 - macOS
+- oapi-cli
 - optional
 - s3
 - s3api
