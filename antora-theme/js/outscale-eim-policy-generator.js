@@ -1,16 +1,19 @@
 (function () {
-    const oapiActions = ["api:*", "api:Read*", "api:AcceptNetPeering", "api:AddUserToUserGroup", "api:CheckAuthentication", "api:CreateAccessKey", "api:CreateAccount", "api:CreateApiAccessRule", "api:CreateCa", "api:CreateClientGateway", "api:CreateDedicatedGroup", "api:CreateDhcpOptions", "api:CreateDirectLink", "api:CreateDirectLinkInterface", "api:CreateFlexibleGpu", "api:CreateImage", "api:CreateImageExportTask", "api:CreateInternetService", "api:CreateKeypair", "api:CreateListenerRule", "api:CreateLoadBalancer", "api:CreateLoadBalancerListeners", "api:CreateLoadBalancerPolicy", "api:CreateLoadBalancerTags", "api:CreateNatService", "api:CreateNet", "api:CreateNetAccessPoint", "api:CreateNetPeering", "api:CreateNic", "api:CreatePolicy", "api:CreatePolicyVersion", "api:CreateProductType", "api:CreatePublicIp", "api:CreateRoute", "api:CreateRouteTable", "api:CreateSecurityGroup", "api:CreateSecurityGroupRule", "api:CreateServerCertificate", "api:CreateSnapshot", "api:CreateSnapshotExportTask", "api:CreateSubnet", "api:CreateTags", "api:CreateUser", "api:CreateUserGroup", "api:CreateVirtualGateway", "api:CreateVmGroup", "api:CreateVmTemplate", "api:CreateVms", "api:CreateVolume", "api:CreateVpnConnection", "api:CreateVpnConnectionRoute", "api:DeleteAccessKey", "api:DeleteApiAccessRule", "api:DeleteCa", "api:DeleteClientGateway", "api:DeleteDedicatedGroup", "api:DeleteDhcpOptions", "api:DeleteDirectLink", "api:DeleteDirectLinkInterface", "api:DeleteExportTask", "api:DeleteFlexibleGpu", "api:DeleteImage", "api:DeleteInternetService", "api:DeleteKeypair", "api:DeleteListenerRule", "api:DeleteLoadBalancer", "api:DeleteLoadBalancerListeners", "api:DeleteLoadBalancerPolicy", "api:DeleteLoadBalancerTags", "api:DeleteNatService", "api:DeleteNet", "api:DeleteNetAccessPoint", "api:DeleteNetPeering", "api:DeleteNic", "api:DeletePolicy", "api:DeletePolicyVersion", "api:DeletePublicIp", "api:DeleteRoute", "api:DeleteRouteTable", "api:DeleteSecurityGroup", "api:DeleteSecurityGroupRule", "api:DeleteServerCertificate", "api:DeleteSnapshot", "api:DeleteSubnet", "api:DeleteTags", "api:DeleteUser", "api:DeleteUserGroup", "api:DeleteUserGroupPolicy", "api:DeleteVirtualGateway", "api:DeleteVmGroup", "api:DeleteVmTemplate", "api:DeleteVms", "api:DeleteVolume", "api:DeleteVpnConnection", "api:DeleteVpnConnectionRoute", "api:DeregisterVmsInLoadBalancer", "api:LinkFlexibleGpu", "api:LinkInternetService", "api:LinkLoadBalancerBackendMachines", "api:LinkManagedPolicyToUserGroup", "api:LinkNic", "api:LinkPolicy", "api:LinkPrivateIps", "api:LinkPublicIp", "api:LinkRouteTable", "api:LinkVirtualGateway", "api:LinkVolume", "api:PutUserGroupPolicy", "api:ReadAccessKeys", "api:ReadAccounts", "api:ReadAdminPassword", "api:ReadApiAccessPolicy", "api:ReadApiAccessRules", "api:ReadApiLogs", "api:ReadCas", "api:ReadCatalog", "api:ReadCatalogs", "api:ReadClientGateways", "api:ReadConsoleOutput", "api:ReadConsumptionAccount", "api:ReadDedicatedGroups", "api:ReadDhcpOptions", "api:ReadDirectLinkInterfaces", "api:ReadDirectLinks", "api:ReadFlexibleGpuCatalog", "api:ReadFlexibleGpus", "api:ReadImageExportTasks", "api:ReadImages", "api:ReadInternetServices", "api:ReadKeypairs", "api:ReadLinkedPolicies", "api:ReadListenerRules", "api:ReadLoadBalancerTags", "api:ReadLoadBalancers", "api:ReadLocations", "api:ReadManagedPoliciesLinkedToUserGroup", "api:ReadNatServices", "api:ReadNetAccessPointServices", "api:ReadNetAccessPoints", "api:ReadNetPeerings", "api:ReadNets", "api:ReadNics", "api:ReadPolicies", "api:ReadPolicy", "api:ReadPolicyVersion", "api:ReadPolicyVersions", "api:ReadProductTypes", "api:ReadPublicCatalog", "api:ReadPublicIpRanges", "api:ReadPublicIps", "api:ReadQuotas", "api:ReadRegions", "api:ReadRouteTables", "api:ReadSecretAccessKey", "api:ReadSecurityGroups", "api:ReadServerCertificates", "api:ReadSnapshotExportTasks", "api:ReadSnapshots", "api:ReadSubnets", "api:ReadSubregions", "api:ReadTags", "api:ReadUserGroup", "api:ReadUserGroupPolicies", "api:ReadUserGroupPolicy", "api:ReadUserGroups", "api:ReadUserGroupsPerUser", "api:ReadUsers", "api:ReadVirtualGateways", "api:ReadVmGroups", "api:ReadVmTemplates", "api:ReadVmTypes", "api:ReadVms", "api:ReadVmsHealth", "api:ReadVmsState", "api:ReadVolumes", "api:ReadVpnConnections", "api:RebootVms", "api:RegisterVmsInLoadBalancer", "api:RejectNetPeering", "api:RemoveUserFromUserGroup", "api:ScaleDownVmGroup", "api:ScaleUpVmGroup", "api:SetDefaultPolicyVersion", "api:StartVms", "api:StopVms", "api:UnlinkFlexibleGpu", "api:UnlinkInternetService", "api:UnlinkLoadBalancerBackendMachines", "api:UnlinkManagedPolicyFromUserGroup", "api:UnlinkNic", "api:UnlinkPolicy", "api:UnlinkPrivateIps", "api:UnlinkPublicIp", "api:UnlinkRouteTable", "api:UnlinkVirtualGateway", "api:UnlinkVolume", "api:UpdateAccessKey", "api:UpdateAccount", "api:UpdateApiAccessPolicy", "api:UpdateApiAccessRule", "api:UpdateCa", "api:UpdateDedicatedGroup", "api:UpdateDirectLinkInterface", "api:UpdateFlexibleGpu", "api:UpdateImage", "api:UpdateListenerRule", "api:UpdateLoadBalancer", "api:UpdateNet", "api:UpdateNetAccessPoint", "api:UpdateNic", "api:UpdateRoute", "api:UpdateRoutePropagation", "api:UpdateRouteTableLink", "api:UpdateServerCertificate", "api:UpdateSnapshot", "api:UpdateSubnet", "api:UpdateUser", "api:UpdateUserGroup", "api:UpdateVm", "api:UpdateVmGroup", "api:UpdateVmTemplate", "api:UpdateVolume", "api:UpdateVpnConnection"]
-    const fcuActions = ["ec2:*", "ec2:Describe*", "ec2:AcceptVpcPeeringConnection", "ec2:AllocateAddress", "ec2:AssignPrivateIpAddresses", "ec2:AssociateAddress", "ec2:AssociateDhcpOptions", "ec2:AssociateRouteTable", "ec2:AttachInternetGateway", "ec2:AttachNetworkInterface", "ec2:AttachVolume", "ec2:AttachVpnGateway", "ec2:AuthorizeSecurityGroupEgress", "ec2:AuthorizeSecurityGroupIngress", "ec2:CancelExportTask", "ec2:CopyImage", "ec2:CopySnapshot", "ec2:CreateCustomerGateway", "ec2:CreateDhcpOptions", "ec2:CreateImage", "ec2:CreateImageExportTask", "ec2:CreateInternetGateway", "ec2:CreateKeyPair", "ec2:CreateNatGateway", "ec2:CreateNetworkInterface", "ec2:CreateRoute", "ec2:CreateRouteTable", "ec2:CreateSecurityGroup", "ec2:CreateSnapshot", "ec2:CreateSnapshotExportTask", "ec2:CreateSubnet", "ec2:CreateTags", "ec2:CreateVolume", "ec2:CreateVpc", "ec2:CreateVpcEndpoint", "ec2:CreateVpcPeeringConnection", "ec2:CreateVpnConnection", "ec2:CreateVpnConnectionRoute", "ec2:CreateVpnGateway", "ec2:DeleteCustomerGateway", "ec2:DeleteDhcpOptions", "ec2:DeleteInternetGateway", "ec2:DeleteKeyPair", "ec2:DeleteNatGateway", "ec2:DeleteNetworkInterface", "ec2:DeleteRoute", "ec2:DeleteRouteTable", "ec2:DeleteSecurityGroup", "ec2:DeleteSnapshot", "ec2:DeleteSubnet", "ec2:DeleteTags", "ec2:DeleteVolume", "ec2:DeleteVpc", "ec2:DeleteVpcEndpoints", "ec2:DeleteVpcPeeringConnection", "ec2:DeleteVpnConnection", "ec2:DeleteVpnConnectionRoute", "ec2:DeleteVpnGateway", "ec2:DeregisterImage", "ec2:DescribeAddresses", "ec2:DescribeAvailabilityZones", "ec2:DescribeCustomerGateways", "ec2:DescribeDhcpOptions", "ec2:DescribeImageAttribute", "ec2:DescribeImageExportTasks", "ec2:DescribeImages", "ec2:DescribeInstanceAttribute", "ec2:DescribeInstanceStatus", "ec2:DescribeInstanceTypes", "ec2:DescribeInstances", "ec2:DescribeInternetGateways", "ec2:DescribeKeyPairs", "ec2:DescribeNatGateways", "ec2:DescribeNetworkInterfaces", "ec2:DescribePrefixLists", "ec2:DescribeProductTypes", "ec2:DescribeQuotas", "ec2:DescribeRegions", "ec2:DescribeRouteTables", "ec2:DescribeSecurityGroups", "ec2:DescribeSnapshotAttribute", "ec2:DescribeSnapshotExportTasks", "ec2:DescribeSnapshots", "ec2:DescribeSubnets", "ec2:DescribeTags", "ec2:DescribeVolumes", "ec2:DescribeVpcAttribute", "ec2:DescribeVpcEndpointServices", "ec2:DescribeVpcEndpoints", "ec2:DescribeVpcPeeringConnections", "ec2:DescribeVpcs", "ec2:DescribeVpnConnections", "ec2:DescribeVpnGateways", "ec2:DetachInternetGateway", "ec2:DetachNetworkInterface", "ec2:DetachVolume", "ec2:DetachVpnGateway", "ec2:DisableVgwRoutePropagation", "ec2:DisassociateAddress", "ec2:DisassociateRouteTable", "ec2:EnableVgwRoutePropagation", "ec2:GetConsoleOutput", "ec2:GetPasswordData", "ec2:GetProductType", "ec2:GetProductTypes", "ec2:ImportKeyPair", "ec2:ImportSnapshot", "ec2:ModifyImageAttribute", "ec2:ModifyInstanceAttribute", "ec2:ModifyInstanceKeypair", "ec2:ModifyNetworkInterfaceAttribute", "ec2:ModifySnapshotAttribute", "ec2:ModifySubnetAttribute", "ec2:ModifyVpcEndpoint", "ec2:ReadPublicIpRanges", "ec2:RebootInstances", "ec2:RegisterImage", "ec2:RejectVpcPeeringConnection", "ec2:ReleaseAddress", "ec2:ReplaceRoute", "ec2:ReplaceRouteTableAssociation", "ec2:RevokeSecurityGroupEgress", "ec2:RevokeSecurityGroupIngress", "ec2:RunInstances", "ec2:StartInstances", "ec2:StopInstances", "ec2:TerminateInstances", "ec2:UnassignPrivateIpAddresses"]
-    const lbuActions = ["elasticloadbalancing:*", "elasticloadbalancing:Describe*", "elasticloadbalancing:AddTags", "elasticloadbalancing:ConfigureHealthCheck", "elasticloadbalancing:CreateAppCookieStickinessPolicy", "elasticloadbalancing:CreateLBCookieStickinessPolicy", "elasticloadbalancing:CreateLoadBalancer", "elasticloadbalancing:CreateLoadBalancerListeners", "elasticloadbalancing:CreateLoadBalancerPolicy", "elasticloadbalancing:DeleteLoadBalancer", "elasticloadbalancing:DeleteLoadBalancerListeners", "elasticloadbalancing:DeleteLoadBalancerPolicy", "elasticloadbalancing:DeregisterInstancesFromLoadBalancer", "elasticloadbalancing:DescribeInstanceHealth", "elasticloadbalancing:DescribeLoadBalancerAttributes", "elasticloadbalancing:DescribeLoadBalancers", "elasticloadbalancing:DescribeTags", "elasticloadbalancing:ModifyLoadBalancerAttributes", "elasticloadbalancing:RegisterInstancesWithLoadBalancer", "elasticloadbalancing:RemoveTags", "elasticloadbalancing:SetLoadBalancerListenerSSLCertificate", "elasticloadbalancing:SetLoadBalancerPoliciesForBackendServer", "elasticloadbalancing:SetLoadBalancerPoliciesOfListener"]
-    const eimActions = ["iam:*", "iam:Describe*", "iam:AddUserToGroup", "iam:AttachGroupPolicy", "iam:AttachUserPolicy", "iam:CreateAccessKey", "iam:CreateGroup", "iam:CreatePolicy", "iam:CreatePolicyVersion", "iam:CreateUser", "iam:DeleteAccessKey", "iam:DeleteGroup", "iam:DeleteGroupPolicy", "iam:DeletePolicy", "iam:DeletePolicyVersion", "iam:DeleteServerCertificate", "iam:DeleteUser", "iam:DeleteUserPolicy", "iam:DetachGroupPolicy", "iam:DetachUserPolicy", "iam:GetGroup", "iam:GetGroupPolicy", "iam:GetPolicy", "iam:GetPolicyVersion", "iam:GetServerCertificate", "iam:GetUser", "iam:GetUserPolicy", "iam:ListAccessKeys", "iam:ListAttachedGroupPolicies", "iam:ListAttachedUserPolicies", "iam:ListGroupPolicies", "iam:ListGroups", "iam:ListGroupsForUser", "iam:ListPolicies", "iam:ListPolicyVersions", "iam:ListServerCertificates", "iam:ListUserPolicies", "iam:ListUsers", "iam:PutGroupPolicy", "iam:PutUserPolicy", "iam:RemoveUserFromGroup", "iam:SetDefaultPolicyVersion", "iam:UpdateAccessKey", "iam:UpdateGroup", "iam:UpdateServerCertificate", "iam:UpdateUser", "iam:UploadServerCertificate"]
-    const directlinkActions = ["directconnect:*", "directconnect:Describe*", "directconnect:AllocatePrivateVirtualInterface", "directconnect:ConfirmPrivateVirtualInterface", "directconnect:CreateConnection", "directconnect:CreatePrivateVirtualInterface", "directconnect:DeleteConnection", "directconnect:DeleteVirtualInterface", "directconnect:DescribeConnections", "directconnect:DescribeLocations", "directconnect:DescribeVirtualGateways", "directconnect:DescribeVirtualInterfaces"]
+    const oapiActions = ["api:*", ["api:Read*"], "api:AcceptNetPeering", "api:AddUserToUserGroup", "api:CheckAuthentication", "api:CreateAccessKey", "api:CreateAccount", "api:CreateApiAccessRule", "api:CreateCa", "api:CreateClientGateway", "api:CreateDedicatedGroup", "api:CreateDhcpOptions", "api:CreateDirectLink", "api:CreateDirectLinkInterface", "api:CreateFlexibleGpu", "api:CreateImage", "api:CreateImageExportTask", "api:CreateInternetService", "api:CreateKeypair", "api:CreateListenerRule", "api:CreateLoadBalancer", "api:CreateLoadBalancerListeners", "api:CreateLoadBalancerPolicy", "api:CreateLoadBalancerTags", "api:CreateNatService", "api:CreateNet", "api:CreateNetAccessPoint", "api:CreateNetPeering", "api:CreateNic", "api:CreatePolicy", "api:CreatePolicyVersion", "api:CreateProductType", "api:CreatePublicIp", "api:CreateRoute", "api:CreateRouteTable", "api:CreateSecurityGroup", "api:CreateSecurityGroupRule", "api:CreateServerCertificate", "api:CreateSnapshot", "api:CreateSnapshotExportTask", "api:CreateSubnet", "api:CreateTags", "api:CreateUser", "api:CreateUserGroup", "api:CreateVirtualGateway", "api:CreateVmGroup", "api:CreateVmTemplate", "api:CreateVms", "api:CreateVolume", "api:CreateVpnConnection", "api:CreateVpnConnectionRoute", "api:DeleteAccessKey", "api:DeleteApiAccessRule", "api:DeleteCa", "api:DeleteClientGateway", "api:DeleteDedicatedGroup", "api:DeleteDhcpOptions", "api:DeleteDirectLink", "api:DeleteDirectLinkInterface", "api:DeleteExportTask", "api:DeleteFlexibleGpu", "api:DeleteImage", "api:DeleteInternetService", "api:DeleteKeypair", "api:DeleteListenerRule", "api:DeleteLoadBalancer", "api:DeleteLoadBalancerListeners", "api:DeleteLoadBalancerPolicy", "api:DeleteLoadBalancerTags", "api:DeleteNatService", "api:DeleteNet", "api:DeleteNetAccessPoint", "api:DeleteNetPeering", "api:DeleteNic", "api:DeletePolicy", "api:DeletePolicyVersion", "api:DeletePublicIp", "api:DeleteRoute", "api:DeleteRouteTable", "api:DeleteSecurityGroup", "api:DeleteSecurityGroupRule", "api:DeleteServerCertificate", "api:DeleteSnapshot", "api:DeleteSubnet", "api:DeleteTags", "api:DeleteUser", "api:DeleteUserGroup", "api:DeleteUserGroupPolicy", "api:DeleteVirtualGateway", "api:DeleteVmGroup", "api:DeleteVmTemplate", "api:DeleteVms", "api:DeleteVolume", "api:DeleteVpnConnection", "api:DeleteVpnConnectionRoute", "api:DeregisterVmsInLoadBalancer", "api:LinkFlexibleGpu", "api:LinkInternetService", "api:LinkLoadBalancerBackendMachines", "api:LinkManagedPolicyToUserGroup", "api:LinkNic", "api:LinkPolicy", "api:LinkPrivateIps", "api:LinkPublicIp", "api:LinkRouteTable", "api:LinkVirtualGateway", "api:LinkVolume", "api:PutUserGroupPolicy", "api:ReadAccessKeys", "api:ReadAccounts", "api:ReadAdminPassword", "api:ReadApiAccessPolicy", "api:ReadApiAccessRules", "api:ReadApiLogs", "api:ReadCas", "api:ReadCatalog", "api:ReadCatalogs", "api:ReadClientGateways", "api:ReadConsoleOutput", "api:ReadConsumptionAccount", "api:ReadDedicatedGroups", "api:ReadDhcpOptions", "api:ReadDirectLinkInterfaces", "api:ReadDirectLinks", "api:ReadFlexibleGpuCatalog", "api:ReadFlexibleGpus", "api:ReadImageExportTasks", "api:ReadImages", "api:ReadInternetServices", "api:ReadKeypairs", "api:ReadLinkedPolicies", "api:ReadListenerRules", "api:ReadLoadBalancerTags", "api:ReadLoadBalancers", "api:ReadLocations", "api:ReadManagedPoliciesLinkedToUserGroup", "api:ReadNatServices", "api:ReadNetAccessPointServices", "api:ReadNetAccessPoints", "api:ReadNetPeerings", "api:ReadNets", "api:ReadNics", "api:ReadPolicies", "api:ReadPolicy", "api:ReadPolicyVersion", "api:ReadPolicyVersions", "api:ReadProductTypes", "api:ReadPublicCatalog", "api:ReadPublicIpRanges", "api:ReadPublicIps", "api:ReadQuotas", "api:ReadRegions", "api:ReadRouteTables", "api:ReadSecretAccessKey", "api:ReadSecurityGroups", "api:ReadServerCertificates", "api:ReadSnapshotExportTasks", "api:ReadSnapshots", "api:ReadSubnets", "api:ReadSubregions", "api:ReadTags", "api:ReadUserGroup", "api:ReadUserGroupPolicies", "api:ReadUserGroupPolicy", "api:ReadUserGroups", "api:ReadUserGroupsPerUser", "api:ReadUsers", "api:ReadVirtualGateways", "api:ReadVmGroups", "api:ReadVmTemplates", "api:ReadVmTypes", "api:ReadVms", "api:ReadVmsHealth", "api:ReadVmsState", "api:ReadVolumes", "api:ReadVpnConnections", "api:RebootVms", "api:RegisterVmsInLoadBalancer", "api:RejectNetPeering", "api:RemoveUserFromUserGroup", "api:ScaleDownVmGroup", "api:ScaleUpVmGroup", "api:SetDefaultPolicyVersion", "api:StartVms", "api:StopVms", "api:UnlinkFlexibleGpu", "api:UnlinkInternetService", "api:UnlinkLoadBalancerBackendMachines", "api:UnlinkManagedPolicyFromUserGroup", "api:UnlinkNic", "api:UnlinkPolicy", "api:UnlinkPrivateIps", "api:UnlinkPublicIp", "api:UnlinkRouteTable", "api:UnlinkVirtualGateway", "api:UnlinkVolume", "api:UpdateAccessKey", "api:UpdateAccount", "api:UpdateApiAccessPolicy", "api:UpdateApiAccessRule", "api:UpdateCa", "api:UpdateDedicatedGroup", "api:UpdateDirectLinkInterface", "api:UpdateFlexibleGpu", "api:UpdateImage", "api:UpdateListenerRule", "api:UpdateLoadBalancer", "api:UpdateNet", "api:UpdateNetAccessPoint", "api:UpdateNic", "api:UpdateRoute", "api:UpdateRoutePropagation", "api:UpdateRouteTableLink", "api:UpdateServerCertificate", "api:UpdateSnapshot", "api:UpdateSubnet", "api:UpdateUser", "api:UpdateUserGroup", "api:UpdateVm", "api:UpdateVmGroup", "api:UpdateVmTemplate", "api:UpdateVolume", "api:UpdateVpnConnection"]
+    const fcuActions = ["ec2:*", ["ec2:Describe*", "ec2:Get*", "ec2:Read*"], "ec2:AcceptVpcPeeringConnection", "ec2:AllocateAddress", "ec2:AssignPrivateIpAddresses", "ec2:AssociateAddress", "ec2:AssociateDhcpOptions", "ec2:AssociateRouteTable", "ec2:AttachInternetGateway", "ec2:AttachNetworkInterface", "ec2:AttachVolume", "ec2:AttachVpnGateway", "ec2:AuthorizeSecurityGroupEgress", "ec2:AuthorizeSecurityGroupIngress", "ec2:CancelExportTask", "ec2:CopyImage", "ec2:CopySnapshot", "ec2:CreateCustomerGateway", "ec2:CreateDhcpOptions", "ec2:CreateImage", "ec2:CreateImageExportTask", "ec2:CreateInternetGateway", "ec2:CreateKeyPair", "ec2:CreateNatGateway", "ec2:CreateNetworkInterface", "ec2:CreateRoute", "ec2:CreateRouteTable", "ec2:CreateSecurityGroup", "ec2:CreateSnapshot", "ec2:CreateSnapshotExportTask", "ec2:CreateSubnet", "ec2:CreateTags", "ec2:CreateVolume", "ec2:CreateVpc", "ec2:CreateVpcEndpoint", "ec2:CreateVpcPeeringConnection", "ec2:CreateVpnConnection", "ec2:CreateVpnConnectionRoute", "ec2:CreateVpnGateway", "ec2:DeleteCustomerGateway", "ec2:DeleteDhcpOptions", "ec2:DeleteInternetGateway", "ec2:DeleteKeyPair", "ec2:DeleteNatGateway", "ec2:DeleteNetworkInterface", "ec2:DeleteRoute", "ec2:DeleteRouteTable", "ec2:DeleteSecurityGroup", "ec2:DeleteSnapshot", "ec2:DeleteSubnet", "ec2:DeleteTags", "ec2:DeleteVolume", "ec2:DeleteVpc", "ec2:DeleteVpcEndpoints", "ec2:DeleteVpcPeeringConnection", "ec2:DeleteVpnConnection", "ec2:DeleteVpnConnectionRoute", "ec2:DeleteVpnGateway", "ec2:DeregisterImage", "ec2:DescribeAddresses", "ec2:DescribeAvailabilityZones", "ec2:DescribeCustomerGateways", "ec2:DescribeDhcpOptions", "ec2:DescribeImageAttribute", "ec2:DescribeImageExportTasks", "ec2:DescribeImages", "ec2:DescribeInstanceAttribute", "ec2:DescribeInstanceStatus", "ec2:DescribeInstanceTypes", "ec2:DescribeInstances", "ec2:DescribeInternetGateways", "ec2:DescribeKeyPairs", "ec2:DescribeNatGateways", "ec2:DescribeNetworkInterfaces", "ec2:DescribePrefixLists", "ec2:DescribeProductTypes", "ec2:DescribeQuotas", "ec2:DescribeRegions", "ec2:DescribeRouteTables", "ec2:DescribeSecurityGroups", "ec2:DescribeSnapshotAttribute", "ec2:DescribeSnapshotExportTasks", "ec2:DescribeSnapshots", "ec2:DescribeSubnets", "ec2:DescribeTags", "ec2:DescribeVolumes", "ec2:DescribeVpcAttribute", "ec2:DescribeVpcEndpointServices", "ec2:DescribeVpcEndpoints", "ec2:DescribeVpcPeeringConnections", "ec2:DescribeVpcs", "ec2:DescribeVpnConnections", "ec2:DescribeVpnGateways", "ec2:DetachInternetGateway", "ec2:DetachNetworkInterface", "ec2:DetachVolume", "ec2:DetachVpnGateway", "ec2:DisableVgwRoutePropagation", "ec2:DisassociateAddress", "ec2:DisassociateRouteTable", "ec2:EnableVgwRoutePropagation", "ec2:GetConsoleOutput", "ec2:GetPasswordData", "ec2:GetProductType", "ec2:GetProductTypes", "ec2:ImportKeyPair", "ec2:ImportSnapshot", "ec2:ModifyImageAttribute", "ec2:ModifyInstanceAttribute", "ec2:ModifyInstanceKeypair", "ec2:ModifyNetworkInterfaceAttribute", "ec2:ModifySnapshotAttribute", "ec2:ModifySubnetAttribute", "ec2:ModifyVpcEndpoint", "ec2:ReadPublicIpRanges", "ec2:RebootInstances", "ec2:RegisterImage", "ec2:RejectVpcPeeringConnection", "ec2:ReleaseAddress", "ec2:ReplaceRoute", "ec2:ReplaceRouteTableAssociation", "ec2:RevokeSecurityGroupEgress", "ec2:RevokeSecurityGroupIngress", "ec2:RunInstances", "ec2:StartInstances", "ec2:StopInstances", "ec2:TerminateInstances", "ec2:UnassignPrivateIpAddresses"]
+    const lbuActions = ["elasticloadbalancing:*", ["elasticloadbalancing:Describe*"], "elasticloadbalancing:AddTags", "elasticloadbalancing:ConfigureHealthCheck", "elasticloadbalancing:CreateAppCookieStickinessPolicy", "elasticloadbalancing:CreateLBCookieStickinessPolicy", "elasticloadbalancing:CreateLoadBalancer", "elasticloadbalancing:CreateLoadBalancerListeners", "elasticloadbalancing:CreateLoadBalancerPolicy", "elasticloadbalancing:DeleteLoadBalancer", "elasticloadbalancing:DeleteLoadBalancerListeners", "elasticloadbalancing:DeleteLoadBalancerPolicy", "elasticloadbalancing:DeregisterInstancesFromLoadBalancer", "elasticloadbalancing:DescribeInstanceHealth", "elasticloadbalancing:DescribeLoadBalancerAttributes", "elasticloadbalancing:DescribeLoadBalancers", "elasticloadbalancing:DescribeTags", "elasticloadbalancing:ModifyLoadBalancerAttributes", "elasticloadbalancing:RegisterInstancesWithLoadBalancer", "elasticloadbalancing:RemoveTags", "elasticloadbalancing:SetLoadBalancerListenerSSLCertificate", "elasticloadbalancing:SetLoadBalancerPoliciesForBackendServer", "elasticloadbalancing:SetLoadBalancerPoliciesOfListener"]
+    const eimActions = ["iam:*", ["iam:Get*", "iam:List*"], "iam:AddUserToGroup", "iam:AttachGroupPolicy", "iam:AttachUserPolicy", "iam:CreateAccessKey", "iam:CreateGroup", "iam:CreatePolicy", "iam:CreatePolicyVersion", "iam:CreateUser", "iam:DeleteAccessKey", "iam:DeleteGroup", "iam:DeleteGroupPolicy", "iam:DeletePolicy", "iam:DeletePolicyVersion", "iam:DeleteServerCertificate", "iam:DeleteUser", "iam:DeleteUserPolicy", "iam:DetachGroupPolicy", "iam:DetachUserPolicy", "iam:GetGroup", "iam:GetGroupPolicy", "iam:GetPolicy", "iam:GetPolicyVersion", "iam:GetServerCertificate", "iam:GetUser", "iam:GetUserPolicy", "iam:ListAccessKeys", "iam:ListAttachedGroupPolicies", "iam:ListAttachedUserPolicies", "iam:ListGroupPolicies", "iam:ListGroups", "iam:ListGroupsForUser", "iam:ListPolicies", "iam:ListPolicyVersions", "iam:ListServerCertificates", "iam:ListUserPolicies", "iam:ListUsers", "iam:PutGroupPolicy", "iam:PutUserPolicy", "iam:RemoveUserFromGroup", "iam:SetDefaultPolicyVersion", "iam:UpdateAccessKey", "iam:UpdateGroup", "iam:UpdateServerCertificate", "iam:UpdateUser", "iam:UploadServerCertificate"]
+    const directlinkActions = ["directconnect:*", ["directconnect:Describe*"], "directconnect:AllocatePrivateVirtualInterface", "directconnect:ConfirmPrivateVirtualInterface", "directconnect:CreateConnection", "directconnect:CreatePrivateVirtualInterface", "directconnect:DeleteConnection", "directconnect:DeleteVirtualInterface", "directconnect:DescribeConnections", "directconnect:DescribeLocations", "directconnect:DescribeVirtualGateways", "directconnect:DescribeVirtualInterfaces"]
+    const policyMaxLength = 5120
     const text = {
         "api": {"en": "OUTSCALE API", "fr": "API OUTSCALE"},
-        "allowDeny": {"en": "Allow or deny...", "fr": "Autoriser ou interdire..."},
+        "allowDeny": {"en": "Allow or deny:", "fr": "Autoriser ou interdire :"},
         "allow": {"en": "Allow", "fr": "Autoriser"},
         "deny": {"en": "Deny", "fr": "Interdire"},
+        "what": {"en": "What:", "fr": "Quoi :"},
+        "actions": {"en": "The following actions", "fr": "Les actions suivantes"},
+        "notActions": {"en": "All except the following actions", "fr": "Tout sauf les actions suivantes"},
         "statement": {"en": "Statement", "fr": "Déclaration"},
-        "theseActions": {"en": "...the following actions:", "fr": "...les actions suivantes :"},
         "allActions": {"en": "All actions in this API", "fr": "Toutes les actions de cette API"},
         "allReadActions": {"en": "All Read actions in this API", "fr": "Toutes les actions Read de cette API"},
         "allDescribeActions": {"en": "All Describe actions in this API", "fr": "Toutes les actions Describe de cette API"},
@@ -19,7 +22,11 @@
         "generateJson": {"en": "Generate policy", "fr": "Générer la politique"},
         "labelJson": {"en": "JSON:", "fr": "JSON :"},
         "labelJsonString": {"en": "JSON string (for use with OSC CLI):", "fr": "JSON dans une chaîne de texte (pour utilisation avec OSC CLI) :"},
-        "errorNeedOneAction": {"en": "Error: You must select at least one action in statement #", "fr": "Erreur : Vous devez sélectionner au moins une action dans la déclaration #"},
+        "error": {"en": "Error in statement #", "fr": "Erreur dans la déclaration #"},
+        "errorNeedOneAction": {"en": ": You must select at least one action.", "fr": " : Vous devez sélectionner au moins une action."},
+        "errorPolicyTooLong_1": {"en": ": The specified policy is too long (", "fr": " : La politique spécifiée est trop longue ("},
+        "errorPolicyTooLong_2": {"en": " characters not counting whitespaces). The maximum length for a policy is ", "fr": " caractères sans compter les espaces blancs). La longueur maximale d'une politique est de "},
+        "errorPolicyTooLong_3": {"en": " characters not counting whitespaces.", "fr": " caractères sans compter les espaces blancs."},
         "disclaimer": {"en": "Note: Make sure you verify that this policy correctly fits your needs before you apply it.", "fr": "Note : Vérifiez bien que cette politique remplit correctement vos besoins avant de l'appliquer."},
     }
     const lang = document.querySelector("html")["lang"]
@@ -34,9 +41,11 @@
     function createStatement () {
         const num = document.querySelectorAll("#eim-policy-generator > fieldset").length + 1
         const effects = [text.allow[lang], text.deny[lang]]
+        const what = [text.actions[lang], text.notActions[lang]]
         const superArray = [
             createFieldSet("effect", effects, "radio", text.allowDeny[lang], false, num),
-            createActionsSuperFieldSet("actions", actions, "checkbox", text.theseActions[lang], num),
+            createFieldSet("what", what, "radio", text.what[lang], false, num),
+            createActionsSuperFieldSet("actions", actions, "checkbox", num),
         ]
         const fieldset = document.createElement("fieldset")
         fieldset.id = "statement-" + num
@@ -49,17 +58,15 @@
         fieldset.append(legend, divs)
         return fieldset
     }
-    function createActionsSuperFieldSet (name, superArray, inputType, legendText, num) {
+    function createActionsSuperFieldSet (name, superArray, inputType, num) {
         const fieldset = document.createElement("fieldset")
-        const legend = document.createElement("legend")
-        legend.textContent = legendText
         const divs = document.createElement("div")
         divs.id = name + "-" + num
         for (let array of superArray) {
             const div = createFieldSet(array[1], array[0], inputType, array[1], true, num)
             divs.append(div)
         }
-        fieldset.append(legend, divs)
+        fieldset.append(divs)
         return fieldset
     }
     function createFieldSet (name, array, inputType, legendText, collapsible=false, num) {
@@ -91,26 +98,25 @@
         input.id = item + "-" + num
         input.name = name + "-" + num
         input.value = item
-        if (inputType === "radio" && item === text.allow[lang]) input.checked = true
+        if (inputType === "radio" && (item === text.allow[lang] || item === text.actions[lang])) input.checked = true
         div.append(input)
         const label = document.createElement("label")
         label.classList.add("full-width")
         label.htmlFor = input.id
         label.textContent = item
         if (inputType === "checkbox") {
-            if (item.endsWith(":*")) {
-                label.textContent = text.allActions[lang] + ""
-                input.addEventListener("click", selectAllActions)
-            }
-            else if (item.endsWith("Read*")) {
-                label.textContent = text.allReadActions[lang]
+            if (Array.isArray(item)) {
+                const verbs = []
+                for (const n of item) {
+                    verbs.push(n.split(":")[1].replace("*", ""))
+                }
+                label.textContent = text.allReadActions[lang].replace("Read", verbs.join("/"))
                 input.addEventListener("click", selectReadActions)
                 input.classList.add("spacing-below")
             }
-            else if (item.endsWith("Describe*")) {
-                label.textContent = text.allDescribeActions[lang]
-                input.addEventListener("click", selectDescribeActions)
-                input.classList.add("spacing-below")
+            else if (item.endsWith(":*")) {
+                label.textContent = text.allActions[lang] + ""
+                input.addEventListener("click", selectAllActions)
             }
             else {
                 input.addEventListener("click", resetSpecialCheckboxes)
@@ -129,17 +135,16 @@
     function selectReadActions () {
         const checkboxes = document.querySelectorAll('[id="' + this.name + '"] [type="checkbox"]')
         const value = this.checked
-        for (let checkbox of checkboxes) {
-            checkbox.checked = false
-            if (checkbox.value.includes("Read")) checkbox.checked = value
+        const readActions = this.value.split(",")
+        const verbs = []
+        for (const readAction of readActions) {
+            verbs.push(readAction.split(":")[1].replace("*", ""))
         }
-    }
-    function selectDescribeActions () {
-        const checkboxes = document.querySelectorAll('[id="' + this.name + '"] [type="checkbox"]')
-        const value = this.checked
         for (let checkbox of checkboxes) {
             checkbox.checked = false
-            if (checkbox.value.includes("Describe")) checkbox.checked = value
+            for (const verb of verbs) {
+                if (checkbox.value.includes(verb)) checkbox.checked = value
+            }
         }
     }
     function resetSpecialCheckboxes () {
@@ -246,13 +251,22 @@
             let effect = form["effect-" + i].value
             if (effect === text.allow.fr) effect = text.allow.en
             else if (effect === text.deny.fr) effect = text.deny.en
+            let what = form["what-" + i].value
+            if (what === text.actions.en || what === text.actions.fr) what = "Action"
+            else if (what === text.notActions.en || what === text.notActions.fr) what = "NotAction"
             const Statement = {
                 "Effect": effect,
-                "Action": selectedActions,
+                [what]: selectedActions,
                 "Resource": ["*"],
             }
             obj.Statement.push(Statement)
-            if (selectedActions.length === 0) return [text.errorNeedOneAction[lang] + i, true]
+            if (selectedActions.length === 0) {
+                return [text.error[lang] + i + text.errorNeedOneAction[lang], true]
+            }
+            const length = JSON.stringify(Statement).length
+            if (length > policyMaxLength) {
+                return [text.error[lang] + i + text.errorPolicyTooLong_1[lang] + length + text.errorPolicyTooLong_2[lang] + policyMaxLength + text.errorPolicyTooLong_3[lang], true]
+            }
         }
         return [JSON.stringify(obj, null, 2), false]
     }
