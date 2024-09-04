@@ -1,7 +1,7 @@
-{{=data.methodUpper}} {{=data.url}}{{=data.requiredQueryString}} HTTP/1.1
-{{? data.host}}Host: {{=data.host}}{{?}}
-{{?data.consumes.length}}Content-Type: {{=data.consumes[0]}}
-{{?}}{{?data.produces.length}}Accept: {{=data.produces[0]}}{{?}}
-{{?data.headerParameters.length}}{{~ data.headerParameters :p:index}}{{=p.name}}: {{=p.exampleValues.object}}
+{{=data.methodUpper}} {{=data.method.path}}{{=data.queryString}} HTTP/1.1
+{{? data.baseUrl}}Host: {{=data.baseUrl}}{{?}}
+{{? data.bodyParameter.exampleValues.object && data.consumes.length}}Content-Type: {{=data.consumes[0]}}
+{{?}}{{? data.headerParameters.length}}{{~ data.headerParameters :p:index}}{{=p.name}}: {{=p.exampleValues.object}}
 {{~}}
 {{?}}
+{{? data.bodyParameter.exampleValues.object}}{{? data.consumes.length && data.consumes[0].endsWith('json')}}{{= data.bodyParameter.exampleValues.json}}{{??}}...{{?}}{{?}}

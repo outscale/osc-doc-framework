@@ -1,5 +1,9 @@
 {{ {
 
+if (!data.operation.description) {
+    data.operation.description = data.method.pathItem.description;
+}
+
 function supportMultipleExamples(data) {
     let op = data.method.operation;
     if (op.requestBody) {
@@ -7,100 +11,26 @@ function supportMultipleExamples(data) {
             const examples = op.requestBody.content[rb].examples;
             if (examples) {
                 let key = Object.keys(examples)[0];
-                data.bodyParameter.exampleValues.customExamples = [];
+                data['x-customRequestExamples'] = [];
                 for (let i = 0, length = Object.keys(examples).length; i < length; i++) {
                     key = Object.keys(examples)[i];
-                    data.bodyParameter.exampleValues.customExamples.push({
+                    data['x-customRequestExamples'].push({
                         "object": examples[key].value,
                         "summary": examples[key].summary,
-                        "json": JSON.stringify(examples[key].value, null, 2),
                     });
                 }
             }
             else {
-                data.bodyParameter.exampleValues.customExamples = [];
-                data.bodyParameter.exampleValues.customExamples.push({
-                    "object": data.bodyParameter.exampleValues.object,
-                    "json": JSON.stringify(data.bodyParameter.exampleValues.object, null, 2),
-                });
+                data['x-customRequestExamples'] = [{ "object": data.bodyParameter.exampleValues.object }];
             }
         }
     }
     return data;
 }
 
-function fakeProdConsForResponse(data) {
-    data.consumes = [];
-    data.bodyResponse = {};
-    let op = data.method.operation;
-    let first = Object.keys(op.responses)[0];
-    for (var rp in op.responses[first].content) {
-        data.consumes.push(rp);
-        data.bodyResponse.present = true;
-        data.bodyResponse.contentType = rp;
-        if (op.responses[first].content[rp].schema) {
-            let schema = op.responses[first].content[rp].schema;
-            if (schema['x-widdershins-oldRef']) {
-                data.bodyResponse.refName = schema['x-widdershins-oldRef'].replace('#/components/schemas/', '');
-            }
-            else {
-                if ((schema.type === 'array') && (schema.items) && (schema.items['x-widdershins-oldRef'])) {
-                    data.bodyResponse.refName = schema.items['x-widdershins-oldRef'].replace('#/components/schemas/', '');
-                }
-
-            }
-        }
-        data.bodyResponse.schema = op.responses[first].content[rp].schema;
-    }
-}
-
-function fakeBodyResponse(data) {
-    if (!data.firstResponse) data.firstResponse = [];
-    let bodyParams = [];
-    if (data.bodyResponse.schema) {
-        let param = {};
-        param.in = 'body';
-        param.schema = data.bodyResponse.schema;
-        param.name = 'body';
-        if (data.operation.requestBody) {
-            param.required = data.operation.requestBody.required || false;
-            param.description = data.operation.requestBody.description;
-            if (data.options.useBodyName && data.operation['x-body-name']) {
-                param.name = data.operation['x-body-name'];
-            }
-        }
-        param.refName = data.bodyResponse.refName;
-        if (!data.options.omitBody || param.schema["x-widdershins-oldRef"]) {
-            bodyParams.push(param);
-        }
-
-        if ((param.schema.type === 'object') && (data.options.expandBody || (!param.schema["x-widdershins-oldRef"]))) {
-            let offset = (data.options.omitBody ? -1 : 0);
-            let props = data.utils.schemaToArray(data.bodyResponse.schema, offset, { trim: true }, data);
-
-            for (let block of props) {
-                for (let prop of block.rows) {
-                    let param = {};
-                    param.in = 'body';
-                    param.schema = prop.schema;
-                    param.name = prop.displayName;
-                    param.required = prop.required;
-                    param.description = prop.description;
-                    param.safeType = prop.safeType;
-                    param.depth = prop.depth;
-                    bodyParams.push(param);
-                }
-            }
-        }
-
-        if (!data.firstResponse || !Array.isArray(data.firstResponse)) data.firstResponse = [];
-        data.firstResponse = data.firstResponse.concat(bodyParams);
-    }
-}
-
-function omitBody(data, body, object) {
-    if (data[body].schema && data.options.omitBody && data[body].schema["x-widdershins-oldRef"]) {
-        data[object].shift();
+function omitBody(data) {
+    if (data.bodyParameter.schema && data.options.omitBody && data.bodyParameter.schema["x-widdershins-oldRef"]) {
+        data.parameters.shift();
     }
     return data;
 }
@@ -136,20 +66,17 @@ function generateTabs(language_tabs) {
 ## {{= getCallName(data.operationUniqueName) }}
 {{= getDeprecateState(data.operation.description) }}
 
-<a id="opId{{=data.operation.operationId || data.operation.UniqueName}}"></a>
-
 {{ data.methodUpper = data.method.verb.toUpperCase(); }}
 {{ data.url = data.utils.slashes(data.baseUrl + data.method.path); }}
 {{ data.parameters = data.operation.parameters; }}
-{{ data.firstResponse = data.operation.firstResponse; }}
 {{ data.utils.fakeProdCons(data); supportMultipleExamples(data); }}
-{{ data.utils.fakeBodyParameter(data); omitBody(data, 'bodyParameter', 'parameters'); }}
-{{ fakeProdConsForResponse(data); }}
-{{ fakeBodyResponse(data); omitBody(data, 'bodyResponse', 'firstResponse'); }}
+{{ data.utils.fakeBodyParameter(data); omitBody(data); }}
 {{ data.utils.mergePathParameters(data); }}
 {{ data.utils.getParameters(data); }}
 
 `{{= data.methodUpper}} {{=data.method.path}}`
+
+{{? data.operation.externalDocs}}[{{= data.operation.externalDocs.description || data.translations.externalDocs }}]({{= data.operation.externalDocs.url}}){{?}}
 
 {{? data.operation.summary && !data.options.tocSummary}}*{{= data.operation.summary }}*{{?}}
 
@@ -163,9 +90,7 @@ function generateTabs(language_tabs) {
 {{?}}
 {{= data.tags.endSection }}
 
-{{? data.parameters && data.parameters.length }}
 {{#def.parameters}}
-{{?}}
 
 {{#def.responses}}
 

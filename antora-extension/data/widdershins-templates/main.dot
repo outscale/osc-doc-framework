@@ -1,71 +1,20 @@
 {{ {
 
-function convertToToc(source, data) {
-    let resources_unordered = {};
-    var tagNames = [];
-    resources_unordered[data.translations.defaultTag] = { count: 0, methods: {} };
-    if (source.tags) {
-        for (let tag of source.tags) {
-            resources_unordered[tag.name] = { count: 0, methods: {}, description: tag.description, externalDocs: tag.externalDocs };
-            tagNames[tagNames.length] = tag.name;
-        }
-    }
-    for (var p in source.paths) {
-        if (!p.startsWith('x-')) {
-            for (var m in source.paths[p]) {
-                if ((m !== 'parameters') && (m !== 'summary') && (m !== 'description') && (!m.startsWith('x-'))) {
-                    var method = {};
-                    method.operation = source.paths[p][m];
-                    method.pathItem = source.paths[p];
-                    method.verb = m;
-                    method.path = p;
-                    method.pathParameters = source.paths[p].parameters;
-                    var sMethodUniqueName = (method.operation.operationId ? method.operation.operationId : m + '_' + p).split('?')[0].split('/').join('_');
-                    if (data.options.tocSummary && method.operation.summary) {
-                        sMethodUniqueName = method.operation.summary;
-                    }
-                    method.slug = sMethodUniqueName.toLowerCase().split(' ').join('-'); /* TODO {, } and : ?*/
-                    var tagName = data.translations.defaultTag;
-                    var tagDescription = '';
-                    if (method.operation.tags && method.operation.tags.length > 0) {
-                        var tagData = getTagGroup(method.operation.tags[0], data.options.tagGroups);
-                        tagName = tagData.name;
-                        tagDescription = tagData.description;
-                    }
-                    method.operation.description = source.paths[p].description;
-                    if (!resources_unordered[tagName]) {
-                        resources_unordered[tagName] = { count: 0, methods: {} };
-                        tagNames[tagNames.length] = tagName;
-                    }
-                    resources_unordered[tagName].count++;
-                    resources_unordered[tagName].methods[sMethodUniqueName] = method;
-                }
-            }
-        }
-    }
-    for (let r in resources_unordered) {
-        if (resources_unordered[r].count <= 0) {
-            delete resources_unordered[r];
-            delete tagNames[r];
-        }
-    }
-    tagNames.sort();
-    var resources = {};
-    for (var r in tagNames) {
-        resources[tagNames[r]] = resources_unordered[tagNames[r]]
-    }
-    return resources;
-}
+function sortTags(resources) {
+    const obj = {};
+    const keys = Object.keys(resources);
+    keys.sort((a, b) => {
+        if (a === data.translations.defaultTag || b === data.translations.defaultTag) {return -1;}
+        else if (a <= b) {return -1;}
+        else if (a > b) {return 1;}
+    });
+    for (let i = 0; i < keys.length; i++) {
+        const k = keys[i];
+        const v = resources[k];
+        obj[k] = v;
+    } 
 
-function getTagGroup(tag, tagGroups) {
-    if (tagGroups) {
-        for (let group of tagGroups) {
-            if (group.tags.indexOf(tag) > -1) {
-                return { name: group.title, description: group.description };
-            }
-        }
-    }
-    return { name: tag, description: '' };
+    return obj;
 }
 
 function concatenateSomePropertyOneOfs(origSchema) {
@@ -160,15 +109,42 @@ function printPattern(p) {
     return s;
 }
 
-data.resources = convertToToc(data.api,data);
-data.version = (data.api.info && data.api.info.version && typeof data.api.info.version === 'string' && (data.api.info.version.toLowerCase().startsWith('v') || data.api.info.version.match('[0-9]{4}-[0-9]{2}-[0-9]{2}')) ? data.api.info.version : 'v'+data.api.info.version);
+data.resources = sortTags(data.resources);
+
+data.host = (data.host || '').replace(/\.$/, '');
+
+data.version = data.api.info?.version || '';
+const semverRegex = /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$/;
+if (data.version.match(semverRegex)) {
+    data.version = 'v' + data.version;
+}
+
+function areAllParametersInSameLocation(data) {
+    const parameterIns = [];
+    for (const resource of Object.values(data.resources || {})) {
+        for (const method of Object.values(resource.methods || {})) {
+            for (const parameter of (method.operation.parameters || [])) {
+                if (!parameterIns.includes(parameter.in)) {parameterIns.push(parameter.in);}
+            }
+            if (method.operation.requestBody) {
+                if (!parameterIns.includes('body')) {parameterIns.push('body');}
+                for (const content of Object.values(method.operation.requestBody.content || {})) {
+                }
+            }
+        }
+    }
+    if (parameterIns.length === 1) {
+        return true;
+    }
+}
+data['x-allParametersAreInSameLocation'] = areAllParametersInSameLocation(data);
 
 } }}
 
 <!-- Generator: Widdershins v{{=data.widdershins.version}} -->
 
 {{= data.tags.section }}
-<h1 id="{{=data.title_prefix}}">{{=data.api.info && data.api.info.title}} {{=data.version}}</h1>
+<h1 id="{{=data.title_prefix}}">{{=data.api.info && data.api.info.title}}{{? data.version}} {{=data.version}}{{?}}</h1>
 
 {{? data.api.info && data.api.info.description}}{{= getFirstPartOfIntro(data.api.info.description) }}{{?}}
 
@@ -197,10 +173,6 @@ data.version = (data.api.info && data.api.info.version && typeof data.api.info.v
 
 {{? data.resource.description }}{{= data.resource.description}}{{?}}
 
-{{? data.resource.externalDocs}}
-<a href="{{=data.resource.externalDocs.url}}">{{=data.resource.externalDocs.description||'External documentation'}}</a>
-{{?}}
-
 {{ for (var m in data.resource.methods) { }}
 {{ data.operationUniqueName = m; }}
 {{ data.method = data.resource.methods[m]; }}
@@ -226,8 +198,6 @@ data.version = (data.api.info && data.api.info.version && typeof data.api.info.v
 {{= data.tags.section }}
 <h2 id="tocS_{{=s}}">{{=s}}</h2>
 <a class="offset-up" id="schema{{=s.toLowerCase()}}"></a>
-<a class="offset-up" id="schema_{{=s}}"></a>
-<a class="offset-up" id="tocS{{=s.toLowerCase()}}"></a>
 <a class="offset-up" id="tocs{{=s.toLowerCase()}}"></a>
 
 {{ var blocks = data.utils.schemaToArray(origSchema,-1,{trim:true,join:true},data); }}
@@ -238,18 +208,20 @@ data.version = (data.api.info && data.api.info.version && typeof data.api.info.v
 {{= data.tags.section }}
 {{?}}
 
-{{? block.externalDocs}}
-<a href="{{=block.externalDocs.url}}">{{=block.externalDocs.description||'External documentation'}}</a>
-{{?}}
+{{? block.externalDocs}}[{{= block.externalDocs.description || data.translations.externalDocs}}](block.externalDocs.url){{?}}
 
 {{? (block.rows.length === 1 && block.rows[0].name === '*anonymous*') }}
+
+{{? block.title }}
+{{= block.title}}{{= '\n\n'}}
+{{?}}
 
 |Type|Description|
 |---|---|
 {{~ block.rows :p}}|{{= cleanType(p.safeType) }}|{{= cleanParameterDescription(p.description) }}{{= printPattern(p)}}|
 {{~}}
 
-{{??}}
+{{?? block.rows.length }}
 
 {{? block.title }}
 {{= block.title}}{{= '\n\n'}}

@@ -3,7 +3,7 @@
 function generateJavaScriptExamples(data) {
     let s = '';
     let exampleContent = '';
-    const examples = Object.entries(data.bodyParameter.exampleValues);
+    const examples = data['x-customRequestExamples'] || {};
 
     s += 'const osc = require("outscale-api");\n';
     s += 'const crypto = require("crypto");\n';
@@ -33,19 +33,13 @@ function generateJavaScriptExamples(data) {
     s += '    const api = new osc.' + data.operation.tags[0] + 'Api(config);\n\n';
 
     let increment = 1;
-    for (let [key, value] of examples) {
-        if (key === 'customExamples') {
-            for (let n = 0, length = value.length; n < length; n++) {
-                if (value[n]) {
-                    if (value[n].summary) {
-                        s += '    /* ' + value[n].summary + ' */\n';
-                    }
-                    exampleContent = getExampleContent(value[n], data, increment);
-                    s += exampleContent;
-                    increment += 1;
-                }
-            }
+    for (let n = 0, length = examples.length; n < length; n++) {
+        if (examples[n].summary) {
+            s += '    /* ' + examples[n].summary + ' */\n';
         }
+        exampleContent = getExampleContent(examples[n].object, data, increment);
+        s += exampleContent;
+        increment += 1;
     }
     s = s.replace('"$OSC_PASSWORD"', 'process.env.OSC_PASSWORD');
     s += '}\n\n';
@@ -54,9 +48,8 @@ function generateJavaScriptExamples(data) {
     return s;
 }
 
-function getExampleContent(value, data, increment) {
+function getExampleContent(objJson, data, increment) {
     let s = '';
-    const objJson = JSON.parse(value.json);
     const operationUniqueName = lowercaseFirstLetter(data.operationUniqueName);
 
     let result = 'result';

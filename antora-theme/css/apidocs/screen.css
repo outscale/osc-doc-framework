@@ -383,7 +383,7 @@ under the License.
   font-weight: normal;
   font-style: normal; }
 
-.api aside.warning:before, .api aside.notice:before, .api aside.success:before, .toc-wrapper > .search:before {
+.api aside.warning:before, .api aside.notice:before, .api aside.success:before, .toc-wrapper > .nav > .search:before {
   font-family: 'slate';
   speak: none;
   font-style: normal;
@@ -401,7 +401,7 @@ under the License.
 .api aside.success:before {
   content: "\e606"; }
 
-.toc-wrapper > .search:before {
+.toc-wrapper > .nav > .search:before {
   content: "\e607"; }
 
 /*
@@ -432,12 +432,6 @@ html, body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-#toc > ul > li > a > span {
-  float: right;
-  background-color: #2484FF;
-  border-radius: 40px;
-  width: 20px; }
-
 .toc-wrapper {
   transition: left 0.3s ease-in-out;
   overflow-y: auto;
@@ -460,9 +454,9 @@ html, body {
     display: block;
     max-width: 100%;
     margin-bottom: 0px; }
-  .toc-wrapper > .search {
+  .toc-wrapper > .nav > .search {
     position: relative; }
-    .toc-wrapper > .search input {
+    .toc-wrapper > .nav > .search input {
       background: #2E3336;
       border-width: 0 0 1px 0;
       border-color: #666;
@@ -474,7 +468,7 @@ html, body {
       color: #fff;
       border-radius: 0;
       /* ios has a default border radius */ }
-    .toc-wrapper > .search:before {
+    .toc-wrapper > .nav > .search:before {
       position: absolute;
       top: 17px;
       left: 15px;

@@ -134,14 +134,16 @@ function printErrorResponses(responses) {
 }
 
 function cleanType(type) {
-    type = type.replace(/\b\(/, ' (');
-    type = type.replace(/\)\(/, ') (');
-    type = type.replace('¦null', '');
+    if (type) {
+        type = type.replace(/\b\(/, ' (');
+        type = type.replace(/\)\(/, ') (');
+        type = type.replace('¦null', '');
+    }
     return type;
 }
 
 function cleanParameterDescription(description) {
-    if (description) return description.replace(/\n/g, '');
+    if (description) return description.replace(/\n/g, '').replace(/(&lt;.*?&gt;)/g, '`$1`');
     else return '';
 }
 
@@ -175,6 +177,15 @@ function getCallName(operationUniqueName) {
 {{~}}
 
 {{= data.tags.section }}
+
+{{ data.responseSchemas = false; }}
+
+{{~ data.responses :response }}
+{{ if (response.content && !data.utils.isPrimitive(response.type)) data.responseSchemas = true; }}
+{{~}}
+
+{{? data.responseSchemas && Object.keys(response.content).length }}
+
 <h3 id="{{=data.operationUniqueSlug}}-responses">Response Elements</h3>
 
 {{? data.responseSchemas && Object.keys(response.content).length }}
@@ -183,43 +194,33 @@ function getCallName(operationUniqueName) {
 {{= evaluateResponses(data) }}
 {{?}}
 
-{{= printResponse200(data.responses.splice(0, 1)[0]) }}
+{{~ data.responses.slice(0, 1) :response}}
+{{? !data.utils.isPrimitive(response.type)}}
+{{? Object.keys(response.content || {}).length }}
+{{ var responseKey = Object.keys(response.content)[0]; }}
+{{ var responseSchema = response.content[responseKey].schema; }}
+{{ var blocks = data.utils.schemaToArray(responseSchema,-1,{trim:true,join:true},data); }}
 
-{{? data.firstResponse.length }}
+**Response {{= response.status}}**{{? response.schema}} ({{= response.schema}}){{?}}:
+
+{{~ blocks :block}}
+{{? block.title }}{{=block.title}}
+{{?}}
+
+{{? block.rows.length }}
+
 |Response Element|Type|Description|
 |---|---|---|
-{{~ data.firstResponse :p}}|{{=p.name}}{{= getDeprecateState(p.description) }}|{{= cleanType(p.safeType) }}|{{= cleanParameterDescription(p.description) }}{{= printPattern(p) }}|
+{{~block.rows :p}}|{{=p.displayName}}{{= getDeprecateState(p.description) }}|{{= cleanType(p.safeType) }}|{{= cleanParameterDescription(p.description) }}{{= printPattern(p) }}|
+{{~}}
+{{?}}
+
 {{~}}
 
 {{??}}
+**Response {{= response.status}}**:
+
 Returns an empty body.
-{{?}}
-
-{{ data.responseSchemas = false; }}
-{{~ data.responses :response }}
-{{ if (response.content && !response.$ref && !data.utils.isPrimitive(response.type)) data.responseSchemas = true; }}
-{{~}}
-{{? data.responseSchemas && Object.keys(response.content).length }}
-<h3 id="{{=data.operationUniqueSlug}}-responseschema">Response Schema</h3>
-{{~ data.responses :response}}
-{{? response.content && !response.$ref && !data.utils.isPrimitive(response.type)}}
-{{? Object.keys(response.content).length }}
-{{ var responseKey = Object.keys(response.content)[0]; }}
-{{ var responseSchema = response.content[responseKey].schema; }}
-{{ var blocks = data.utils.schemaToArray(responseSchema,0,{trim:true,join:true},data); }}
-
-{{? blocks[0].rows.length || blocks[0].title }}
-Status Code **{{=response.status}}**
-
-{{~ blocks :block}}
-{{? block.title }}*{{=block.title}}*
-{{?}}
-|Name|Type|Required|Restrictions|Description|
-|---|---|---|---|---|
-{{~block.rows :p}}|{{=p.displayName}}|{{=p.safeType}}|{{=p.required}}|{{=p.restrictions||'none'}}|{{=p.description||''}}|
-{{~}}
-{{~}}
-{{?}}
 
 {{?}}
 
@@ -242,6 +243,6 @@ Status Code **{{=response.status}}**
 
 {{?}}
 
-{{= printErrorResponses(data.responses) }}
+{{= printErrorResponses(data.responses.slice(1)) }}
 
 {{= data.tags.endSection }}

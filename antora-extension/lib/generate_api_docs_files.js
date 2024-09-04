@@ -151,8 +151,9 @@ function runShins (markdown, outputFile) {
       html = postProcessCollapsibles(html)
       html = postProcessDeprecateTags(html)
       html = postProcessAdmonitionsInTables(html)
+      const title = html.match(/(?<=<h1.*?>).+?(?=<\/h1>)/)[0]
       fs.mkdirSync(outputFile.split('/').slice(0, -1).join('/'), { recursive: true })
-      fs.writeFileSync(outputFile, ':page-role: apidocs\n:noindex:\n\n++++\n' + html + '\n++++\n')
+      fs.writeFileSync(outputFile, '= ' + title + '\n:page-role: apidocs\n:noindex:\n\n++++\n' + html + '\n++++\n')
     }
   })
   console.log = turnOnConsoleLog()
