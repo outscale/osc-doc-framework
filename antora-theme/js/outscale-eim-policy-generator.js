@@ -6,11 +6,13 @@
     const directlinkActions = ["directconnect:*", "directconnect:Describe*", "directconnect:AllocatePrivateVirtualInterface", "directconnect:ConfirmPrivateVirtualInterface", "directconnect:CreateConnection", "directconnect:CreatePrivateVirtualInterface", "directconnect:DeleteConnection", "directconnect:DeleteVirtualInterface", "directconnect:DescribeConnections", "directconnect:DescribeLocations", "directconnect:DescribeVirtualGateways", "directconnect:DescribeVirtualInterfaces"]
     const text = {
         "api": {"en": "OUTSCALE API", "fr": "API OUTSCALE"},
-        "allowDeny": {"en": "Allow or deny...", "fr": "Autoriser ou interdire..."},
+        "allowDeny": {"en": "Allow or deny:", "fr": "Autoriser ou interdire :"},
         "allow": {"en": "Allow", "fr": "Autoriser"},
         "deny": {"en": "Deny", "fr": "Interdire"},
+        "what": {"en": "What:", "fr": "Quoi :"},
+        "actions": {"en": "The following actions", "fr": "Les actions suivantes"},
+        "notActions": {"en": "All except the following actions", "fr": "Tout sauf les actions suivantes"},
         "statement": {"en": "Statement", "fr": "Déclaration"},
-        "theseActions": {"en": "...the following actions:", "fr": "...les actions suivantes :"},
         "allActions": {"en": "All actions in this API", "fr": "Toutes les actions de cette API"},
         "allReadActions": {"en": "All Read actions in this API", "fr": "Toutes les actions Read de cette API"},
         "allDescribeActions": {"en": "All Describe actions in this API", "fr": "Toutes les actions Describe de cette API"},
@@ -34,9 +36,11 @@
     function createStatement () {
         const num = document.querySelectorAll("#eim-policy-generator > fieldset").length + 1
         const effects = [text.allow[lang], text.deny[lang]]
+        const what = [text.actions[lang], text.notActions[lang]]
         const superArray = [
             createFieldSet("effect", effects, "radio", text.allowDeny[lang], false, num),
-            createActionsSuperFieldSet("actions", actions, "checkbox", text.theseActions[lang], num),
+            createFieldSet("what", what, "radio", text.what[lang], false, num),
+            createActionsSuperFieldSet("actions", actions, "checkbox", num),
         ]
         const fieldset = document.createElement("fieldset")
         fieldset.id = "statement-" + num
@@ -49,17 +53,15 @@
         fieldset.append(legend, divs)
         return fieldset
     }
-    function createActionsSuperFieldSet (name, superArray, inputType, legendText, num) {
+    function createActionsSuperFieldSet (name, superArray, inputType, num) {
         const fieldset = document.createElement("fieldset")
-        const legend = document.createElement("legend")
-        legend.textContent = legendText
         const divs = document.createElement("div")
         divs.id = name + "-" + num
         for (let array of superArray) {
             const div = createFieldSet(array[1], array[0], inputType, array[1], true, num)
             divs.append(div)
         }
-        fieldset.append(legend, divs)
+        fieldset.append(divs)
         return fieldset
     }
     function createFieldSet (name, array, inputType, legendText, collapsible=false, num) {
@@ -91,7 +93,7 @@
         input.id = item + "-" + num
         input.name = name + "-" + num
         input.value = item
-        if (inputType === "radio" && item === text.allow[lang]) input.checked = true
+        if (inputType === "radio" && (item === text.allow[lang] || item === text.actions[lang])) input.checked = true
         div.append(input)
         const label = document.createElement("label")
         label.classList.add("full-width")
@@ -246,9 +248,12 @@
             let effect = form["effect-" + i].value
             if (effect === text.allow.fr) effect = text.allow.en
             else if (effect === text.deny.fr) effect = text.deny.en
+            let what = form["what-" + i].value
+            if (what === text.actions.en || what === text.actions.fr) what = "Action"
+            else if (what === text.notActions.en || what === text.notActions.fr) what = "NotAction"
             const Statement = {
                 "Effect": effect,
-                "Action": selectedActions,
+                [what]: selectedActions,
                 "Resource": ["*"],
             }
             obj.Statement.push(Statement)
