@@ -19,58 +19,53 @@ under the License.
 <% } } %>
 
   <div id="api-body" <% if (current_page.page_classes) {%>class="<%= current_page.page_classes %>" <% } %>data-languages="<%- language_array(current_page.data.language_tabs) %>">
-    <div  class="toc-wrapper nav-container">
-      <% if (language_tabs.length>0) {%>
-        <div class="lang-selector">
-          <% for (var lang in language_tabs) { %>
-            <% if (typeof language_tabs[lang] === 'object') { %>
-              <a href="#" name="<%= Object.keys(language_tabs[lang])[0] %>"><%= language_tabs[lang][Object.keys(language_tabs[lang])[0]] %></a>
-            <% } else { %>
-              <a href="#" name="<%= language_tabs[lang] %>"><%= language_tabs[lang] %></a>
+    <div class="toc-wrapper nav-container">
+      <aside class="nav">
+        <% if (language_tabs.length>0) {%>
+          <div class="lang-selector">
+            <% for (var lang in language_tabs) { %>
+              <% if (typeof language_tabs[lang] === 'object') { %>
+                <a href="#" name="<%= Object.keys(language_tabs[lang])[0] %>"><%= language_tabs[lang][Object.keys(language_tabs[lang])[0]] %></a>
+              <% } else { %>
+                <a href="#" name="<%= language_tabs[lang] %>"><%= language_tabs[lang] %></a>
+              <% } %>
             <% } %>
-          <% } %>
-        </div>
-      <% } %>
-      <% if (current_page.data.search) { %>
-        <div class="search">
-          <input type="text" class="search" id="input-search" placeholder="Search">
-        </div>
-        <ul class="search-results"></ul>
-      <% } %>
-      <div id="toc" class="toc-list-h1">
-	  	<ul class="toc-list-h1">
-        <% for (var h1 of toc_data(page_content)) { %>
-          <li>
-            <a href="#<%= h1.id %>" class="toc-h1 toc-link" data-title="<%= h1.title %>"><%- h1.content %></a>
-            <% if (h1.children && (h1.children.length > 0)) { %>
-              <ul class="toc-list-h2">
-                <% for (var h2 of h1.children) { %>
-                  <li>
-                    <a href="#<%= h2.id %>" class="toc-h2 toc-link" data-title="<%= h2.title %>"><%- h2.content %></a>
-                    <% if (h2.children && (h2.children.length > 0)) { %>
-                      <ul class="toc-list-h3">
-                      <% for (var h3 of h2.children) { %>
-                      <li>
-                        <a href="#<%= h3.id %>" class="toc-h3 toc-link" data-title="<%= h3.title %>"><%- h3.content %></a>
-                      </li>
-                      <% } %>
-                    </ul>
-                    <% } %>
-                  </li>
-                <% } %>
-              </ul>
-            <% } %>
-          </li>
+          </div>
         <% } %>
-		</ul>
-      </div>
-      <% if (current_page.data.toc_footers) { %>
-        <ul class="toc-footer">
-          <% for (var footer in current_page.data.toc_footers) { %>
-            <li><%- current_page.data.toc_footers[footer] %></li>
-          <% } %>
-        </ul>
-      <% } %>
+        <% if (current_page.data.search) { %>
+          <div class="search">
+            <input type="text" class="search" id="input-search" placeholder="Search">
+          </div>
+          <ul class="search-results"></ul>
+        <% } %>
+        <div id="toc" class="toc-menu toc-list-h1" data-levels="2">
+          <ul class="toc-list-h1">
+            <% for (var h1 of toc_data(page_content)) { %>
+              <% if (h1.children.length) { %>
+              <li>
+              <% } else { %>
+              <li class="sg-parent">
+              <% } %>
+                <a href="#<%= h1.id %>" class="toc-h1 toc-link" data-level="1" data-title="<%= h1.title %>"><%- h1.content %></a>
+                <% if (h1.children && (h1.children.length > 0)) { %>
+                  <% for (var h2 of h1.children) { %>
+                  <li>
+                    <a href="#<%= h2.id %>" class="toc-h2 toc-link" data-level="2" data-title="<%= h2.title %>"><%- h2.content %></a>
+                  </li>
+                  <% } %>
+                <% } %>
+              </li>
+            <% } %>
+          </ul>
+        </div>
+        <% if (current_page.data.toc_footers) { %>
+          <ul class="toc-footer">
+            <% for (var footer in current_page.data.toc_footers) { %>
+              <li><%- current_page.data.toc_footers[footer] %></li>
+            <% } %>
+          </ul>
+        <% } %>
+      </aside>
     </div>
     <div class="page-wrapper">
       <div class="dark-box"></div>

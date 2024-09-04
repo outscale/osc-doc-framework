@@ -8,29 +8,8 @@
     background-color: var(--brandPrimaryDarkBlue500);
 }
 
-h1 {
-    color: var(--brandPrimaryDarkBlue500);
-}
-
-.toc-wrapper .toc-list-h2 {
-    background-color: var(--brandPrimaryDarkBlue500);
-}
-.toc-wrapper .active a {
-    background-color: var(--brandPrimaryDarkBlue400);
-}
-
 .toc-wrapper .lang-selector {
     background-color: var(--brandPrimaryDarkBlue500);
-}
-
-.toc-wrapper .toc-link.active-parent {
-    background-color: var(--brandPrimaryIndigo700) !important;
-    color: #fff;
-}
-
-.toc-wrapper .toc-link.active {
-    background-color: var(--brandPrimaryIndigo500) !important;
-    color: #fff;
 }
 
 .lang-selector, th {

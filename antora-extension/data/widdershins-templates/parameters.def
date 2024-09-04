@@ -69,7 +69,7 @@ function cleanType(type) {
 }
 
 function cleanParameterDescription(description) {
-    if (description) return description.replace(/\n/g, '');
+    if (description) return description.replace(/\n/g, '').replace(/(&lt;.*?&gt;)/g, '`$1`');
     else return '';
 }
 
@@ -103,9 +103,8 @@ function printPattern(p) {
 {{= data.utils.getCodeSamples(data) }}
 {{?}}
 
-{{? !data.options.codeSamples }}
-{{? data.operation.requestBody}}
-> Examples
+{{? !data.options.codeSamples && data.operation.requestBody}}
+> Schema
 
 {{? data.bodyParameter.exampleValues.description }}
 > {{= data.bodyParameter.exampleValues.description }}
@@ -113,11 +112,25 @@ function printPattern(p) {
 
 {{= data.utils.getBodyParameterExamples(data) }}
 {{?}}
-{{?}}
 
+{{? data['x-allParametersAreInSameLocation'] }}
+
+{{? data.parameters && data.parameters.length }}
 |Request Parameter|Type|Description|
 |---|---|---|
 {{~ data.parameters :p}}|{{=p.name}}{{= formatRequired(p.required) }}{{= getDeprecateState(p.description) }}|{{= cleanType(p.safeType) }}|{{= cleanParameterDescription(p.description) }}{{= printPattern(p) }}|
 {{~}}
+{{?}}
+
+{{??}}
+
+{{? data.parameters && data.parameters.length }}
+|Request Parameter|In|Type|Description|
+|---|---|---|---|
+{{~ data.parameters :p}}|{{=p.name}}{{= formatRequired(p.required) }}{{= getDeprecateState(p.description) }}|{{=p.in}}|{{= cleanType(p.safeType) }}|{{= cleanParameterDescription(p.description) }}{{= printPattern(p) }}|
+{{~}}
+{{?}}
+
+{{?}}
 
 {{= data.tags.endSection }}

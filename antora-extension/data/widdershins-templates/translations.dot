@@ -1,9 +1,9 @@
 {{
-data.translations.defaultTag = 'Default';
+data.translations.defaultTag = 'Untagged Operations';
 data.translations.response = 'Response';
 data.translations.responseDefault = 'Default';
 data.translations.responseUnknown = 'Unknown';
-data.translations.schemaInline = 'Inline';
+data.translations.schemaInline = '';
 data.translations.schemaNone = 'None';
 data.translations.externalDocs = 'External documentation';
 data.translations.secDefNone = 'None';

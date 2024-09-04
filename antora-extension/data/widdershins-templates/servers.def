@@ -2,27 +2,28 @@
 
 function getServers(data) {
     let content = '';
-    for (let s in data.api.servers) {
-        const server = data.api.servers[s];
-        content += '- <a href="' + server.url + '">' + server.url + '</a>';
-        if (server.description) {content += ' (' + server.description + ')';}
-        content += '\n';
-        for (let v in server.variables) {
-            const variable = server.variables[v];
-            content += '  - Where **{' + v + '}** ';
-            if (variable.description) {content += ' (' + variable.description + ')';}
-            content += ' is:\n';
-            for (e of variable.enum) {
-                content += '    - ' + e;
-                if (variable.default === e) {content += ' (default)';}
-                content += '\n';
-            }
+    const servers = data.api.servers || [];
+    if (servers) {
+        content += '### Endpoints\n\n';
+    }
+    for (const server of servers) {
+        if (server.description) {content += server.description + ':\n';}
+        content += '|Name|Base URL|\n';
+        content += '|---|---|\n';
+        const entries = Object.entries(server.variables || {});
+        const [k, v] = entries[0] || ['', {}];
+        for (e of v.enum || ['default']) {
+            const url = server.url.replace('\{' + k + '\}', e).replace(/(\{.+?\})/g, '`$1`');
+            content += '|' + e;
+            if (v.default === e) {content += ' (default)';}
+            content += '|[' + url +'](' + url + ')';
+            content += '|\n';
         }
+        content += '\n';
     }
     return content;
 }
 
 } }}
 
-Base URLs:
 {{= getServers(data) }}

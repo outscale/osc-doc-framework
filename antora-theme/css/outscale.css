@@ -559,6 +559,9 @@ html {
   width: var(--topbar-height);
   /*! z-index: 9999; */
 }
+.nav-toggle.is-active {
+  filter: invert(1);
+}
 .navbar {
   padding-left: var(--topbar-height);
   box-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);

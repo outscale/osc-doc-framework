@@ -8,7 +8,7 @@ function generatePythonExamples(data) {
         }
     }
 
-    const examples = Object.entries(data.bodyParameter.exampleValues);
+    const examples = data['x-customRequestExamples'] || {};
     let s = 'from osc_sdk_python import Gateway\n';
     if (basicAuth) {
         s += '# import os\n';
@@ -26,51 +26,45 @@ function generatePythonExamples(data) {
     }
     s += '\n';
 
-    for (let [key, value] of examples) {
-        if (key === 'customExamples') {
-            for (let n = 0, length = value.length; n < length; n++) {
-                if (value[n]) {
-                    const objJson = JSON.parse(value[n].json);
-                    if (value[n].summary) {
-                        s += '# ' + value[n].summary + '\n';
-                    }
-                    s += 'result = gw.' + data.operationUniqueName + '(\n';
-                    for (let [k, v] of Object.entries(objJson)) {
-                        /* osc-sdk-python doesn't implement the DryRun parameter, so skip it */
-                        if (k === 'DryRun' || k === 'dryRun') {
-                            continue;
-                        }
-                        s += '    ' + k;
-                        if (typeof v === 'object') {
-                            s += '=' + getPythonStyleObject(v, 1) + ',\n';
-                        }
-                        else if (isNaN(v)) {
-                            /* EIM policies need to be formatted in a special way */
-                            if (v.includes('"')) {
-                                s += "='" + v + "',\n";
-                            }
-                            else {
-                                s += '="' + v + '",\n';
-                            }
-                        }
-                        else {
-                            if (v === false) {v = 'False';}
-                            else if (v === true) {v = 'True';}
-                            /* Workaround for strings composed entirely of digits */
-                            else if (!Number.isInteger(v)) {v = '"' + v + '"';}
-                            s += '=' + v + ',\n';
-                        }
-                    }
-                    if (s.includes('"$OSC_PASSWORD"')) {
-                        s = s.replace("from osc_sdk_python import Gateway\n", "from osc_sdk_python import Gateway\nimport os\n");
-                        s = s.replace('"$OSC_PASSWORD"', 'os.environ.get("OSC_PASSWORD")');
-                    }
-                    s += ')\n';
-                    s = s.replace('(\n)', '()');
-                    s += 'print(result)\n\n';
+    for (let n = 0, length = examples.length; n < length; n++) {
+        const objJson = examples[n].object;
+        if (examples[n].summary) {
+            s += '# ' + examples[n].summary + '\n';
+        }
+        s += 'result = gw.' + data.operationUniqueName + '(\n';
+        for (let [k, v] of Object.entries(objJson)) {
+            /* osc-sdk-python doesn't implement the DryRun parameter, so skip it */
+            if (k === 'DryRun' || k === 'dryRun') {
+                continue;
+            }
+            s += '    ' + k;
+            if (typeof v === 'object') {
+                s += '=' + getPythonStyleObject(v, 1) + ',\n';
+            }
+            else if (isNaN(v)) {
+                /* EIM policies need to be formatted in a special way */
+                if (v.includes('"')) {
+                    s += "='" + v + "',\n";
+                }
+                else {
+                    s += '="' + v + '",\n';
                 }
             }
+            else {
+                if (v === false) {v = 'False';}
+                else if (v === true) {v = 'True';}
+                /* Workaround for strings composed entirely of digits */
+                else if (!Number.isInteger(v)) {v = '"' + v + '"';}
+                s += '=' + v + ',\n';
+            }
         }
+        if (s.includes('"$OSC_PASSWORD"')) {
+            s = s.replace("from osc_sdk_python import Gateway\n", "from osc_sdk_python import Gateway\nimport os\n");
+            s = s.replace('"$OSC_PASSWORD"', 'os.environ.get("OSC_PASSWORD")');
+        }
+        s += ')\n';
+        s = s.replace('(\n)', '()');
+        s += 'print(result)\n\n';
     }
 
     return s;

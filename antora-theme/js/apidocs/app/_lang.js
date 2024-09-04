@@ -37,7 +37,7 @@ under the License.
     $(".highlight.tab-" + language).show();
     $(".lang-specific." + language).show();
 
-    window.recacheHeights();
+    // window.recacheHeights();
 
     // scroll to the new location of the position
     // if ($(window.location.hash).get(0)) {
@@ -161,4 +161,6 @@ under the License.
       return false;
     });
   });
+
+  setupLanguages($('#api-body').data('languages'));
 })();
