@@ -126,9 +126,6 @@
       if (iActive > 0) {
         window.history.replaceState(null, '', activeFragment)
         document.title = links[activeFragment].textContent + ' ' + originalTitleSuffix
-      } else {
-        window.history.replaceState(null, '', window.location.pathname)
-        document.title = originalTitle
       }
     }
   }
