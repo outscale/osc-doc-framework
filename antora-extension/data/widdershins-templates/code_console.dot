@@ -6,7 +6,7 @@ function generateOscCliExamples(data) {
     const options = createGeneralOptions(data);
     let s = printExamples(examples, options, data);
 
-    if (data.security.find((n) => n.BasicAuth)) {
+    if (data.security?.find((n) => n.BasicAuth)) {
         data.operation['x-basicAuthFlag'] = true;
         s += '\n\n';
         s += '```\n';
@@ -38,7 +38,7 @@ function printExamples(examples, options, data) {
     let s = '';
 
     for (let i = 0, length = examples.length; i < length; i++) {
-        if (data.security.length) {
+        if (data.security?.length) {
             if (!data.operation['x-basicAuthFlag']) {
                 if (examples[i].summary) {
                     s += '# ' + examples[i].summary + '\n\n';

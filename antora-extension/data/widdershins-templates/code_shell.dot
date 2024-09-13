@@ -6,7 +6,7 @@ function generateCurlExamples(data) {
     const options = createGeneralOptions(data);
     let s = printExamples(examples, options, data);
 
-    if (data.security.find((n) => n.BasicAuth)) {
+    if (data.security?.find((n) => n.BasicAuth)) {
         data.operation['x-basicAuthFlag'] = true;
         s += '\n\n';
         s += '```\n';
@@ -22,7 +22,7 @@ function createGeneralOptions(data) {
     const options = [];
 
     if (data.host.startsWith('api')) {
-        if (data.security.length && !data.operation['x-basicAuthFlag']) {
+        if (data.security?.length && !data.operation['x-basicAuthFlag']) {
             options.push(
                 { name: 'user', value: '$OSC_ACCESS_KEY:$OSC_SECRET_KEY' },
                 { name: 'aws-sigv4', value: 'osc' },
@@ -37,7 +37,7 @@ function createGeneralOptions(data) {
         options.push({ name: 'header', value: 'Content-Type: application/json' });
     }
     else {
-        if (data.security.length && !data.operation['x-basicAuthFlag']) {
+        if (data.security?.length && !data.operation['x-basicAuthFlag']) {
             options.push(
                 { name: 'user', value: '$OSC_ACCESS_KEY:$OSC_SECRET_KEY' },
                 { name: 'aws-sigv4', value: 'aws:amz' },
@@ -67,7 +67,7 @@ function createGeneralOptions(data) {
 function printExamples(examples, options, data) {
     let s = '';
     for (let i = 0, length = examples.length; i < length; i++) {
-        if (data.security.length) {
+        if (data.security?.length) {
             if (!data.operation['x-basicAuthFlag']) {
                 if (i === 0) {
                     s += '# You need Curl version 7.75 or later to use the --aws-sigv4 option\n\n';
