@@ -43,13 +43,7 @@ function createGeneralOptions(data) {
                 { name: 'aws-sigv4', value: 'aws:amz' },
             );
         }
-        if (data.methodUpper === 'GET') {
-            options.push(
-                { name: 'data-urlencode', value: 'Version=' + data.version },
-                { name: 'data-urlencode', value: 'Action=' + data.method.path.replace('/', '') },
-            );
-        }
-        else {
+        if (data.host.startsWith('icu') || data.host.startsWith('directlink') || data.host.startsWith('kms')) {
             let service = '';
             if (data.host.startsWith('icu')) {service = 'TinaIcuService';}
             else if (data.host.startsWith('directlink')) {service = 'OvertureService';}
@@ -57,6 +51,12 @@ function createGeneralOptions(data) {
             options.push(
                 { name: 'header', value: 'x-amz-target: ' + service + '.' + data.method.path.replace('/', '') },
                 { name: 'header', value: 'Content-Type: application/x-amz-json-1.1' },
+            );
+        }
+        else {
+            options.push(
+                { name: 'data-urlencode', value: 'Version=' + data.version },
+                { name: 'data-urlencode', value: 'Action=' + data.method.path.replace('/', '') },
             );
         }
     }
@@ -91,18 +91,19 @@ function printExamples(examples, options, data) {
         if (data.host.startsWith('api')) {
             url += data.method.path;
         }
-        s += 'curl -X ' + data.methodUpper + ' ' + url + data.requiredQueryString + ' \\\n';
+
+        let verb = ' -X ' + data.methodUpper;
+        if (data.methodUpper === 'GET') {
+            verb = ''
+        }
+
+        s += 'curl' + verb + ' ' + url + data.requiredQueryString + ' \\\n';
 
         for (const option of options) {
             s += printOption(option.name, option.value);
         }
 
-        if (data.methodUpper === 'GET') {
-            let params = printParamsAsUrlEncodes(examples[i].object);
-            params = params.replace(/\.member\.N/g, '.member.0');
-            s += params;
-        }
-        else {
+        if (data.host.startsWith('icu') || data.host.startsWith('directlink') || data.host.startsWith('kms')) {
             let obj = JSON.stringify(examples[i].object, overrideSomeValues, 2);
             /* Escape shell variables */
             obj = obj.replace(/"(\$.+?)"/g, '"\'$1\'"');
@@ -122,6 +123,11 @@ function printExamples(examples, options, data) {
                 (m) => m.replace(/\n/g, '').replace(/, +/g, ', ').replace(/  +/g, '')
             );
             s += printOption('data', obj);
+        }
+        else {
+            let params = printParamsAsUrlEncodes(examples[i].object);
+            params = params.replace(/\.member\.N/g, '.member.0');
+            s += params;
         }
         s = s.replace(/ \\\n$/, '');
 
