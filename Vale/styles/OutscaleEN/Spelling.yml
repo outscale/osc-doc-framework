@@ -44,6 +44,7 @@ filters:
 - reassociation
 - s3cmd
 - subnet
+- subparameter
 - sysprep
 - tebibyte
 - unassign
@@ -53,3 +54,4 @@ filters:
 - unpublish
 - virtualize
 - virtualizing
+- zxcvbn
