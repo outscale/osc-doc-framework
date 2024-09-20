@@ -44,7 +44,9 @@ async function main () {
 
   let apiMarkdown = await runWiddershins(api, languages)
   apiMarkdown = postProcessIndentsAfterWiddershins(apiMarkdown)
-  apiMarkdown = postDocsOutscaleComLinks(apiMarkdown, apiFile)
+  if (!apiFile.includes('okms')) {
+    apiMarkdown = postDocsOutscaleComLinks(apiMarkdown)
+  }
   runShins(apiMarkdown, `${outputDir}/modules/ROOT/pages/${outputFileStem}.adoc`)
 
   if (errorsFile) {
@@ -135,10 +137,8 @@ function postProcessIndentsAfterWiddershins (apiMarkdown) {
   return apiMarkdown
 }
 
-function postDocsOutscaleComLinks (apiMarkdown, apiFile) {
-  if (!apiFile.includes('okms')) {
-    return apiMarkdown.replaceAll('https://docs.outscale.com/', '')
-  }
+function postDocsOutscaleComLinks (apiMarkdown) {
+  return apiMarkdown.replaceAll('https://docs.outscale.com/', '')
 }
 
 function runShins (markdown, outputFile) {
