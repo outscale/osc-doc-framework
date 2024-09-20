@@ -166,13 +166,7 @@ img,
     width: initial;
 }
 
-.tooltiptext {
+.tooltip::after {
     color: lightslategray;
-    margin: initial !important;
-}
-.tooltiptext::before {
-    content: " (";
-}
-.tooltiptext::after {
-    content: ")";
+    content: " (" attr(data-tooltip) ")";
 }
