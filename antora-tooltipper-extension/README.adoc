@@ -1,0 +1,23 @@
+= Antora Tooltipper Extension
+
+[IMPORTANT]
+====
+WIP
+====
+
+.antora.yml
+[source.yaml]
+----
+ext:
+  antora-tooltipper-extension:
+    tooltips:
+    - find: OpenAPI
+      tooltip: Formerly known as Swagger
+    - find: "[Nn]etwork [Ii]nterface [Cc]ards? \\(NICs?\\)|[Nn]etwork [Ii]nterface [Cc]ards?|NICs?"
+      tooltip: A component that connects a computer to a network
+----
+
+* `tooltips`: A list of tooltips to apply. `find` is the regex pattern to find the term in each page chunk, and `tooltip` is the text to display in the tooltip.
+* `flag`: The https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_expressions#advanced_searching_with_flags[regex flag] for the tooltip search function (for example, `g` for global search or `i` for case-insensitive search). If not specified, the default value is `""`, which means that each tooltip is only applied to the first occurrence of `find` in each page chunk.
+* `pattern`: The regex pattern to divide the pages into page chunks where the tooltips are applied. If not specified, the default value is `<h([1-2]).*?>.+?</h\\1>|(?<=</h[1-2]>)[\\s\\S]+?(?=<h2|</main>)`, which means that the page chunks are first-level and second-level headings and first-level and second-level sections.
+* `exempted-tags`: A pipe-separated list of HTML tags where tooltips will not be applied. If not specified, the default value is `h1|h2|a|code|span|strong`.

@@ -1012,35 +1012,35 @@ div.tab.active {
     border-bottom: 2px dotted #777;
   }
 
-  .tooltip .tooltiptext {
-    visibility: hidden;
+  .tooltip:hover:before,
+  .tooltip:hover:after {
+    position: absolute;
+    left: 50%;
+    transform: translate(-50%);
+    z-index: 10;
+  }
+
+  .tooltip:hover:before {
+    content: "";
+    top: calc(100% + 3px);
+    border-style: solid;
+    border-color: transparent transparent var(--neutral800);
+    border-bottom-width: 10px;
+    border-right-width: 8px;
+    border-left-width: 8px;
+  }
+
+  .tooltip:hover:after {
+    content: attr(data-tooltip);
+    top: calc(100% + 13px);
     min-width: max-content;
     background: var(--neutral800);
+    border-radius: 4px;
     color: #fff;
     font-size: 12px;
-    text-align: center;
-    border-radius: 4px;
+    font-weight: initial;
+    line-height: 1rem;
     padding: 0.4rem 0.8rem 0.4rem 0.8rem;
-    position: absolute;
-    z-index: 1;
-    top: 150%;
-  }
-
-  .tooltip .tooltiptext::after {
-    content: "";
-    position: absolute;
-    bottom: 100%;
-    left: 50%;
-    margin-left: -5px;
-    border-width: 5px;
-    border-style: solid;
-    border-color: transparent transparent var(--neutral800) transparent;
-  }
-
-  .tooltip:hover .tooltiptext,
-  .tooltip:active .tooltiptext {
-    visibility: visible;
-    z-index: 10;
   }
 
   #term-box {
