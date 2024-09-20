@@ -14,7 +14,6 @@ module.exports.register = function ({ config }) {
       const files = contentAggregate[i].files
       for (let j = 0, length = files.length; j < length; j++) {
         if (files[j].stem) (files[j].stem = files[j].stem.normalize('NFC'))
-        if (files[j].extname === '.adoc') files[j].contents = modifyAsciiDoc(files[j])
       }
     }
   })
@@ -44,37 +43,6 @@ module.exports.register = function ({ config }) {
     addQueryParamToRedirect(outputDir + '/fr/userguide/Notes-de-releases-OUTSCALE-Marketplace.html', '?f=Marketplace')
     updateRobotsTxt('robots.txt', playbook)
   })
-}
-
-function modifyAsciiDoc (file) {
-  let text = file.contents.toString()
-
-  text = text.normalize('NFC')
-
-  text = disambiguateTabIds(/\[\.tab, id="\{cockpit-1\}"\]/g, text)
-  text = disambiguateTabIds(/\[\.tab, id="\{cockpit-2\}"\]/g, text)
-  text = disambiguateTabIds(/\[\.tab, id="OSC CLI"\]/g, text)
-  text = disambiguateTabIds(/\[\.tab, id="AWS CLI"\]/g, text)
-  text = disambiguateTabIds(/\[\.tab, id="Linux"\]/g, text)
-  text = disambiguateTabIds(/\[\.tab, id="macOS"\]/g, text)
-  text = disambiguateTabIds(/\[\.tab, id="Windows"\]/g, text)
-
-  if (~file.dirname.indexOf('/pages')) {
-    if (~text.indexOf('AWS')) text += '\n\n[#aws-disclaimer]\n{page-awsdisclaimer-text}\n'
-  }
-
-  return Buffer.from(text)
-}
-
-function disambiguateTabIds (re, text) {
-  const m = text.match(re)
-  if (m && m.length > 1) {
-    for (let i = 0, length = m.length; i < length; i++) {
-      const repl = m[i].replace('"]', '_' + i + '"]')
-      text = text.replace(m[i], repl)
-    }
-  }
-  return text
 }
 
 function checkOtherLanguageLink (file, contentCatalog, logger) {
