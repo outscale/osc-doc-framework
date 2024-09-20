@@ -1,6 +1,11 @@
 #!/bin/sh
 
 DIR="./node_modules/@outscale/osc-doc-framework/"
+
+if [ ! -e "${DIR}" ] && [ $(which npm) ]; then
+    DIR="$(npm prefix --global)/lib/"$DIR
+fi
+
 LINTSTAGED_BIN="${DIR}/node_modules/.bin/lint-staged"
 
 if [ ! -e "${LINTSTAGED_BIN}" ]; then
