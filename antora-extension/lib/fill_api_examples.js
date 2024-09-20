@@ -74,7 +74,7 @@ async function runOpenapiExamplesValidator (api) {
   }
 }
 
-if (process.argv[1] === __filename) {
+if (process.argv[1].split('/').at(-1) === __filename.split('/').at(-1)) {
   runInCli()
 }
 
