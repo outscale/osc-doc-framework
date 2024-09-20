@@ -11,14 +11,14 @@
               </li>
               {{else if (or this.path this.url)}}
               <li class="entry">
-                <a href="{{#if this.path}}{{../siteRootPath}}/{{this.path}}{{else}}{{this.url}}{{/if}}">{{@key}}</a>
+                <a href={{#if this.path}}"{{../siteRootPath}}/{{this.path}}"{{else}}"{{this.url}}" target="_blank" rel="noopener"{{/if}}>{{@key}}</a>
               </li>
               {{else if this.dropdown}}
               <li class="dropdown entry">
                   <button aria-expanded="false" aria-controls="entry-{{@index}}">{{@key}}</button>
                   <ul id="entry-{{@index}}">
                       {{#each this.dropdown}}
-                      <li><a href="{{#if this.path}}{{../../siteRootPath}}/{{this.path}}{{else}}{{this.url}}{{/if}}">{{@key}}</a></li>
+                      <li><a href={{#if this.path}}"{{../../siteRootPath}}/{{this.path}}"{{else}}"{{this.url}}" target="_blank" rel="noopener"{{/if}}>{{@key}}</a></li>
                       {{/each}}
                   </ul>
               </li>

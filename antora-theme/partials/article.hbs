@@ -5,8 +5,8 @@
 {{{page.contents}}}
 <div class="sidebar-button paragraph"><a onclick="printPage()"><strong>{{#if page.attributes.en}}{{or page.attributes.printthispage-text "Exporter en PDF"}}{{else}}{{or page.attributes.printthispage-text "Export to PDF"}}{{/if}}</strong> <i class="fa fa-file-pdf-o"></i></a></div>
 {{#if (and env.CI (not env.DISABLE_EDIT_PAGE_LINK))}}
-<div class="sidebar-button paragraph"><a href="{{page.editUrl}}"><strong>{{page.attributes.editthispage-text}}</strong> <i class="fa fa-file-code-o"></i></a></div>
+<div class="sidebar-button paragraph"><a href="{{page.editUrl}}" target="_blank" rel="noopener"><strong>{{page.attributes.editthispage-text}}</strong> <i class="fa fa-file-code-o"></i></a></div>
 {{else if (not env.DISABLE_EDIT_PAGE_LINK)}}
-<div class="sidebar-button paragraph"><a href="{{page.fileUri}}"><strong>{{page.attributes.editthispage-text}}</strong> <i class="fa fa-file-code-o"></i></a></div>
+<div class="sidebar-button paragraph"><a href="{{page.fileUri}}" target="_blank" rel="noopener"><strong>{{page.attributes.editthispage-text}}</strong> <i class="fa fa-file-code-o"></i></a></div>
 {{/if}}
 </article>
