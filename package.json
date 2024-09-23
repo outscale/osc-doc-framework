@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "antora": "3.1.1",
-    "@antora/collector-extension": "1.0.0-alpha.3",
+    "@antora/collector-extension": "v1.0.0-beta.2",
     "@antora/lunr-extension": "1.0.0-alpha.8",
     "antora-navigator-extension": "https://gitlab.com/opendevise/oss/antora-navigator-extension/-/archive/2d0ec861f894728b303a8bbe68ccd68acdef7b9f/antora-navigator-extension-2d0ec861f894728b303a8bbe68ccd68acdef7b9f.tar.gz",
     "csv-parse": "5.5.0",
