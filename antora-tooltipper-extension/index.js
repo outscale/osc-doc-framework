@@ -6,7 +6,7 @@ module.exports.register = function ({ config }) {
       const componentName = contentAggregate[i].name
       tooltipsConfig[componentName] = contentAggregate[i].ext?.antoraTooltipperExtension || {}
     }
-    if (Object.keys(tooltipsConfig.ROOT).length === 0) {
+    if (Object.keys(tooltipsConfig.ROOT || {}).length === 0) {
       tooltipsConfig.ROOT = tooltipsConfig.en
     }
   })
@@ -40,7 +40,7 @@ function processPage (page, tooltipsComponentConfig) {
 function addTooltips (pageChunk, tooltips, flag) {
   for (const n of tooltips) {
     pageChunk = pageChunk.replace(
-      new RegExp('(?<!["\\w\\-])(' + n.find + ')(?![\\w\\)])', flag),
+      new RegExp('(?<!["\\w\\-#])(' + n.find + ')(?![\\w\\)])', flag),
       '<span class="tooltip" data-tooltip="' + n.tooltip + '">$1</span>'
     )
   }
