@@ -40,7 +40,7 @@ function processPage (page, tooltipsComponentConfig) {
 function addTooltips (pageChunk, tooltips, flag) {
   for (const n of tooltips) {
     pageChunk = pageChunk.replace(
-      new RegExp('(?<!["\\w\\-#])(' + n.find + ')(?![\\w\\)])', flag),
+      new RegExp('(?<!["\\w\\-#])(' + n.find + ')(?!["\\w\\)])', flag),
       '<span class="tooltip" data-tooltip="' + n.tooltip + '">$1</span>'
     )
   }
