@@ -28,13 +28,15 @@ function processPage (page, tooltipsComponentConfig) {
 
   let text = page.contents.toString()
   const pageChunks = text.match(new RegExp(pattern, 'g'))
-  const newPageChunks = []
-  for (const pageChunk of pageChunks) {
-    newPageChunks.push(addTooltips(pageChunk, tooltips, flag))
+  if (pageChunks) {
+    const newPageChunks = []
+    for (const pageChunk of pageChunks) {
+      newPageChunks.push(addTooltips(pageChunk, tooltips, flag))
+    }
+    text = swapPagePartsWithNewPageParts(text, pageChunks, newPageChunks)
+    text = removeTooltipsFromExemptedTags(text, exemptedTags)
+    page.contents = Buffer.from(text)
   }
-  text = swapPagePartsWithNewPageParts(text, pageChunks, newPageChunks)
-  text = removeTooltipsFromExemptedTags(text, exemptedTags)
-  page.contents = Buffer.from(text)
 }
 
 function addTooltips (pageChunk, tooltips, flag) {
