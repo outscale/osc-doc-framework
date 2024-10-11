@@ -11,6 +11,7 @@ exceptions:
 - fGPUs?
 - inWebo
 - macOS
+- Nuage public
 - oapi-cli
 - optional
 - s3
