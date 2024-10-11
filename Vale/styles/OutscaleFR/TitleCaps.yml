@@ -18,11 +18,13 @@ exceptions:
 - Linux
 - Microsoft
 - Net
+- Nuage public
 - Oracle
 - (d')?OUTSCALE (Key Management Service|Marketplace|Monitoring Services|Object Storage)
 - Read\w+
 - Red Hat
 - Régions?
 - Subnets?
+- Sous-régions?
 - Virtual Private Clouds?
 - Windows
