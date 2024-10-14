@@ -103,7 +103,12 @@ function printExamples(examples, options, data) {
             s += printOption(option.name, option.value);
         }
 
-        if (data.host.startsWith('icu') || data.host.startsWith('directlink') || data.host.startsWith('kms')) {
+        if (
+            data.host.startsWith('api') ||
+            data.host.startsWith('icu') ||
+            data.host.startsWith('directlink') ||
+            data.host.startsWith('kms')
+          ) {
             let obj = JSON.stringify(examples[i].object, overrideSomeValues, 2);
             /* Escape shell variables */
             obj = obj.replace(/"(\$.+?)"/g, '"\'$1\'"');
