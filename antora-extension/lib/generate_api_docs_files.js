@@ -101,6 +101,7 @@ function getLanguageTabs (languages) {
       python: 'Python',
       ruby: 'Ruby',
       shell: 'Shell',
+      'text--hcl': 'HCL',
     }
     languages = languages.split(',')
     for (let i = 0; i < languages.length; i++) {
@@ -163,6 +164,7 @@ function runShins (markdown, outputFile) {
     } else {
       html = postProcessIndentsAfterShins(html)
       html = postProcessCollapsibles(html)
+      html = postProcessLinksInHclExamples(html)
       html = postProcessDeprecateTags(html)
       html = postProcessAdmonitionsInTables(html)
       const title = html.match(/(?<=<h1.*?>).+?(?=<\/h1>)/)[0]
@@ -212,6 +214,16 @@ function postProcessDeprecateTags (html) {
   html = html.replace(/----Deprecated----/g, ' <span class="deprecated">Deprecated</span>')
 
   return html
+}
+
+function postProcessLinksInHclExamples (html) {
+  function replacer (match) {
+    return match.replace(
+      /(resources|data-sources)\/(.+?)\b/g,
+      '<a href="https://registry.terraform.io/providers/outscale/outscale/latest/docs/$1/$2">outscale_$2</a>'
+    )
+  }
+  return html.replace(/<pre class="highlight tab tab-text--hcl">([\s\S]+?)<\/pre>/g, replacer)
 }
 
 function postProcessAdmonitionsInTables (html) {

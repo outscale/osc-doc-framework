@@ -309,6 +309,15 @@ h3 + p + blockquote a {
 .api pre.highlight.tab:not(.tab-console):not(.tab-bash):not(.tab-json) {
   display: none;
 }
+.api pre a {
+  border-bottom: none !important;
+  color: var(--brandPrimaryIndigo400) !important;
+  text-decoration: underline solid !important;
+  text-underline-position: under;
+}
+.api pre a:hover {
+  color: var(--brandPrimaryIndigo500) !important;
+}
 
 .api mark {
   background: none;
