@@ -6,6 +6,7 @@ const fillApiDescriptions = require('./fill_api_descriptions')
 const fillApiExamples = require('./fill_api_examples')
 const generateErrorMarkdown = require('./generate_error_markdown')
 const generateOscCliPartials = require('./generate_osc_cli_partials')
+const generateOapiCliPartials = require('./generate_oapi_cli_partials')
 const CONSOLE_LOG = console.log
 
 async function main () {
@@ -18,7 +19,7 @@ async function main () {
   ) {
     console.log(
       'Please specify --api, [--descriptions], [--examples], [--errors], [--languages], [--osc-cli-partials], ' +
-        '--output-dir, and --output-file-stem.'
+        '[--oapi-cli-partials], --output-dir, and --output-file-stem.'
     )
     process.exit(1)
   }
@@ -29,6 +30,7 @@ async function main () {
   const errorsFile = args['--errors']
   const languages = args['--languages']
   const oscCliPartials = args['--osc-cli-partials']
+  const oapiCliPartials = args['--oapi-cli-partials']
   const outputDir = args['--output-dir']
   const outputFileStem = args['--output-file-stem']
 
@@ -58,6 +60,10 @@ async function main () {
   if (oscCliPartials) {
     generateOscCliPartials(apiMarkdown, api, `${outputDir}/modules/ROOT/partials`)
   }
+
+  if (oapiCliPartials) {
+    generateOapiCliPartials(apiMarkdown, api, `${outputDir}/modules/ROOT/partials`)
+  }
 }
 
 function runWiddershins (api, languages) {
@@ -84,6 +90,7 @@ function getLanguageTabs (languages) {
   if (languages.trim() !== '\\') {
     const map = {
       console: 'OSC CLI',
+      'console--oapi-cli': 'oapi-cli',
       csharp: 'C#',
       go: 'Go',
       http: 'HTTP',

@@ -42,7 +42,7 @@
       toast.appendChild(document.createTextNode('Copied!'))
       copy.appendChild(toast)
       toolbox.appendChild(copy)
-      ;if (pre.classList.contains('tab-console') || pre.classList.contains('tab-shell')) {
+      ;if (pre.className.includes('tab-console') || pre.className.includes('tab-shell')) {
         (copy2 = document.createElement('button')).className = 'copy-button'
         copy2.setAttribute('title', 'Copy to clipboard (on a single line)')
         var img = document.createElement('img')

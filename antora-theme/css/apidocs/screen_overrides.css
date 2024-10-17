@@ -66,6 +66,10 @@ main > .content {
     margin-left: 300px;
   }
 }
+.toc-wrapper .lang-selector a {
+  padding-left: 0.475em;
+  padding-right: 0.475em;
+}
 .toc-wrapper a {
   text-decoration: none;
 }

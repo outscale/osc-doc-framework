@@ -1,4 +1,4 @@
-const TAB_IDS_TO_DISAMBIGUATE = ['\{cockpit-2\}', 'OSC CLI', 'AWS CLI', 'Linux', 'macOS', 'Windows']
+const TAB_IDS_TO_DISAMBIGUATE = ['\{cockpit-2\}', 'OSC CLI', 'oapi-cli', 'AWS CLI', 'Linux', 'macOS', 'Windows']
 const EXTERNAL_LINKS = new RegExp('(<a href="(?:http|file).+?")(?: class="bare")?>', 'g')
 
 module.exports = function (registry) {
