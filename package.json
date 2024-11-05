@@ -1,8 +1,9 @@
 {
   "private": true,
   "name": "@outscale/osc-doc-framework",
-  "version": "1.14.0",
+  "version": "1.15.0",
   "description": "This package contains tooling used to generate OUTSCALE documentations.",
+  "author": "André Tran (https://github.com/andrepasteur)",
   "repository": {
     "type": "git",
     "url": "https://github.com/outscale/osc-doc-framework.git"
