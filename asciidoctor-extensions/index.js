@@ -39,7 +39,7 @@ function disambiguateTabIds (ids, text) {
 
 function addAwsDisclaimer (dir, text) {
   if (~dir.indexOf('/pages')) {
-    if (~text.indexOf('AWS')) text += '\n\n[#aws-disclaimer]\n{page-awsdisclaimer-text}\n'
+    if (~text.indexOf('AWS')) text += '\n\n[#aws-disclaimer.page-wrapper.api]\n{page-awsdisclaimer-text}\n'
   }
 
   return text
