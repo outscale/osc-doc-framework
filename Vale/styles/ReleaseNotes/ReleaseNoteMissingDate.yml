@@ -3,4 +3,4 @@ message: "In the release note entry '%s', the date is missing in the section tit
 level: error
 scope: raw
 raw:
-- '(?<=:page-rssfeed: v2\n[\s\S.]+\n)(== [^\*]+?)(?=\n)'
+- '(?<=^|\n)(== [^\*]+?)(?=\n)'

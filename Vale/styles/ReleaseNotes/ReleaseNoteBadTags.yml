@@ -1,5 +1,5 @@
 extends: existence
-message: "In the release note entry '%s', the tags list is badly formatted. Ensure the following: 1/ the tags should be in a bullet list; 2/ there should be two bullets; 3/ if there are subsections, the tags should be inside the subsections."
+message: "In the release note entry '%s', the tags list is badly formatted. Ensure the following: 1/ the tags should be in a bullet list; 2/ there should be two bullets (each bullet can contain multiple tags); 3/ if there are subsections, the tags should be inside the subsections and not above them."
 level: error
 scope: raw
 raw:
