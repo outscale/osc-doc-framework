@@ -1,8 +1,8 @@
 const fs = require('fs')
 
-function generateOscCliPartials (apiMarkdown, api, outputFolder) {
+function generateOscCliPartials (apiMarkdown, api, outputFolder, outputFileStem) {
   const codeSamples = createCodeSamples(apiMarkdown)
-  createOscCliSections(api, codeSamples, outputFolder)
+  createOscCliSections(api, codeSamples, outputFolder, outputFileStem)
 }
 
 function createCodeSamples (apiMarkdown) {
@@ -23,10 +23,9 @@ function createCodeSamples (apiMarkdown) {
   return codeSamples
 }
 
-function createOscCliSections (api, codeSamples, outputFolder) {
+function createOscCliSections (api, codeSamples, outputFolder, outputFileStem) {
   const paths = api.paths
   const schemas = api.components.schemas
-  const apiName = api.servers[0].url.split('https://')[1].split('.')[0]
 
   for (const path of Object.values(paths)) {
     const post = path.post
@@ -56,7 +55,7 @@ function createOscCliSections (api, codeSamples, outputFolder) {
     s += getResultSamplesFromYaml(path)
 
     fs.mkdirSync(outputFolder, { recursive: true })
-    fs.writeFileSync(process.cwd() + '/' + outputFolder + '/_RC-OscCli-' + apiName + '-' + operation + '.adoc', s)
+    fs.writeFileSync(`${process.cwd()}/${outputFolder}/_RC-OscCli-${outputFileStem}-${operation}.adoc`, s)
   }
 }
 

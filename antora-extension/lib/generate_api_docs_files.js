@@ -58,7 +58,7 @@ async function main () {
   }
 
   if (oscCliPartials) {
-    generateOscCliPartials(apiMarkdown, api, `${outputDir}/modules/ROOT/partials`)
+    generateOscCliPartials(apiMarkdown, api, `${outputDir}/modules/ROOT/partials`, outputFileStem)
   }
 
   if (oapiCliPartials) {
