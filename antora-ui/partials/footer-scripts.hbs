@@ -1,0 +1,30 @@
+    {{#if (eq page.attributes.role 'apidocs')}}
+    <script id="site-script" src="{{uiRootPath}}/js/site.js" data-ui-root-path="{{{uiRootPath}}}"></script>
+    <script src="{{uiRootPath}}/js/apidocs/app/_lang.js"></script>
+    <script src="{{uiRootPath}}/js/apidocs/app/_nav.js"></script>
+    <script src="{{uiRootPath}}/js/apidocs/app/copy-to-clipboard.js"></script>
+    {{else}}
+    <script src="{{uiRootPath}}/js/site-navigation-data.js"></script>
+    {{#if (ne page.layout '404')}}
+    <script id="navigator-script" src="{{uiRootPath}}/js/nav.js"></script>
+    <script id="site-script" src="{{uiRootPath}}/js/site.js" data-ui-root-path="{{{uiRootPath}}}"></script>
+    <script src="{{uiRootPath}}/js/outscale-right-sidebar.js"></script>
+    <script src="{{uiRootPath}}/js/outscale-tabs.js"></script>
+    {{#if (eq page.attributes.role 'eim-policy-generator')}}
+    <script src="{{uiRootPath}}/js/outscale-eim-policy-generator.js"></script>
+    {{/if}}
+    {{#if env.SITE_SEARCH_PROVIDER}}{{> search-scripts}}{{/if}}
+    <script src="{{uiRootPath}}/js/vendor/highlight.js"></script>
+    <script async src="{{uiRootPath}}/js/outscale-extra-highlight.js"></script>
+    <script src="{{uiRootPath}}/js/vendor/jstable.es5.min.js"></script>
+    <script async src="{{uiRootPath}}/js/outscale-tables.js"></script>
+    <script async src="{{uiRootPath}}/js/outscale-print.js"></script>
+    {{#if (eq page.attributes.role 'release-notes')}}
+    <script async src="{{uiRootPath}}/js/release-notes.js"></script>
+    {{/if}}
+    {{else}}
+    <script id="site-script" src="{{uiRootPath}}/js/site.js" data-ui-root-path="{{{uiRootPath}}}"></script>
+    <script src="{{uiRootPath}}/js/outscale-right-sidebar.js"></script>
+    <script async src="{{uiRootPath}}/js/outscale-404.js"></script>
+    {{/if}}
+    {{/if}}

@@ -2,7 +2,9 @@
 
 const { spawn } = require('child_process')
 
-try {require('mac-ca')}
+try {
+  require('mac-ca').addToGlobalAgent()
+}
 catch (e) {}
 
 function callGitCredentialFill (url) {

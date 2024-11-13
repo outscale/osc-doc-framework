@@ -1,175 +1,3 @@
-{{ {
-
-function evaluateResponses(data) {
-    for (let resp in data.operation.responses) {
-        if (!resp.startsWith('x-')) {
-            let response = data.operation.responses[resp];
-            for (let ct in response.content) {
-                let contentType = response.content[ct];
-                if (contentType.examples || contentType.example) {return getResponseExamples(data);}
-                else if (contentType.schema) {return data.utils.getResponseExamples(data);}
-            }
-        }
-    }
-}
-
-function getResponseExamples(data) {
-    let content = '';
-    let examples = [];
-    for (let resp in data.operation.responses) {
-        if (!resp.startsWith('x-')) {
-            let response = data.operation.responses[resp];
-            for (let ct in response.content) {
-                let contentType = response.content[ct];
-                let cta = [ct];
-                /* support embedded examples */
-                if (contentType.examples) {
-                    for (let ctei in contentType.examples) {
-                        let example = contentType.examples[ctei];
-                        examples.push({ summary: example.summary || response.summary, value: _convertExample(example.value), cta: cta });
-                    }
-                }
-                else if (contentType.example) {
-                    examples.push({ summary: resp + ' ' + data.translations.response, value: _convertExample(contentType.example), cta: cta });
-                }
-            }
-        }
-    }
-    let lastDesc = '';
-    for (let example of examples) {
-        if (example.summary && example.summary !== lastDesc) {
-            if (example.summary === examples[0].summary) {
-                content += '----details-start open----\n\n';
-            }
-            else {
-                content += '----details-start----\n\n';
-            }
-            content += '----summary-start----\n';
-            content += '```bash\n';
-            content += '# ' + example.summary + '\n';
-            content += '```\n\n';
-            content += '----summary-end----\n';
-            lastDesc = example.summary + '\n';
-        }
-        if (_doContentType(example.cta, 'json')) {
-            content += '```json\n';
-            content += data.utils.safejson(example.value, null, 2) + '\n';
-            content += '```\n\n';
-        }
-        if (_doContentType(example.cta, 'yaml')) {
-            content += '```yaml\n';
-            content += yaml.stringify(example.value) + '\n';
-            content += '```\n\n';
-        }
-        if (_doContentType(example.cta, 'text')) {
-            content += '```\n';
-            content += JSON.stringify(example.value) + '\n';
-            content += '```\n\n';
-        }
-        let xmlObj = example.value;
-        if (example.xmlWrap) {
-            xmlObj = {};
-            xmlObj[example.xmlWrap] = example.value;
-        }
-        if ((typeof xmlObj === 'object') && _doContentType(example.cta, 'xml')) {
-            content += '```xml\n';
-            content += xml.getXml(JSON.parse(data.utils.safejson(xmlObj)), '@', '', true, '  ', false) + '\n';
-            content += '```\n\n';
-        }
-        if (example.summary && example.summary !== lastDesc) {
-            content += '----details-end----\n\n';
-        }
-    }
-    return content;
-}
-
-function _convertExample(ex) {
-    if (typeof ex === 'string') {
-        try {
-            return yaml.parse(ex);
-        }
-        catch (e) {
-            return ex;
-        }
-    }
-    else return ex;
-}
-
-function _doContentType(ctTypes, ctClass) {
-    const contentTypes = {
-        xml: ['^(application|text|image){1}\\/(.*\\+){0,1}xml(;){0,1}(\\s){0,}(charset=.*){0,}$'],
-        json: ['^(application|text){1}\\/(.*\\+){0,1}json(;){0,1}(\\s){0,}(charset=.*){0,}$'],
-        yaml: ['application/x-yaml', 'text/x-yaml'],
-        form: ['multipart/form-data', 'application/x-www-form-urlencoded', 'application/octet-stream'],
-        text: ['text/plain', 'text/html']
-    };
-    for (let type of ctTypes) {
-        for (let target of contentTypes[ctClass]||[]) {
-            if (type.match(target)) return true;
-        }
-    }
-    return false;
-}
-
-function printResponse200(response) {
-    if (response.schema === 'None') {
-        return '**Response ' + response.status + '**:';
-    }
-    return '**Response ' + response.status + '** (' + response.schema + '):';
-}
-
-function printErrorResponses(responses) {
-    let s = '';
-    if (responses.length) {
-        s += 'Other responses:\n';
-        for (const response of responses) {
-            s += '* **Response ' + response.status + '** (' + response.schema + ')';
-            if (response.description) {
-                s += ': ' + response.description;
-            }
-            s += '\n';
-        }
-    }
-    return s;
-}
-
-function cleanType(type) {
-    if (type) {
-        type = type.replace(/\b\(/, ' (');
-        type = type.replace(/\)\(/, ') (');
-        type = type.replace('¦null', '');
-    }
-    return type;
-}
-
-function cleanParameterDescription(description) {
-    if (description) return description.replace(/\n/g, '').replace(/(&lt;.*?&gt;)/g, '`$1`');
-    else return '';
-}
-
-function printEnum(p) {
-    let s = '';
-    if (p.schema.enum) {
-        s += '<br />Possible values: `' + p.schema.enum.join('`, `') + '`.';
-    }
-    return s;
-}
-
-function printPattern(p) {
-    let s = p.schema.items?.pattern || p.schema.pattern || '';
-    if (s) {
-        s = s.replaceAll('|', '\\|');
-        s = '<br /><span>Pattern: `' + s + '`</span>';
-    }
-    return s;
-}
-
-function getCallName(operationUniqueName) {
-    return data.operationUniqueName.split('__').slice(-1)[0];
-}
-
-} }}
-
 {{ data.responses = data.utils.getResponses(data); }}
 {{ data.responseSchemas = false; }}
 {{~ data.responses :response }}
@@ -189,17 +17,17 @@ function getCallName(operationUniqueName) {
 <h3 id="{{=data.operationUniqueSlug}}-responses">Response Elements</h3>
 
 {{? data.responseSchemas && Object.keys(response.content).length }}
-> Examples<a name="{{= getCallName(data.operationUniqueName) }}-res-example.json"></a>
+> Examples<a name="{{= data.custom.printOperationName(data.operationUniqueName) }}-res-example.json"></a>
 
-{{= evaluateResponses(data) }}
+{{= data.custom.evaluateResponses(data) }}
 {{?}}
 
 {{~ data.responses.slice(0, 1) :response}}
 {{? !data.utils.isPrimitive(response.type)}}
 {{? Object.keys(response.content || {}).length }}
-{{ var responseKey = Object.keys(response.content)[0]; }}
-{{ var responseSchema = response.content[responseKey].schema; }}
-{{ var blocks = data.utils.schemaToArray(responseSchema,-1,{trim:true,join:true},data); }}
+{{ const responseKey = Object.keys(response.content)[0]; }}
+{{ const responseSchema = response.content[responseKey].schema; }}
+{{ const blocks = data.utils.schemaToArray(responseSchema,-1,{trim:true,join:true},data); }}
 
 **Response {{= response.status}}**{{? response.schema}} ({{= response.schema}}){{?}}:
 
@@ -211,7 +39,7 @@ function getCallName(operationUniqueName) {
 
 |Response Element|Type|Description|
 |---|---|---|
-{{~block.rows :p}}|{{=p.displayName}}{{= getDeprecateState(p.description) }}|{{= cleanType(p.safeType) }}|{{= cleanParameterDescription(p.description) }}{{= printPattern(p) }}|
+{{~block.rows :p}}|{{=p.displayName}}{{= data.custom.getDeprecateState(p.description) }}|{{= data.custom.printType(p.safeType) }}|{{= data.custom.printDescription(p.description) }}{{= data.custom.printPattern(p) }}|
 {{~}}
 {{?}}
 
@@ -243,6 +71,6 @@ Returns an empty body.
 
 {{?}}
 
-{{= printErrorResponses(data.responses.slice(1)) }}
+{{= data.custom.printErrorResponses(data.responses.slice(1)) }}
 
 {{= data.tags.endSection }}

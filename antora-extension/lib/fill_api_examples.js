@@ -6,19 +6,19 @@ const ERROR_START = '\u001b[31m'
 const ERROR_END = '\u001b[0m'
 
 async function runInCli () {
-  const args = helperFunctions.parseArgs()
+  const options = helperFunctions.parseArgs()
 
-  if (!args['--api'] || !args['--examples'] || !args['--output']) {
+  if (!options.api || !options.examples || !options.output) {
     console.log('Please specify --api, --examples, and --output.')
     process.exit(1)
   }
 
-  let api = helperFunctions.parseYaml(args['--api'])
-  const examples = helperFunctions.parseYaml(args['--examples'])
-  api = insertExamples(api, examples, args['--api'])
+  let api = helperFunctions.parseYaml(options.api)
+  const examples = helperFunctions.parseYaml(options.examples)
+  api = insertExamples(api, examples, options.api)
   await runOpenapiExamplesValidator(api)
   const s = helperFunctions.dumpYaml(api)
-  fs.writeFileSync(args['--output'], s)
+  fs.writeFileSync(options.output, s)
 }
 
 async function runInNode (api, examplesFile, outputFileStem) {

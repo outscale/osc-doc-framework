@@ -1,104 +1,13 @@
-{{ {
-
-function concatenateSomeParameterOneOfs(parameters) {
-    for (var i = 0, length = parameters.length; i < length; i++) {
-        let types = [];
-        const formats = [];
-        const p = parameters[i];
-        const itemsOneOf = p.schema.items?.oneOf;
-        const oneOf = p.schema.oneOf;
-        if (itemsOneOf) {
-            let k = 0;
-            while (itemsOneOf[k]) {
-                types.push(itemsOneOf[k].type);
-                formats.push(itemsOneOf[k].format);
-                k++;
-            }
-        }
-        if (oneOf) {
-            let k = i + 1;
-            while (parameters[k] && parameters[k].depth === p.depth + 1) {
-                types.push(parameters[k].schema.type);
-                formats.push(parameters[k].schema.format);
-                k++;
-            }
-        }
-        if (itemsOneOf || oneOf) {
-            types = [...new Set(types)];
-            if (types.length === 1) {
-                p.safeType = types + ' (' + formats.join(' or ') + ')';
-                if (itemsOneOf) {
-                    p.safeType = '[' + p.safeType + ']';
-                }
-                k = i + 1;
-                while (parameters[k] && p && parameters[k].depth === p.depth + 1) {
-                    parameters[k]._temp = 'parameter_to_remove';
-                    k++;
-                }
-            }
-        }
-    }
-    parameters = parameters.filter( (n) => {return '_temp' in n === false} );
-    return parameters;
-}
-data.parameters = concatenateSomeParameterOneOfs(data.parameters);
-
-function getDeprecateState(description) {
-    const match = description?.match('Deprecated:');
-    if (match) {
-        /* Placeholder tag which is further transformed by antora-extension/lib/generate_api_docs_files.js */
-        return '----Deprecated----';
-    }
-    return '';
-}
-
-function formatRequired(boolean) {
-    if (boolean) {
-        return ' <mark>(required)</mark>';
-    }
-    else {
-        return '';
-    }
-}
-
-function cleanType(type) {
-    type = type.replace(/\b\(/, ' (');
-    type = type.replace(/\)\(/, ') (');
-    type = type.replace('¦null', '');
-    return type;
-}
-
-function cleanParameterDescription(description) {
-    if (description) return description.replace(/\n/g, '').replace(/(&lt;.*?&gt;)/g, '`$1`');
-    else return '';
-}
-
-function printEnum(p) {
-    let s = '';
-    if (p.schema.enum) {
-        s += '<br />Possible values: `' + p.schema.enum.join('`, `') + '`.';
-    }
-    return s;
-}
-
-function printPattern(p) {
-    let s = p.schema.items?.pattern || p.schema.pattern || '';
-    if (s) {
-        s = s.replace(/\|/g, '\\|');
-        s = '<br /><span>Pattern: `' + s + '`</span>';
-    }
-    return s;
-}
-
-} }}
-
 {{= data.tags.section }}
+
+{{ data.parameters = data.custom.concatenateSomeParameterOneOfs(data.parameters); }}
+
 <h3 id="{{=data.operationUniqueSlug}}-parameters">Request Parameters</h3>
 
 {{? data.options.codeSamples || data.operation["x-code-samples"] }}
-{{= generateTabs(data.options.language_tabs) }}
+{{= data.custom.createTabs(data.options.language_tabs) }}
 
-> Examples<a name="{{= getCallName(data.operationUniqueName) }}-req-example.sh"></a>
+> Examples<a name="{{= data.custom.printOperationName(data.operationUniqueName) }}-req-example.sh"></a>
 
 {{= data.utils.getCodeSamples(data) }}
 {{?}}
@@ -118,7 +27,7 @@ function printPattern(p) {
 {{? data.parameters && data.parameters.length }}
 |Request Parameter|Type|Description|
 |---|---|---|
-{{~ data.parameters :p}}|{{=p.name}}{{= formatRequired(p.required) }}{{= getDeprecateState(p.description) }}|{{= cleanType(p.safeType) }}|{{= cleanParameterDescription(p.description) }}{{= printPattern(p) }}|
+{{~ data.parameters :p}}|{{=p.name}}{{= data.custom.printRequired(p.required) }}{{= data.custom.getDeprecateState(p.description) }}|{{= data.custom.printType(p.safeType) }}|{{= data.custom.printDescription(p.description) }}{{= data.custom.printPattern(p) }}|
 {{~}}
 {{?}}
 
@@ -127,7 +36,7 @@ function printPattern(p) {
 {{? data.parameters && data.parameters.length }}
 |Request Parameter|In|Type|Description|
 |---|---|---|---|
-{{~ data.parameters :p}}|{{=p.name}}{{= formatRequired(p.required) }}{{= getDeprecateState(p.description) }}|{{=p.in}}|{{= cleanType(p.safeType) }}|{{= cleanParameterDescription(p.description) }}{{= printPattern(p) }}|
+{{~ data.parameters :p}}|{{=p.name}}{{= data.custom.printRequired(p.required) }}{{= data.custom.getDeprecateState(p.description) }}|{{=p.in}}|{{= data.custom.printType(p.safeType) }}|{{= data.custom.printDescription(p.description) }}{{= data.custom.printPattern(p) }}|
 {{~}}
 {{?}}
 

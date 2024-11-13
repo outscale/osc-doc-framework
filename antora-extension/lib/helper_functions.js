@@ -9,11 +9,18 @@ function parseArgs () {
   const argv = process.argv
   for (const [i, key] of Object.entries(argv)) {
     if (key.startsWith('--')) {
-      dictionary[key] = argv[parseInt(i) + 1]
+      dictionary[camelCase(key)] = argv[parseInt(i) + 1]
     }
   }
 
   return dictionary
+}
+
+function camelCase(str){
+  const arr = str.substring(2).split('-')
+  const capital = arr.map((item, index) => index ? item.charAt(0).toUpperCase() + item.slice(1).toLowerCase() : item)
+
+  return capital.join('')
 }
 
 function parseYaml (path_or_string) {
