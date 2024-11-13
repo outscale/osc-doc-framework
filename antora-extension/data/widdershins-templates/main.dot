@@ -212,7 +212,7 @@ data['x-allParametersAreInSameLocation'] = areAllParametersInSameLocation(data);
 
 {{? (block.rows.length === 1 && block.rows[0].name === '*anonymous*') }}
 
-{{? block.title }}
+{{? (block.title && block.title !== block.rows[0].description) }}
 {{= block.title}}{{= '\n\n'}}
 {{?}}
 
@@ -223,7 +223,7 @@ data['x-allParametersAreInSameLocation'] = areAllParametersInSameLocation(data);
 
 {{?? block.rows.length }}
 
-{{? block.title }}
+{{? (block.title && block.title !== block.rows[0].description) }}
 {{= block.title}}{{= '\n\n'}}
 {{?}}
 
