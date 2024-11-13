@@ -1,156 +1,11 @@
-{{ {
-
-function sortTags(resources) {
-    const obj = {};
-    const keys = Object.keys(resources);
-    keys.sort((a, b) => {
-        if (a === data.translations.defaultTag || b === data.translations.defaultTag) {return -1;}
-        else if (a <= b) {return -1;}
-        else if (a > b) {return 1;}
-    });
-    for (let i = 0; i < keys.length; i++) {
-        const k = keys[i];
-        const v = resources[k];
-        obj[k] = v;
-    } 
-
-    return obj;
-}
-
-function concatenateSomePropertyOneOfs(origSchema) {
-    const properties = origSchema.properties || {};
-    for (const property of Object.values(properties)) {
-        let types = [];
-        const formats = [];
-        const itemsOneOf = property.items?.oneOf;
-        const oneOf = property.oneOf;
-        if (itemsOneOf) {
-            for (var i = 0, length = itemsOneOf.length; i < length; i++) {
-                types.push(itemsOneOf[i].type);
-                formats.push(itemsOneOf[i].format);
-            }
-        }
-        if (property.oneOf) {
-            for (var i = 0, length = oneOf.length; i < length; i++) {
-                types.push(oneOf[i].type);
-                formats.push(oneOf[i].format);
-            }
-        }
-        if (itemsOneOf || oneOf) {
-            types = [...new Set(types)];
-            if (types.length === 1) {
-                property.type = types + ' (' + formats.join(' or ') + ')';
-                if (itemsOneOf) {
-                    property.type = '[' + property.type + ']';
-                    delete(property.items.oneOf);
-                }
-                delete(property.oneOf);
-            }
-        }
-    }
-    return origSchema;
-}
-
-function getDeprecateState(description) {
-    const match = description?.match('Deprecated:');
-    if (match) {
-        /* Placeholder tag which is further transformed by antora-extension/lib/generate_api_docs_files.js */
-        return '----Deprecated----';
-    }
-    return '';
-}
-
-function cleanType(type) {
-    type = type.replace(/\b\(/, ' (');
-    type = type.replace(/\)\(/, ') (');
-    type = type.replace('¦null', '');
-    return type;
-}
-
-function cleanParameterDescription(description) {
-    if (description) return description.replace(/\n/g, '');
-    else return '';
-}
-
-function printEnum(p) {
-    let s = '';
-    if (p.schema.enum) {
-        s += '<br />Possible values: `' + p.schema.enum.join('`, `') + '`.';
-    }
-    return s;
-}
-
-function getFirstPartOfIntro(description) {
-    const s = data.api.info.description.split('# Authentication Schemes');
-    if (s.length > 1) {
-        return s.slice(0, 1);
-    }
-    else {
-        return s.slice(0, 1);
-    }
-}
-
-function getSecondPartOfIntro(description) {
-    const s = data.api.info.description.split('# Authentication Schemes');
-    if (s.length > 1) {
-        return '# Authentication Schemes' + s.slice(-1);
-    }
-    else {
-        return null;
-    }
-}
-
-function printPattern(p) {
-    let s = p.schema.items?.pattern || p.schema.pattern || '';
-    if (s) {
-        s = s.replace(/\|/g, '\\|');
-        s = '<br /><span>Pattern: `' + s + '`</span>';
-    }
-    return s;
-}
-
-data.resources = sortTags(data.resources);
-
-data.host = (data.host || '').replace(/\.$/, '');
-
-data.version = data.api.info?.version || '';
-const semverRegex = /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$/;
-if (data.version.match(semverRegex)) {
-    data.version = 'v' + data.version;
-}
-
-function areAllParametersInSameLocation(data) {
-    const parameterIns = [];
-    for (const resource of Object.values(data.resources || {})) {
-        for (const method of Object.values(resource.methods || {})) {
-            for (const parameter of (method.operation.parameters || [])) {
-                if (!parameterIns.includes(parameter.in)) {parameterIns.push(parameter.in);}
-            }
-            if (method.operation.requestBody) {
-                if (!parameterIns.includes('body')) {parameterIns.push('body');}
-                for (const content of Object.values(method.operation.requestBody.content || {})) {
-                }
-            }
-        }
-    }
-    if (parameterIns.length === 1) {
-        return true;
-    }
-}
-data['x-allParametersAreInSameLocation'] = areAllParametersInSameLocation(data);
-
-} }}
-
 <!-- Generator: Widdershins v{{=data.widdershins.version}} -->
 
 {{= data.tags.section }}
 <h1 id="{{=data.title_prefix}}">{{=data.api.info && data.api.info.title}}{{? data.version}} {{=data.version}}{{?}}</h1>
 
-{{? data.api.info && data.api.info.description}}{{= getFirstPartOfIntro(data.api.info.description) }}{{?}}
+{{? data.api.info && data.api.info.description}}{{= data.custom.getIntroFirstPart(data.api.info.description) }}{{?}}
 
-{{? data.api.servers }}
-{{#def.servers}}
-{{?}}
+{{= data.api.servers }}
 
 {{? data.api.info && data.api.info.termsOfService}}<a href="{{=data.api.info.termsOfService}}">Terms of service</a>.{{?}}
 {{? data.api.info && data.api.info.contact}}{{? data.api.info.contact.email}}Email: <a href="mailto:{{=data.api.info.contact.email}}">{{=data.api.info.contact.name || data.api.info.contact.email}}</a>. {{?}}{{? data.api.info.contact.url}}Web: <a href="{{=data.api.info.contact.url}}">{{= data.api.info.contact.name || 'Support'}}</a>. {{?}}{{?}}
@@ -159,13 +14,13 @@ data['x-allParametersAreInSameLocation'] = areAllParametersInSameLocation(data);
 
 {{? data.api.components && data.api.components.securitySchemes }}
 
-{{ let secondPartofIntro = getSecondPartOfIntro(data.api.info.description); }}
+{{ const secondPartofIntro = data.custom.getIntroSecondPart(data.api.info.description); }}
 {{? secondPartofIntro !== null }}{{=secondPartofIntro}}
 {{?? secondPartofIntro === null }}{{#def.security}}{{?}}
 
 {{?}}
 
-{{ for (var r in data.resources) { }}
+{{ for (const r in data.resources) { }}
 {{ data.resource = data.resources[r]; }}
 
 {{= data.tags.section }}
@@ -173,7 +28,7 @@ data['x-allParametersAreInSameLocation'] = areAllParametersInSameLocation(data);
 
 {{? data.resource.description }}{{= data.resource.description}}{{?}}
 
-{{ for (var m in data.resource.methods) { }}
+{{ for (const m in data.resource.methods) { }}
 {{ data.operationUniqueName = m; }}
 {{ data.method = data.resource.methods[m]; }}
 {{ data.operationUniqueSlug = data.method.slug; }}
@@ -189,18 +44,18 @@ data['x-allParametersAreInSameLocation'] = areAllParametersInSameLocation(data);
 
 # Schemas
 
-{{ for (var s in data.components.schemas) { }}
+{{ for (const s in data.components.schemas) { }}
 {{ if (!s.endsWith('Request')) { }}
-{{ var origSchema = data.components.schemas[s]; }}
-{{ var schema = data.api.components.schemas[s]; }}
-{{ { origSchema = concatenateSomePropertyOneOfs(origSchema); } }}
+{{ let origSchema = data.components.schemas[s]; }}
+{{ const schema = data.api.components.schemas[s]; }}
+{{ origSchema = data.custom.concatenateSomePropertyOneOfs(origSchema); }}
 
 {{= data.tags.section }}
 <h2 id="tocS_{{=s}}">{{=s}}</h2>
 <a class="offset-up" id="schema{{=s.toLowerCase()}}"></a>
 <a class="offset-up" id="tocs{{=s.toLowerCase()}}"></a>
 
-{{ var blocks = data.utils.schemaToArray(origSchema,-1,{trim:true,join:true},data); }}
+{{ const blocks = data.utils.schemaToArray(origSchema,-1,{trim:true,join:true},data); }}
 
 {{~ blocks :block}}
 
@@ -218,7 +73,7 @@ data['x-allParametersAreInSameLocation'] = areAllParametersInSameLocation(data);
 
 |Type|Description|
 |---|---|
-{{~ block.rows :p}}|{{= cleanType(p.safeType) }}|{{= cleanParameterDescription(p.description) }}{{= printPattern(p)}}|
+{{~ block.rows :p}}|{{= data.custom.printType(p.safeType) }}|{{= data.custom.printDescription(p.description) }}{{= data.custom.printPattern(p)}}|
 {{~}}
 
 {{?? block.rows.length }}
@@ -229,7 +84,7 @@ data['x-allParametersAreInSameLocation'] = areAllParametersInSameLocation(data);
 
 |Property|Type|Description|
 |---|---|---|
-{{~ block.rows :p}}|{{=p.displayName}}{{= getDeprecateState(p.description) }}|{{= cleanType(p.safeType) }}|{{= cleanParameterDescription(p.description) }}{{= printPattern(p) }}|
+{{~ block.rows :p}}|{{=p.displayName}}{{= data.custom.getDeprecateState(p.description) }}|{{= data.custom.printType(p.safeType) }}|{{= data.custom.printDescription(p.description) }}{{= data.custom.printPattern(p) }}|
 {{~}}
 
 > Schema

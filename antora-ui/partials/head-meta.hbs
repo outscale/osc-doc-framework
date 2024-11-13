@@ -1,0 +1,34 @@
+    <link rel="stylesheet" href="{{uiRootPath}}/css/outscale.css">
+    {{#if (eq page.attributes.role 'apidocs')}}
+    <link rel="stylesheet" media="screen" href="{{uiRootPath}}/css/apidocs/screen.css">
+    <link rel="stylesheet" media="screen" href="{{uiRootPath}}/css/apidocs/screen_overrides.css">
+    <link rel="stylesheet" media="screen" href="{{uiRootPath}}/css/apidocs/theme_overrides.css">
+    <link rel="stylesheet" media="print" href="{{uiRootPath}}/css/apidocs/print.css">
+    <link rel="stylesheet" media="print" href="{{uiRootPath}}/css/apidocs/print_overrides.css">
+    <link rel="shortcut icon" href="{{uiRootPath}}/img/favicon.ico">
+    <script src="{{uiRootPath}}/js/apidocs/lib/_jquery.js"></script>
+    <script src="{{uiRootPath}}/js/apidocs/lib/_jquery.highlight.js"></script>
+    <script src="{{uiRootPath}}/js/apidocs/lib/_lunr.js"></script>
+    <script src="{{uiRootPath}}/js/apidocs/lib/_imagesloaded.min.js"></script>
+    <script src="{{uiRootPath}}/js/apidocs/lib/_energize.js"></script>
+    <script src="{{uiRootPath}}/js/apidocs/app/_search.js"></script>
+    <meta name="theme-color" content="#F3F7F9">
+    {{else}}
+    <link rel="stylesheet" media="screen" href="{{uiRootPath}}/css/vendor/jstable.min.css">
+    <link rel="shortcut icon" href="{{uiRootPath}}/img/favicon.ico">
+    {{#if (eq page.attributes.role 'eim-policy-generator')}}
+    <link rel="stylesheet" href="{{uiRootPath}}/css/outscale-eim-policy-generator.css">
+    {{/if}}
+    {{#if env.SITE_SEARCH_PROVIDER}}
+    <link rel="search" type="application/opensearchdescription+xml" href="{{siteRootPath}}/{{page.component.name}}/{{#if page.version}}{{page.version}}/{{/if}}{{page.module}}/_xml/opensearch.xml" title="{{#if page.attributes.en}}OUTSCALE Docs FR{{else}}OUTSCALE Docs EN{{/if}}">
+    {{#if (eq page.attributes.role 'search')}}
+    <meta name="robots" content="noindex">
+    <meta name="page-role" content="{{page.attributes.role}}">
+    {{/if}}
+    {{/if}}
+    {{#if (and page.component (ne page.layout '404'))}}
+    <meta name="page-component" content="{{page.component.name}}">
+    <meta name="page-version" content="{{page.version}}">
+    <meta name="page-url" content="{{page.url}}">
+    {{/if}}
+    {{/if}}

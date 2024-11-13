@@ -6,18 +6,18 @@ const ERROR_START = '\u001b[31m'
 const ERROR_END = '\u001b[0m'
 
 async function runInCli () {
-  const args = helperFunctions.parseArgs()
+  const options = helperFunctions.parseArgs()
 
-  if (!args['--api'] || !args['--descriptions'] || !args['--output']) {
+  if (!options.api || !options.descriptions || !options.output) {
     console.log('Please specify --api, --descriptions, and --output.')
     process.exit(1)
   }
 
-  let api = helperFunctions.parseYaml(args['--api'])
-  const descriptions = await parseCsv(args['--descriptions'])
-  api = await insertDescriptions(api, descriptions, args['--api'])
+  let api = helperFunctions.parseYaml(options.api)
+  const descriptions = await parseCsv(options.descriptions)
+  api = await insertDescriptions(api, descriptions, options.api)
   const s = helperFunctions.dumpYaml(api)
-  fs.writeFileSync(args['--output'], s)
+  fs.writeFileSync(options.output, s)
 }
 
 async function runInNode (api, descriptionsFile, outputFileStem) {

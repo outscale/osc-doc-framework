@@ -2,15 +2,15 @@
 
 #### Links
 
-{{ for (var l in data.response.links) { }}
-{{ var link = data.response.links[l]; }}
+{{ for (const l in data.response.links) { }}
+{{ const link = data.response.links[l]; }}
 
 **{{=l}}** => {{?link.operationId}}<a href="#{{=link.operationId.toLowerCase()}}">{{=link.operationId}}</a>{{??}}{{=link.operationRef}}{{?}}
 
 {{? link.parameters }}
 |Parameter|Expression|
 |---|---|
-{{for (var p in link.parameters) { }}|{{=p}}|{{=link.parameters[p]}}|{{ } }}
+{{for (const p in link.parameters) { }}|{{=p}}|{{=link.parameters[p]}}|{{ } }}
 {{?}}
 
 {{ } /* of links */ }}

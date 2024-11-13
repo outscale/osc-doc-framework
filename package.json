@@ -1,33 +1,32 @@
 {
   "private": true,
   "name": "@outscale/osc-doc-framework",
-  "version": "1.15.0",
+  "version": "1.16.0",
   "description": "This package contains tooling used to generate OUTSCALE documentations.",
+  "license": "MPL-2.0",
   "author": "André Tran (https://github.com/andrepasteur)",
   "repository": {
     "type": "git",
     "url": "https://github.com/outscale/osc-doc-framework.git"
   },
-  "peerDependencies": {
-    "lint-staged": "13.1.0",
-    "mac-ca": "1.1.0"
-  },
   "dependencies": {
-    "antora": "3.1.1",
-    "@antora/collector-extension": "v1.0.0-beta.2",
+    "antora": "3.1.9",
+    "@antora/collector-extension": "v1.0.0-beta.4",
     "@antora/lunr-extension": "1.0.0-alpha.8",
-    "antora-navigator-extension": "https://gitlab.com/opendevise/oss/antora-navigator-extension/-/archive/2d0ec861f894728b303a8bbe68ccd68acdef7b9f/antora-navigator-extension-2d0ec861f894728b303a8bbe68ccd68acdef7b9f.tar.gz",
-    "csv-parse": "5.5.0",
+    "antora-navigator-extension": "https://gitlab.com/opendevise/oss/antora-navigator-extension/-/archive/2cc12669a3d49b6f32297990ed15bccecb042e8b/antora-navigator-extension-2cc12669a3d49b6f32297990ed15bccecb042e8b.tar.gz",
+    "csv-parse": "5.5.6",
     "js-yaml": "4.1.0",
     "openapi-examples-validator": "5.0.0",
     "shins": "2.6.0",
     "widdershins": "4.0.1"
   },
-  "devDependencies": {
-    "eslint": "~8.42",
-    "eslint-config-standard": "~17.1",
-    "prettier-eslint": "~15.0"
+  "peerDependencies": {
+    "lint-staged": "15.2.10",
+    "mac-ca": "3.1.0"
   },
+  "workspaces": [
+    "antora-ui"
+  ],
   "bin": {
     "antora": "bin/antora"
   },
@@ -35,23 +34,20 @@
     "node": ">=20.0.0"
   },
   "overrides": {
-    "antora": {
-      "gulp-vinyl-zip": "npm:@vscode/gulp-vinyl-zip@~2.5"
-    },
     "openapi-examples-validator": {
-      "json-schema-ref-parser": "npm:@apidevtools/json-schema-ref-parser@^9.0.9"
+      "json-schema-ref-parser": "npm:@apidevtools/json-schema-ref-parser@^11.6.1",
+      "jsonpath-plus": "^10.1.0"
     },
-    "glob-parent": "^6.0.0",
     "shins": {
-      "ejs": "^3.1.8",
-      "markdown-it": "^13.0.0",
-      "sanitize-html": "^2.12.1"
+      "ejs": "^3.1.10",
+      "markdown-it": "^14.1.0",
+      "sanitize-html": "^2.13.0"
     },
     "widdershins": {
-      "httpsnippet": "^3.0.1",
-      "markdown-it": "^13.0.0",
-      "swagger2openapi": "^7.0.0",
-      "yargs": "^13.1.0"
+      "httpsnippet": "npm:@readme/httpsnippet@10.0.5",
+      "markdown-it": "^14.1.0",
+      "swagger2openapi": "^7.0.8",
+      "yargs": "^17.7.2"
     }
   }
 }

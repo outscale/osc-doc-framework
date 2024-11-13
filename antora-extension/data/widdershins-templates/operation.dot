@@ -1,76 +1,15 @@
-{{ {
-
-if (!data.operation.description) {
-    data.operation.description = data.method.pathItem.description;
-}
-
-function supportMultipleExamples(data) {
-    let op = data.method.operation;
-    if (op.requestBody) {
-        for (var rb in op.requestBody.content) {
-            const examples = op.requestBody.content[rb].examples;
-            if (examples) {
-                let key = Object.keys(examples)[0];
-                data['x-customRequestExamples'] = [];
-                for (let i = 0, length = Object.keys(examples).length; i < length; i++) {
-                    key = Object.keys(examples)[i];
-                    data['x-customRequestExamples'].push({
-                        "object": examples[key].value,
-                        "summary": examples[key].summary,
-                    });
-                }
-            }
-            else {
-                data['x-customRequestExamples'] = [{ "object": data.bodyParameter.exampleValues.object }];
-            }
-        }
-    }
-    return data;
-}
-
-function omitBody(data) {
-    if (data.bodyParameter.schema && data.options.omitBody && data.bodyParameter.schema["x-widdershins-oldRef"]) {
-        data.parameters.shift();
-    }
-    return data;
-}
-
-function getCallName(operationUniqueName) {
-    return operationUniqueName.split('__').slice(-1)[0];
-}
-
-function getDeprecateState(description) {
-    const match = description?.match('Deprecated:');
-    if (match) {
-        /* Placeholder tag which is further transformed by antora-extension/lib/generate_api_docs_files.js */
-        return '----Deprecated----';
-    }
-    return '';
-}
-
-function generateTabs(language_tabs) {
-    let s = '<div class="lang-selector">\n';
-    for (let i = 0, length = language_tabs.length; i < length; i++) {
-        const key = Object.keys(language_tabs[i])[0];
-        const value = Object.values(language_tabs[i])[0];
-        s += '<a href="#" name="' + key + '">' + value + '</a>\n';
-    }
-    s += '</div>\n';
-    return s;
-}
-
-} }}
-
 {{= data.tags.section }}
 
-## {{= getCallName(data.operationUniqueName) }}
-{{= getDeprecateState(data.operation.description) }}
+{{ data.operation.description = data.custom.getOperationDescription(data); }}
+
+## {{= data.custom.printOperationName(data.operationUniqueName) }}
+{{= data.custom.getDeprecateState(data.operation.description) }}
 
 {{ data.methodUpper = data.method.verb.toUpperCase(); }}
 {{ data.url = data.utils.slashes(data.baseUrl + data.method.path); }}
 {{ data.parameters = data.operation.parameters; }}
-{{ data.utils.fakeProdCons(data); supportMultipleExamples(data); }}
-{{ data.utils.fakeBodyParameter(data); omitBody(data); }}
+{{ data.utils.fakeProdCons(data); data.custom.supportOperationMultipleExamples(data); }}
+{{ data.utils.fakeBodyParameter(data); data.custom.omitOperationBody(data); }}
 {{ data.utils.mergePathParameters(data); }}
 {{ data.utils.getParameters(data); }}
 

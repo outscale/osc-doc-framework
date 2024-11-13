@@ -2,8 +2,8 @@
 
 # Authentication Schemes
 
-{{ for (var s in data.api.components.securitySchemes) { }}
-{{ var sd = data.api.components.securitySchemes[s]; }}
+{{ for (const s in data.api.components.securitySchemes) { }}
+{{ const sd = data.api.components.securitySchemes[s]; }}
 {{? sd.type == 'apiKey' }}
 * API Key ({{=s}})
     - Parameter Name: **{{=sd.name}}**, in: {{=sd.in}}. {{=sd.description || ''}}
@@ -14,15 +14,15 @@
 {{?}}
 {{? sd.type == 'oauth2'}}
 - oAuth2 authentication. {{=sd.description || ''}}
-{{ for (var f in sd.flows) { }}
-{{ var flow = sd.flows[f]; }}
+{{ for (const f in sd.flows) { }}
+{{ const flow = sd.flows[f]; }}
     - Flow: {{=f}}
 {{? flow.authorizationUrl}}    - Authorization URL = [{{=flow.authorizationUrl}}]({{=flow.authorizationUrl}}){{?}}
 {{? flow.tokenUrl}}    - Token URL = [{{=flow.tokenUrl}}]({{=flow.tokenUrl}}){{?}}
 {{? flow.scopes}}
 |Scope|Scope Description|
 |---|---|
-{{ for (var sc in flow.scopes) { }}|{{=sc}}|{{=data.utils.join(flow.scopes[sc])}}|
+{{ for (const sc in flow.scopes) { }}|{{=sc}}|{{=data.utils.join(flow.scopes[sc])}}|
 {{ } /* of scopes */ }}
 {{?}}
 {{ } /* of flows */ }}

@@ -7,15 +7,23 @@ const fillApiExamples = require('./fill_api_examples')
 const generateErrorMarkdown = require('./generate_error_markdown')
 const generateOscCliPartials = require('./generate_osc_cli_partials')
 const generateOapiCliPartials = require('./generate_oapi_cli_partials')
+const preProcessWiddershins = require('../data/widdershins-templates/_pre_process')
 const CONSOLE_LOG = console.log
 
-async function main () {
-  const args = helperFunctions.parseArgs()
+async function runInCli () {
+  const options = helperFunctions.parseArgs()
+  generateApiDocsFiles(options)
+}
 
+async function runInNode (options) {
+  generateApiDocsFiles(options)
+}
+
+async function generateApiDocsFiles (options) {
   if (
-    !args['--api'] ||
-    !args['--output-dir'] ||
-    !args['--output-file-stem']
+    !options.api ||
+    !options.outputDir ||
+    !options.outputFileStem
   ) {
     console.log(
       'Please specify --api, [--descriptions], [--examples], [--errors], [--languages], [--osc-cli-partials], ' +
@@ -24,15 +32,15 @@ async function main () {
     process.exit(1)
   }
 
-  const apiFile = args['--api']
-  const descriptionsFile = args['--descriptions']
-  const examplesFile = args['--examples']
-  const errorsFile = args['--errors']
-  const languages = args['--languages']
-  const oscCliPartials = args['--osc-cli-partials']
-  const oapiCliPartials = args['--oapi-cli-partials']
-  const outputDir = args['--output-dir']
-  const outputFileStem = args['--output-file-stem']
+  const apiFile = options.api
+  const descriptionsFile = options.descriptions
+  const examplesFile = options.examples
+  const errorsFile = options.errors
+  const languages = options.languages
+  const oscCliPartials = options.oscCliPartials
+  const oapiCliPartials = options.oapiCliPartials
+  const outputDir = options.outputDir
+  const outputFileStem = options.outputFileStem
 
   let api = helperFunctions.parseYaml(apiFile)
 
@@ -78,6 +86,10 @@ function runWiddershins (api, languages) {
     language_tabs: languageTabs,
     user_templates: __dirname + '/../data/widdershins-templates',
     sample: true,
+    templateCallback: function myCallBackFunction (templateName, stage, data) {
+      if (stage === 'pre') preProcessWiddershins(data)
+      return data
+    },
   }
   const apiMarkdown = widdershins.convert(api, widdershinsOptions)
   console.log = turnOnConsoleLog()
@@ -202,10 +214,10 @@ function postProcessCollapsibles (html) {
 }
 
 function postProcessDeprecateTags (html) {
-  const headingsWithADeprecateTag = new RegExp('(<h2.*?>.+?)(<\/h2>)\n<p*?>(----Deprecated----)<\/p>', 'g')
+  const headingsWithADeprecateTag = new RegExp('(<h2.*?>.+?)(</h2>)\n<p*?>(----Deprecated----)</p>', 'g')
   html = html.replace(headingsWithADeprecateTag, '$1$3$2')
 
-  let idMatches = html.matchAll(/(?<=<h2 id=").+?(?=".+----Deprecated----)/g)
+  const idMatches = html.matchAll(/(?<=<h2 id=").+?(?=".+----Deprecated----)/g)
   for (const idMatch of idMatches) {
     const linksInLeftMenu = new RegExp('(<a href="#' + idMatch[0] + '".+?)(</a>)', 'g')
     html = html.replace(linksInLeftMenu, '$1----Deprecated----$2')
@@ -229,7 +241,7 @@ function postProcessLinksInHclExamples (html) {
 function postProcessAdmonitionsInTables (html) {
   html = html.replace(
     /&gt; (\[.+?\])(<br \/>)+&gt; (.+?)(<br \/>)+/g,
-    '<blockquote class="admonition-in-table"><p>$1<br />$3<br /></p></blockquote>',
+    '<blockquote class="admonition-in-table"><p>$1<br />$3<br /></p></blockquote>'
   )
 
   return html
@@ -243,4 +255,8 @@ function turnOnConsoleLog () {
   return CONSOLE_LOG
 }
 
-main()
+if (process.argv[1].split('/').at(-1) === __filename.split('/').at(-1)) {
+  runInCli()
+}
+
+module.exports = runInNode

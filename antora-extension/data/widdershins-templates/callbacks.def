@@ -4,19 +4,19 @@
 
 {{ data.operationStack.push(data.operation); }}
 
-{{ for (var c of Object.keys(data.operation.callbacks)) { }}
+{{ for (const c of Object.keys(data.operation.callbacks)) { }}
 
 #### {{=c}}
 
-{{ var callback = data.operation.callbacks && data.operation.callbacks[c]; }}
+{{ const callback = data.operation.callbacks && data.operation.callbacks[c]; }}
 
-{{ for (var e in callback) { }}
+{{ for (const e in callback) { }}
 
 **{{=e}}**
 
-{{ var exp = callback[e]; }}
+{{ const exp = callback[e]; }}
 
-{{ for (var m in exp) { }}
+{{ for (const m in exp) { }}
 
 {{ data.operation = exp[m]; }}
 {{ data.method.operation = data.operation; }}
