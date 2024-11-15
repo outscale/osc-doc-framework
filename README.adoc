@@ -13,71 +13,29 @@ image:https://docs.outscale.com/fr/userguide/_images/Project-Graduated-green.svg
 
 In addition to the default Antora features, this framework enables the following:
 
-▪ API doc generation via https://github.com/Mermade/widdershins/[Widdershins] +
-▪ Prose linting and Style Guide validation via https://vale.sh/[Vale] +
-▪ Search engine via https://gitlab.com/antora/antora-lunr-extension[Antora Lunr Extension] +
-▪ Release note pages with clickable filters +
-▪ 404 page with randomized images +
-▪ RSS feed generation +
-▪ Automatic tooltips +
-▪ ...and more
+* API doc generation via https://github.com/Mermade/widdershins/[Widdershins] +
+* Prose linting and Style Guide validation via https://vale.sh/[Vale] +
+* Search engine via https://gitlab.com/antora/antora-lunr-extension[Antora Lunr Extension] +
+* Release note pages with clickable filters +
+* 404 page with randomized images +
+* RSS feed generation +
+* Automatic tooltips +
+* ...and more
 
 
 
 == Installing
 
-[NOTE]
-====
-* First, you need to install `node` 20.0.0 (or later) via the https://nodejs.org/en/[Node.js website] or via https://github.com/nvm-sh/nvm[`nvm` (Node Version Manager)].
-* If you are an OUTSCALE technical writer, see the README of the internal `userguide` repository for the team-specific procedure.
-====
+There are multiple ways to install `osc-doc-framework` for your Antora documentation project. If you are an OUTSCALE technical writer, see the README of the internal `userguide` repository for team-specific instructions.
 
-There are multiple ways to install `osc-doc-framework` for your Antora documentation project. Here is an example:
+Otherwise, see https://github.com/andrepasteur/antora-repo-example[antora-repo-example] for a working example.
 
-[source,shell]
-----
-$ cd <YOUR_ANTORA_PROJECT>
-$ git clone https://github.com/outscale/osc-doc-framework.git
-$ npm install ./osc-doc-framework
-----
-
-Then, in your Antora playbook file, you can plug the different components of `osc-doc-framework` by adding the following keys:
-
-[source,yaml]
-----
-ui:
-  bundle:
-    url: ./node_modules/@outscale/osc-doc-framework/antora-ui/build/ui-bundle.zip
-    snapshot: true
-  output_dir: _
-antora:
-  extensions:
-    - require: ./node_modules/@outscale/osc-doc-framework/antora-ui
-    - require: ./node_modules/@outscale/osc-doc-framework/node_modules/@antora/lunr-extension
-    - require: ./node_modules/@outscale/osc-doc-framework/antora-special-pages-extension
-    - require: ./node_modules/@outscale/osc-doc-framework/node_modules/antora-navigator-extension
-    - require: ./node_modules/@outscale/osc-doc-framework/antora-extension
-    - require: ./node_modules/@outscale/osc-doc-framework/node_modules/@antora/collector-extension
-    - require: ./node_modules/@outscale/osc-doc-framework/antora-rss-extension
-    - require: ./node_modules/@outscale/osc-doc-framework/antora-tooltipper-extension
-----
 
 
 
 == Linting
 
-You can configure your Git to use the pre-commit hook in the `git-hooks` folder. This pre-commit hook will run https://vale.sh/[Vale] on your documentation files in order to lint them with the Style Guide rules located in the `Vale/styles` directory.
-
-
-
-== Building
-
-Once you have installed `osc-doc-framework`, you can build (generate) your documentation in the usual Antora way:
-
-[source,shell]
-----
-$ npx antora <YOUR_PLAYBOOK_FILE>
-----
+You can configure your Git to use the pre-commit hook in the `git-hooks` folder. This pre-commit hook will run https://vale.sh/[Vale] on your the files of your Antora project in order to lint them with the Style Guide rules located in the `Vale/styles` directory.
 
 
 
