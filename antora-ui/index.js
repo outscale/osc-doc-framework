@@ -6,7 +6,12 @@ module.exports.register = function ({ config }) {
 
   this.once('beforeProcess', () => {
     fs.rmSync(uiBuildDir, { force: true, recursive: true })
-    execSync('node ../node_modules/gulp/bin/gulp.js --gulpfile gulpfile.js', { cwd: __dirname })
+    if (fs.existsSync(__dirname + '/../node_modules/gulp/bin')) {
+      execSync('node ../node_modules/gulp/bin/gulp.js --gulpfile gulpfile.js', { cwd: __dirname })
+    }
+    else {
+      execSync('node ./node_modules/gulp/bin/gulp.js --gulpfile ./node_modules/@outscale/antora-ui/gulpfile.js')
+    }
   })
 
   this.once('uiLoaded', () => {
