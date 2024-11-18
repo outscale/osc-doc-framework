@@ -17,7 +17,7 @@
 
 {{? data.operation.externalDocs}}[{{= data.operation.externalDocs.description || data.translations.externalDocs }}]({{= data.operation.externalDocs.url}}){{?}}
 
-{{? data.operation.summary && !data.options.tocSummary}}*{{= data.operation.summary }}*{{?}}
+{{? data.operation.summary && !data.options.tocSummary}}{{= data.operation.summary }}{{?}}
 
 {{? data.operation.description}}{{= data.operation.description }}{{?}}
 

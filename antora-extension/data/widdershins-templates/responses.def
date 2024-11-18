@@ -32,8 +32,6 @@
 **Response {{= response.status}}**{{? response.schema}} ({{= response.schema}}){{?}}:
 
 {{~ blocks :block}}
-{{? block.title }}{{=block.title}}
-{{?}}
 
 {{? block.rows.length }}
 
