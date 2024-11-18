@@ -45,7 +45,6 @@
 # Schemas
 
 {{ for (const s in data.components.schemas) { }}
-{{ if (!s.endsWith('Request')) { }}
 {{ let origSchema = data.components.schemas[s]; }}
 {{ const schema = data.api.components.schemas[s]; }}
 
@@ -99,7 +98,6 @@
 
 {{= data.tags.endSection }}
 
-{{ } /* of if endsWith('Request') */ }}
 {{ } /* of schemas */ }}
 
 {{?}}
