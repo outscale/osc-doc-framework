@@ -5,8 +5,11 @@ const generateOapiCliExamples = require('./code_oapi-cli')
 const generateOscCliExamples = require('./code_console')
 const generatePythonExamples = require('./code_python')
 
+const DEFAULT_BASE_URL = '/'
+
 function preProcess (data) {
   data.api.servers = _getServers(data)
+  if (data.baseUrl === '//') {data.baseUrl = DEFAULT_BASE_URL}
   data.host = (data.host || '').replace(/\.$/, '')
   data.resources = _sortTags(data)
   data.version = _getVersion(data)
@@ -44,7 +47,7 @@ function preProcess (data) {
 
 function _getServers (data) {
   let content = ''
-  const servers = data.api.servers || []
+  const servers = data.api.servers || [{url: DEFAULT_BASE_URL}]
   if (servers) {
     content += '### Endpoints\n\n'
   }
@@ -62,7 +65,11 @@ function _getServers (data) {
       if (v.default === e) {
         content += ' (default)'
       }
-      content += '|[' + url + '](' + url + ')'
+      if (url === DEFAULT_BASE_URL) {
+        content += '|' + url
+      } else {
+        content += '|[' + url + '](' + url + ')'
+      }
       content += '|\n'
     }
     content += '\n'
