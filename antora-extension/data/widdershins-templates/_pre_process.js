@@ -14,7 +14,6 @@ function preProcess (data) {
   data.host = (data.host || '').replace(/\.$/, '')
   data.resources = _sortTags(data)
   data.version = _getVersion(data)
-  data['x-allParametersAreInSameLocation'] = _areAllParametersInSameLocation(data)
 
   data.custom = {
     createTabs,
@@ -30,7 +29,6 @@ function preProcess (data) {
     getIntroSecondPart,
     getOperationAuthenticationSchemes,
     getOperationDescription,
-    omitOperationBody,
     printDescription,
     printEnum,
     printErrorResponses,
@@ -173,25 +171,6 @@ function _sortTags (data) {
   }
 
   return obj
-}
-
-function _areAllParametersInSameLocation (data) {
-  const parameterIns = []
-  for (const resource of Object.values(data.resources || {})) {
-    for (const method of Object.values(resource.methods || {})) {
-      for (const parameter of method.operation.parameters || []) {
-        if (!parameterIns.includes(parameter.in)) parameterIns.push(parameter.in)
-      }
-      if (method.operation.requestBody) {
-        if (!parameterIns.includes('body')) parameterIns.push('body')
-        for (const content of Object.values(method.operation.requestBody.content || {})) {
-        }
-      }
-    }
-  }
-  if (parameterIns.length === 1) {
-    return true
-  }
 }
 
 function createTabs (language_tabs) {
@@ -388,14 +367,6 @@ function getOperationDescription (data) {
   }
 
   return data.operation.description
-}
-
-function omitOperationBody (data) {
-  if (data.bodyParameter.schema && data.options.omitBody && data.bodyParameter.schema['x-widdershins-oldRef']) {
-    data.parameters.shift()
-  }
-
-  return data
 }
 
 function printDescription (description) {

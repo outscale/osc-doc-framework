@@ -20,21 +20,47 @@
 {{= data.utils.getBodyParameterExamples(data) }}
 {{?}}
 
-{{? data['x-allParametersAreInSameLocation'] }}
-
 {{? data.parameters && data.parameters.length }}
-|Request Parameter|Type|Description|
+
+{{ const pathParameters = data.parameters.filter((n) => n.in === 'path'); }}
+{{ const queryParameters = data.parameters.filter((n) => n.in === 'query'); }}
+{{ const headerParameters = data.parameters.filter((n) => n.in === 'header'); }}
+{{ const bodyParameters = data.parameters.filter((n) => n.in === 'body'); }}
+
+{{? pathParameters.length }}
+**Path**:
+
+|Path Parameter|Type|Description|
 |---|---|---|
-{{~ data.parameters :p}}|{{= data.custom.printParameterName(p.name) }}{{= data.custom.printRequired(p.required) }}{{= data.custom.getDeprecateState(p.description) }}|{{= data.custom.printType(p) }}|{{= data.custom.printDescription(p.description) }}{{= data.custom.printPattern(p) }}|
+{{~ pathParameters :p}}|{{= data.custom.printParameterName(p.name) }}{{= data.custom.printRequired(p.required) }}{{= data.custom.getDeprecateState(p.description) }}|{{= data.custom.printType(p) }}|{{= data.custom.printDescription(p.description) }}{{= data.custom.printPattern(p) }}|
 {{~}}
 {{?}}
 
-{{??}}
+{{? queryParameters.length }}
+**Query**:
 
-{{? data.parameters && data.parameters.length }}
-|Request Parameter|In|Type|Description|
-|---|---|---|---|
-{{~ data.parameters :p}}|{{= data.custom.printParameterName(p.name) }}{{= data.custom.printRequired(p.required) }}{{= data.custom.getDeprecateState(p.description) }}|{{=p.in}}|{{= data.custom.printType(p) }}|{{= data.custom.printDescription(p.description) }}{{= data.custom.printPattern(p) }}|
+|Query Parameter|Type|Description|
+|---|---|---|
+{{~ queryParameters :p}}|{{= data.custom.printParameterName(p.name) }}{{= data.custom.printRequired(p.required) }}{{= data.custom.getDeprecateState(p.description) }}|{{= data.custom.printType(p) }}|{{= data.custom.printDescription(p.description) }}{{= data.custom.printPattern(p) }}|
+{{~}}
+{{?}}
+
+{{? headerParameters.length }}
+**Headers**:
+
+|Header Parameter|Type|Description|
+|---|---|---|
+{{~ headerParameters :p}}|{{= data.custom.printParameterName(p.name) }}{{= data.custom.printRequired(p.required) }}{{= data.custom.getDeprecateState(p.description) }}|{{= data.custom.printType(p) }}|{{= data.custom.printDescription(p.description) }}{{= data.custom.printPattern(p) }}|
+{{~}}
+{{?}}
+
+{{? bodyParameters.length }}
+**Body** ({{= data.custom.printType(bodyParameters[0]) }}):
+
+{{ bodyParameters.shift(); }}
+|Body Parameter|Type|Description|
+|---|---|---|
+{{~ bodyParameters :p}}|{{= data.custom.printParameterName(p.name) }}{{= data.custom.printRequired(p.required) }}{{= data.custom.getDeprecateState(p.description) }}|{{= data.custom.printType(p) }}|{{= data.custom.printDescription(p.description) }}{{= data.custom.printPattern(p) }}|
 {{~}}
 {{?}}
 
