@@ -8,6 +8,7 @@ const generatePythonExamples = require('./code_python')
 const DEFAULT_BASE_URL = '/'
 
 function preProcess (data) {
+  data = _concatenateOneOfsAndAnyOfs(data)
   data.api.servers = _getServers(data)
   if (data.baseUrl === '//') {data.baseUrl = DEFAULT_BASE_URL}
   data.host = (data.host || '').replace(/\.$/, '')
@@ -16,8 +17,6 @@ function preProcess (data) {
   data['x-allParametersAreInSameLocation'] = _areAllParametersInSameLocation(data)
 
   data.custom = {
-    concatenateSomeParameterOneOfs,
-    concatenateSomePropertyOneOfs,
     createTabs,
     evaluateResponses,
     generateCurlExamples,
@@ -43,6 +42,71 @@ function preProcess (data) {
   }
 
   return data
+}
+
+function _concatenateOneOfsAndAnyOfs (data) {
+  const paths = data.api.paths
+  for (const operations of Object.values(paths)) {
+    _concatenateOneOfsAndAnyOfs2(operations)
+    for (const operation of Object.values(operations)) {
+      _concatenateOneOfsAndAnyOfs2(operation.requestBody?.content || {})
+    }
+  }
+  _concatenateOneOfsAndAnyOfs2(data.api.components?.schemas)
+  _concatenateOneOfsAndAnyOfs2(data.components?.schemas)
+
+  return data
+}
+
+function _concatenateOneOfsAndAnyOfs2 (obj) {
+  for (const n of Object.values(obj)) {
+    const paramsOrProps = n.parameters || Object.values(n.properties || n.schema?.properties || {})
+    for (const paramOrProp of paramsOrProps) {
+      const p = paramOrProp.schema || paramOrProp
+      let xxxOf = p.anyOf || p.oneOf
+      if (xxxOf) {
+        p['x-types'] = []
+        p['x-formats'] = []
+        for (const n of xxxOf) {
+          for (const [k, v] of Object.entries(n)) {
+            if (k === 'type') {
+              p['x-types'].push(v)
+              if (!p.type) {p.type = v}
+            } else if (k === 'format') {
+              p['x-formats'].push(v)
+              if (!p.format) {p.format = v}
+            } else {
+              if (p[k]) {}
+              else {p[k] = v}
+            }
+          }
+        }
+        delete p.anyOf
+        delete p.oneOf
+      }
+      xxxOf = p.items?.anyOf || p.items?.oneOf
+      if (xxxOf) {
+        p.items['x-types'] = []
+        p.items['x-formats'] = []
+        for (const n of xxxOf) {
+          for (const [k, v] of Object.entries(n)) {
+            if (k === 'type') {
+              p.items['x-types'].push(v)
+              if (!p.items.type) {p.items.type = v}
+            } else if (k === 'format') {
+              p.items['x-formats'].push(v)
+              if (!p.items.format) {p.items.format = v}
+            } else {
+              if (p.items[k]) {}
+              else {p.items[k] = v}
+            }
+          }
+        }
+        delete p.items.anyOf
+        delete p.items.oneOf
+      }
+    }
+  }
 }
 
 function _getServers (data) {
@@ -127,86 +191,6 @@ function _areAllParametersInSameLocation (data) {
   if (parameterIns.length === 1) {
     return true
   }
-}
-
-function concatenateSomeParameterOneOfs (parameters) {
-  for (let i = 0, length = parameters.length; i < length; i++) {
-    let types = []
-    const formats = []
-    const p = parameters[i]
-    const itemsOneOf = p.schema.items?.oneOf
-    const oneOf = p.schema.oneOf
-    if (itemsOneOf) {
-      let k = 0
-      while (itemsOneOf[k]) {
-        types.push(itemsOneOf[k].type)
-        formats.push(itemsOneOf[k].format)
-        k++
-      }
-    }
-    if (oneOf) {
-      let k = i + 1
-      while (parameters[k] && parameters[k].depth === p.depth + 1) {
-        types.push(parameters[k].schema.type)
-        formats.push(parameters[k].schema.format)
-        k++
-      }
-    }
-    if (itemsOneOf || oneOf) {
-      types = [...new Set(types)]
-      if (types.length === 1) {
-        p.safeType = types + ' (' + formats.join(' or ') + ')'
-        if (itemsOneOf) {
-          p.safeType = '[' + p.safeType + ']'
-        }
-        k = i + 1
-        while (parameters[k] && p && parameters[k].depth === p.depth + 1) {
-          parameters[k]._temp = 'parameter_to_remove'
-          k++
-        }
-      }
-    }
-  }
-  parameters = parameters.filter((n) => {
-    return '_temp' in n === false
-  })
-
-  return parameters
-}
-
-function concatenateSomePropertyOneOfs (origSchema) {
-  const properties = origSchema.properties || {}
-  for (const property of Object.values(properties)) {
-    let types = []
-    const formats = []
-    const itemsOneOf = property.items?.oneOf
-    const oneOf = property.oneOf
-    if (itemsOneOf) {
-      for (var i = 0, length = itemsOneOf.length; i < length; i++) {
-        types.push(itemsOneOf[i].type)
-        formats.push(itemsOneOf[i].format)
-      }
-    }
-    if (property.oneOf) {
-      for (var i = 0, length = oneOf.length; i < length; i++) {
-        types.push(oneOf[i].type)
-        formats.push(oneOf[i].format)
-      }
-    }
-    if (itemsOneOf || oneOf) {
-      types = [...new Set(types)]
-      if (types.length === 1) {
-        property.type = types + ' (' + formats.join(' or ') + ')'
-        if (itemsOneOf) {
-          property.type = '[' + property.type + ']'
-          delete property.items.oneOf
-        }
-        delete property.oneOf
-      }
-    }
-  }
-
-  return origSchema
 }
 
 function createTabs (language_tabs) {
@@ -376,7 +360,7 @@ function getOperationAuthenticationSchemes (data) {
       } else if (secName === 'BasicAuth') {
         secName = 'login/password'
       }
-      const sep = count > 0 ? ' & ' : ', or '
+      const sep = count > 0 ? ' & ' : ' or '
       list += (list ? sep : '') + '<a href="#authentication-schemes">' + secName + '</a>'
       const scopes = data.security[s][secName]
       if (Array.isArray(scopes) && scopes.length > 0) {
@@ -465,14 +449,40 @@ function printRequired (boolean) {
   }
 }
 
-function printType (type) {
-  if (type) {
-    type = type.replace(/\b\(/, ' (')
-    type = type.replace(/\)\(/, ') (')
-    type = type.replace('¦null', '')
+function printType (p) {
+  let s = p.safeType
+  let xTypes = p.schema['x-types'] || []
+  const xTypesCount = [...new Set(xTypes)].length
+
+  if (p.schema['items'] && p.schema.items['x-types']) {
+    xTypes = [...new Set(p.schema.items['x-types'])]
+    s = xTypes.join(' or ')
+    if (!s.endsWith('null') && p.schema.items['x-formats'].length) {
+      xFormats = [...new Set(p.schema.items['x-formats'])]
+      s += ' (' + xFormats.join(' or ') + ')'
+    }
+    s = '[' + s + ']'
   }
 
-  return type
+  if (p.schema['x-types']) {
+    xTypes = [...new Set(p.schema['x-types'])]
+    s = xTypes.join(' or ')
+    if (!s.endsWith('null') && p.schema['x-formats'].length) {
+      xFormats = [...new Set(p.schema['x-formats'])]
+      s += ' (' + xFormats.join(' or ') + ')'
+    }
+  }
+
+  if (xTypesCount > 1) {
+    s = s.replace(p.type, p.safeType)
+    s = s.replace('object', p.safeType)
+    s = s.replace('array', p.safeType)
+  }
+  s = s.replace(/\b\(/, ' (')
+  s = s.replace(/\)\(/, ') (')
+  s = s.replace('¦null', ' or null')
+
+  return s
 }
 
 function supportOperationMultipleExamples (data) {

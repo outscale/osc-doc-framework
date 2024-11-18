@@ -48,7 +48,6 @@
 {{ if (!s.endsWith('Request')) { }}
 {{ let origSchema = data.components.schemas[s]; }}
 {{ const schema = data.api.components.schemas[s]; }}
-{{ origSchema = data.custom.concatenateSomePropertyOneOfs(origSchema); }}
 
 {{= data.tags.section }}
 <h2 id="tocS_{{=s}}">{{=s}}</h2>
@@ -73,7 +72,7 @@
 
 |Type|Description|
 |---|---|
-{{~ block.rows :p}}|{{= data.custom.printType(p.safeType) }}|{{= data.custom.printDescription(p.description) }}{{= data.custom.printPattern(p)}}|
+{{~ block.rows :p}}|{{= data.custom.printType(p) }}|{{= data.custom.printDescription(p.description) }}{{= data.custom.printPattern(p)}}|
 {{~}}
 
 {{?? block.rows.length }}
@@ -84,7 +83,7 @@
 
 |Property|Type|Description|
 |---|---|---|
-{{~ block.rows :p}}|{{=p.displayName}}{{= data.custom.getDeprecateState(p.description) }}|{{= data.custom.printType(p.safeType) }}|{{= data.custom.printDescription(p.description) }}{{= data.custom.printPattern(p) }}|
+{{~ block.rows :p}}|{{=p.displayName}}{{= data.custom.getDeprecateState(p.description) }}|{{= data.custom.printType(p) }}|{{= data.custom.printDescription(p.description) }}{{= data.custom.printPattern(p) }}|
 {{~}}
 
 > Schema

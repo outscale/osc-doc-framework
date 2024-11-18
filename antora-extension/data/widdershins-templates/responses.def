@@ -39,7 +39,7 @@
 
 |Response Element|Type|Description|
 |---|---|---|
-{{~block.rows :p}}|{{=p.displayName}}{{= data.custom.getDeprecateState(p.description) }}|{{= data.custom.printType(p.safeType) }}|{{= data.custom.printDescription(p.description) }}{{= data.custom.printPattern(p) }}|
+{{~block.rows :p}}|{{=p.displayName}}{{= data.custom.getDeprecateState(p.description) }}|{{= data.custom.printType(p) }}|{{= data.custom.printDescription(p.description) }}{{= data.custom.printPattern(p) }}|
 {{~}}
 {{?}}
 

@@ -1,7 +1,5 @@
 {{= data.tags.section }}
 
-{{ data.parameters = data.custom.concatenateSomeParameterOneOfs(data.parameters); }}
-
 <h3 id="{{=data.operationUniqueSlug}}-parameters">Request Parameters</h3>
 
 {{? data.options.codeSamples || data.operation["x-code-samples"] }}
@@ -27,7 +25,7 @@
 {{? data.parameters && data.parameters.length }}
 |Request Parameter|Type|Description|
 |---|---|---|
-{{~ data.parameters :p}}|{{=p.name}}{{= data.custom.printRequired(p.required) }}{{= data.custom.getDeprecateState(p.description) }}|{{= data.custom.printType(p.safeType) }}|{{= data.custom.printDescription(p.description) }}{{= data.custom.printPattern(p) }}|
+{{~ data.parameters :p}}|{{=p.name}}{{= data.custom.printRequired(p.required) }}{{= data.custom.getDeprecateState(p.description) }}|{{= data.custom.printType(p) }}|{{= data.custom.printDescription(p.description) }}{{= data.custom.printPattern(p) }}|
 {{~}}
 {{?}}
 
@@ -36,7 +34,7 @@
 {{? data.parameters && data.parameters.length }}
 |Request Parameter|In|Type|Description|
 |---|---|---|---|
-{{~ data.parameters :p}}|{{=p.name}}{{= data.custom.printRequired(p.required) }}{{= data.custom.getDeprecateState(p.description) }}|{{=p.in}}|{{= data.custom.printType(p.safeType) }}|{{= data.custom.printDescription(p.description) }}{{= data.custom.printPattern(p) }}|
+{{~ data.parameters :p}}|{{=p.name}}{{= data.custom.printRequired(p.required) }}{{= data.custom.getDeprecateState(p.description) }}|{{=p.in}}|{{= data.custom.printType(p) }}|{{= data.custom.printDescription(p.description) }}{{= data.custom.printPattern(p) }}|
 {{~}}
 {{?}}
 
