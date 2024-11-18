@@ -35,6 +35,7 @@ function preProcess (data) {
     printEnum,
     printErrorResponses,
     printOperationName,
+    printParameterName,
     printPattern,
     printRequired,
     printType,
@@ -429,6 +430,16 @@ function printErrorResponses (responses) {
 
 function printOperationName (operationUniqueName) {
   return operationUniqueName.split('__').slice(-1)[0]
+}
+
+function printParameterName (s) {
+  const pattern = '**additionalProperties**'
+  const replacement = '*additional properties*'
+  if (s.includes(pattern)) {
+    return s.replace(pattern, replacement)
+  } else {
+    return s
+  }
 }
 
 function printPattern (p) {
