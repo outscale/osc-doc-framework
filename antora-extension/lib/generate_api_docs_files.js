@@ -20,14 +20,10 @@ async function runInNode (options) {
 }
 
 async function generateApiDocsFiles (options) {
-  if (
-    !options.api ||
-    !options.outputDir ||
-    !options.outputFileStem
-  ) {
+  if (!options.api || !options.outputFileStem) {
     console.log(
       'Please specify --api, [--descriptions], [--examples], [--errors], [--languages], [--widdershins-templates], ' +
-        '[--shins-templates], [--osc-cli-partials], [--oapi-cli-partials], --output-dir, and --output-file-stem.'
+        '[--shins-templates], [--osc-cli-partials], [--oapi-cli-partials], [--output-dir], and --output-file-stem.'
     )
     process.exit(1)
   }
@@ -41,7 +37,7 @@ async function generateApiDocsFiles (options) {
   const shinsTemplates = options.templates || __dirname + '/../data/shins-templates'
   const oscCliPartials = options.oscCliPartials
   const oapiCliPartials = options.oapiCliPartials
-  const outputDir = options.outputDir
+  const outputDir = options.outputDir || 'build/.tmp'
   const outputFileStem = options.outputFileStem
 
   let api = helperFunctions.parseYaml(apiFile)
