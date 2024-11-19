@@ -3,7 +3,9 @@
 <h3 id="{{=data.operationUniqueSlug}}-parameters">Request Parameters</h3>
 
 {{? data.options.codeSamples || data.operation["x-code-samples"] }}
-{{= data.custom.createTabs(data.options.language_tabs) }}
+
+{{ const tabs = data.custom.createTabs(data.options.language_tabs); }}
+{{? tabs }}{{= tabs }}
 
 > Examples<a name="{{= data.custom.printOperationName(data.operationUniqueName) }}-req-example.sh"></a>
 
@@ -18,6 +20,8 @@
 {{?}}
 
 {{= data.utils.getBodyParameterExamples(data) }}
+{{?}}
+
 {{?}}
 
 {{? data.parameters && data.parameters.length }}

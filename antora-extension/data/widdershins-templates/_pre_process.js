@@ -179,13 +179,17 @@ function _sortTags (data) {
 }
 
 function createTabs (language_tabs) {
-  let s = '<div class="lang-selector">\n'
+  let s = ''
   for (let i = 0, length = language_tabs.length; i < length; i++) {
     const key = Object.keys(language_tabs[i])[0]
     const value = Object.values(language_tabs[i])[0]
-    s += '<a href="#" name="' + key + '">' + value + '</a>\n'
+    if (value) {
+      s += '<a href="#" name="' + key + '">' + value + '</a>\n'
+    }
   }
-  s += '</div>\n'
+  if (s) {
+    s = '<div class="lang-selector">\n' + s + '</div>\n'
+  }
 
   return s
 }

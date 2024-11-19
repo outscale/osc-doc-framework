@@ -97,7 +97,7 @@ function runWiddershins (api, languages, widdershinsTemplates) {
 
 function getLanguageTabs (languages) {
   const tabs = []
-  if (languages.trim() !== '\\') {
+  if (languages) {
     const map = {
       console: 'OSC CLI',
       'console--oapi-cli': 'oapi-cli',
@@ -118,6 +118,8 @@ function getLanguageTabs (languages) {
       const key = languages[i].trim()
       tabs.push({ [key]: map[key] })
     }
+  } else {
+    tabs.push({ http: 'HTTP' })
   }
 
   return tabs
