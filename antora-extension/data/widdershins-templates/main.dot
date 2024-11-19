@@ -53,7 +53,7 @@
 <a class="offset-up" id="schema{{=s.toLowerCase()}}"></a>
 <a class="offset-up" id="tocs{{=s.toLowerCase()}}"></a>
 
-{{ const blocks = data.utils.schemaToArray(origSchema,-1,{trim:true,join:true},data); }}
+{{ const blocks = data.custom.schemaToArray(origSchema,-1,{trim:true,join:true},data); }}
 
 {{~ blocks :block}}
 

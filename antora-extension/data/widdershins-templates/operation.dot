@@ -9,7 +9,7 @@
 {{ data.url = data.utils.slashes(data.baseUrl + data.method.path); }}
 {{ data.parameters = data.operation.parameters; }}
 {{ data.utils.fakeProdCons(data); data.custom.supportOperationMultipleExamples(data); }}
-{{ data.utils.fakeBodyParameter(data); }}
+{{ data.custom.fakeBodyParameter(data); }}
 {{ data.utils.mergePathParameters(data); }}
 {{ data.utils.getParameters(data); }}
 

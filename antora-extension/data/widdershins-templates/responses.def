@@ -27,7 +27,7 @@
 {{? Object.keys(response.content || {}).length }}
 {{ const responseKey = Object.keys(response.content)[0]; }}
 {{ const responseSchema = response.content[responseKey].schema; }}
-{{ const blocks = data.utils.schemaToArray(responseSchema,-1,{trim:true,join:true},data); }}
+{{ const blocks = data.custom.schemaToArray(responseSchema,-1,{trim:true,join:true},data); }}
 
 **Response {{= response.status}}**{{? response.schema}} ({{= response.schema}}){{?}}:
 
