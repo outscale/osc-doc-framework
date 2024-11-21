@@ -599,7 +599,10 @@ function schemaToArray(schema,offset,options,data) {
       else entry.name = state.property.split('/')[1]
     }
     else if (!state.top) console.warn(state.property)
-    if (!entry.name && schema.title) entry.name = schema.title
+    if (!entry.name && schema.title) {
+      entry.name = '*item*'
+      if (schema.type === 'array') entry.name = '*array*'
+    }
 
     if (schema.type === 'array' && schema.items && schema.items["x-widdershins-oldRef"] && !entry.name) {
       state.top = false; // force it in
