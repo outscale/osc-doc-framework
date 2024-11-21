@@ -37,7 +37,7 @@
 
 |Response Element|Type|Description|
 |---|---|---|
-{{~block.rows :p}}|{{= data.custom.printParameterName(p.displayName) }}{{= data.custom.getDeprecateState(p.description) }}|{{= data.custom.printType(p) }}|{{= data.custom.printDescription(p.description) }}{{= data.custom.printPattern(p) }}|
+{{~block.rows :p}}|{{= data.custom.printParameterName(p.displayName) }}{{= data.custom.getDeprecateState(p.description) }}|{{= data.custom.printType(p) }}|{{= data.custom.printDescription(p) }}|
 {{~}}
 {{??}}
 Returns an empty body.

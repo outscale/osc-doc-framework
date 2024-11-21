@@ -65,24 +65,24 @@
 
 {{? (block.rows.length === 1 && block.rows[0].name === '*anonymous*') }}
 
-{{? (block.title && block.title !== block.rows[0].description) }}
+{{? (block.title && block.title !== s && block.title !== block.rows[0].description) }}
 {{= block.title}}{{= '\n\n'}}
 {{?}}
 
 |Type|Description|
 |---|---|
-{{~ block.rows :p}}|{{= data.custom.printType(p) }}|{{= data.custom.printDescription(p.description) }}{{= data.custom.printPattern(p)}}|
+{{~ block.rows :p}}|{{= data.custom.printType(p) }}|{{= data.custom.printDescription(p) }}|
 {{~}}
 
 {{?? block.rows.length }}
 
-{{? (block.title && block.title !== block.rows[0].description) }}
+{{? (block.title && block.title !== s && block.title !== block.rows[0].description) }}
 {{= block.title}}{{= '\n\n'}}
 {{?}}
 
 |Property|Type|Description|
 |---|---|---|
-{{~ block.rows :p}}|{{= data.custom.printParameterName(p.displayName) }}{{= data.custom.getDeprecateState(p.description) }}|{{= data.custom.printType(p) }}|{{= data.custom.printDescription(p.description) }}{{= data.custom.printPattern(p) }}|
+{{~ block.rows :p}}|{{= data.custom.printParameterName(p.displayName) }}{{= data.custom.getDeprecateState(p.description) }}|{{= data.custom.printType(p) }}|{{= data.custom.printDescription(p) }}|
 {{~}}
 
 > Schema

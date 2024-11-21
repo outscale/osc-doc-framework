@@ -38,7 +38,6 @@ function preProcess (data) {
     printErrorResponses,
     printOperationName,
     printParameterName,
-    printPattern,
     printRequired,
     printType,
     schemaToArray,
@@ -427,9 +426,32 @@ function getOperationDescription (data) {
   return data.operation.description
 }
 
-function printDescription (description) {
-  if (description) return description.replace(/\n/g, '').replace(/(&lt;.*?&gt;)/g, '`$1`')
-  else return ''
+function printDescription (p) {
+  let s = p.description
+
+  if (s) {
+    let array = []
+    array = _getValuePattern(array, p)
+    if (array.length) {
+      s += '<br />' + array.join('. ') + '.'
+    }
+    s = s.replace(/\n/g, '')
+    s = s.replace(/\|/g, '\\|')
+  } else {
+    s = ''
+  }
+
+  return s
+}
+
+function _getValuePattern (array, p) {
+  let pattern = (p.schema.items && p.schema.items.pattern) || p.schema.pattern
+
+  if (pattern !== undefined) {
+    array.push('Pattern: `' + pattern + '`')
+  }
+
+  return array
 }
 
 function printEnum (p) {
@@ -469,16 +491,6 @@ function printParameterName (s) {
   } else {
     return s
   }
-}
-
-function printPattern (p) {
-  let s = p.schema.items?.pattern || p.schema.pattern || ''
-  if (s) {
-    s = s.replace(/\|/g, '\\|')
-    s = '<br /><span>Pattern: `' + s + '`</span>'
-  }
-
-  return s
 }
 
 function printRequired (boolean) {
