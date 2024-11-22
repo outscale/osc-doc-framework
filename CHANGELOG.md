@@ -1,11 +1,33 @@
 # osc-doc-framework Changelog
 
+## 1.17.0 (2024-11-22)
+
+### New features
+
+* Updated the README.adoc with a link to a demo repository 4d5a5deadb22cc03798a7b90a412af934a03f45d
+* (antora-extension / widdershins) Allow shins-templates and widdershins-templates to be overridden 23d5467a96df7f5bd89e8df5b3b5d5ff2a56dd38
+
+### Improvements
+
+* (antora-extension / widdershins) Updated the API DOC generation scripts:
+    * Improve display of oneOf and anyOf 399e33d99d2bb5eb4d1f55dbd614e4e87eca939a
+    * Display path/query/header/body parameters in separate tables aa3053927e9625ec6e28121e2f0cb39b9ad81540
+    * Adjust some default values f4f383c5e2cb06da71a58cf3f839cfeb8bf27ae3, 23faf81694d85e44d06d8cd8e225a1fc0eaa66ca, 69efe51c5de36c3edc5881af2e0cf87cf82d7994
+    * Miscellaneous formatting changes a0740ae6da0fc3d9f4987b00c3495c353c52d06a, 1bf03368f6c81d610ae5a39ad7b1a7f0f97b978e
+* (Vale) Updated some rules 8085238cebdd30451b64d01daa288fb4380bf55e, 59f056a1ceea6c265d25442b4b945d0cbe374c65
+
+### Bugfixes
+
+* (antora-extension / widdershins) Fix display of empty response bodies c4adbe560110a93533ba30d5b873c0e8fba1f4d7
+* (antora-extension / widdershins) Don't omit the nested parameters of repeated objects b5488b0eef28fdea7639b5cacefd951c49498c8b
+* (antora-extension / widdershins) Don't omit request body schemas in Schemas section 596d4ae0eec4c2614c9a0d481c8ff0d4546dc97d
+
 ## 1.16.0 (2024-11-13)
 
 ### Improvements
 
-* General refactoring:
-    * (antora-theme) Instead of supplementing the [Antora Default UI](https://gitlab.com/antora/antora-ui-default), osc-doc-framework now directly builds a full UI package during doc generation f9187042caa8c89022b2e6c1307cd07a9811a460...6b693b85bba49befef937a3ecbd59bf8fc7b05f7
+* General refactoring: 3eeca90c7a59c3c95a0cdaff1f12cf136513b951
+    * (antora-theme) Instead of supplementing the [Antora Default UI](https://gitlab.com/antora/antora-ui-default), osc-doc-framework now directly builds a full UI package during doc generation
         * You can use this full UI package by modifying your playbook file as follows:
             ```yaml
             ui:
@@ -13,14 +35,14 @@
                     url: ./node_modules/@outscale/osc-doc-framework/antora-ui/build/ui-bundle.zip
                     snapshot: true
             ```
-    * (antora-extension / widdershins) Separate Widdershins scripts from template files 778c9a6c5347423612ef649880a81f88927ffd5c
-    * (antora-extension) Improve generation of API docs, by making it executable by Node instead of just sh f9187042caa8c89022b2e6c1307cd07a9811a460
-    * (antora-extension) Merge asciidoctor-extensions back into antora-extension in order to make the AWS disclaimer code more customizable 1a76d9adf1d09adf1443e17cb88a7c1450e77996
-    * Updated the README.adoc file and copied the GitHub release note entries into a CHANGELOG.md file 05116710dbdf5fd4f02f40b482fca7d72483d2ab
+    * (antora-extension / widdershins) Separate Widdershins scripts from template files
+    * (antora-extension) Improve generation of API docs, by making it executable by Node instead of just sh
+    * (antora-extension) Merge asciidoctor-extensions back into antora-extension in order to make the AWS disclaimer code more customizable
+    * Updated the README.adoc file and copied the GitHub release note entries into a CHANGELOG.md file
 
 ### Bugfixes
 
-* (antora-extension / widdershins) Fix bugs in API doc generation 7a01777b067a0f2e9cec520084b11d1aa4cdde3c c76455e7ed52bc7eaf2ccc77bcb13922ba22a249
+* (antora-extension / widdershins) Fix bugs in API doc generation 7a01777b067a0f2e9cec520084b11d1aa4cdde3c, c76455e7ed52bc7eaf2ccc77bcb13922ba22a249
 
 ## 1.15.0 (2024-11-05)
 

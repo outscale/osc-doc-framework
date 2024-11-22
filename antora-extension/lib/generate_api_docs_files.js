@@ -20,14 +20,10 @@ async function runInNode (options) {
 }
 
 async function generateApiDocsFiles (options) {
-  if (
-    !options.api ||
-    !options.outputDir ||
-    !options.outputFileStem
-  ) {
+  if (!options.api || !options.outputFileStem) {
     console.log(
-      'Please specify --api, [--descriptions], [--examples], [--errors], [--languages], [--osc-cli-partials], ' +
-        '[--oapi-cli-partials], --output-dir, and --output-file-stem.'
+      'Please specify --api, [--descriptions], [--examples], [--errors], [--languages], [--widdershins-templates], ' +
+        '[--shins-templates], [--osc-cli-partials], [--oapi-cli-partials], [--output-dir], and --output-file-stem.'
     )
     process.exit(1)
   }
@@ -37,9 +33,11 @@ async function generateApiDocsFiles (options) {
   const examplesFile = options.examples
   const errorsFile = options.errors
   const languages = options.languages
+  const widdershinsTemplates = options.templates || __dirname + '/../data/widdershins-templates'
+  const shinsTemplates = options.templates || __dirname + '/../data/shins-templates'
   const oscCliPartials = options.oscCliPartials
   const oapiCliPartials = options.oapiCliPartials
-  const outputDir = options.outputDir
+  const outputDir = options.outputDir || 'build/.tmp'
   const outputFileStem = options.outputFileStem
 
   let api = helperFunctions.parseYaml(apiFile)
@@ -52,17 +50,17 @@ async function generateApiDocsFiles (options) {
     api = await fillApiExamples(api, examplesFile, outputFileStem)
   }
 
-  let apiMarkdown = await runWiddershins(api, languages)
+  let apiMarkdown = await runWiddershins(api, languages, widdershinsTemplates)
   apiMarkdown = postProcessIndentsAfterWiddershins(apiMarkdown)
   if (!apiFile.includes('okms')) {
     apiMarkdown = postDocsOutscaleComLinks(apiMarkdown)
   }
-  runShins(apiMarkdown, `${outputDir}/modules/ROOT/pages/${outputFileStem}.adoc`)
+  runShins(apiMarkdown, shinsTemplates, `${outputDir}/modules/ROOT/pages/${outputFileStem}.adoc`)
 
   if (errorsFile) {
     const errors = helperFunctions.parseYaml(errorsFile)
     const errorsMarkdown = generateErrorMarkdown(errors, api)
-    runShins(errorsMarkdown, `${outputDir}/modules/ROOT/pages/${outputFileStem}-errors.adoc`)
+    runShins(errorsMarkdown, shinsTemplates, `${outputDir}/modules/ROOT/pages/${outputFileStem}-errors.adoc`)
   }
 
   if (oscCliPartials) {
@@ -74,7 +72,7 @@ async function generateApiDocsFiles (options) {
   }
 }
 
-function runWiddershins (api, languages) {
+function runWiddershins (api, languages, widdershinsTemplates) {
   console.log = turnOffConsoleLog()
   const languageTabs = getLanguageTabs(languages)
 
@@ -84,9 +82,9 @@ function runWiddershins (api, languages) {
     omitBody: true,
     codeSamples: languageTabs.length > 0,
     language_tabs: languageTabs,
-    user_templates: __dirname + '/../data/widdershins-templates',
+    user_templates: widdershinsTemplates,
     sample: true,
-    templateCallback: function myCallBackFunction (templateName, stage, data) {
+    templateCallback: function myCallBackFunction (_, stage, data) {
       if (stage === 'pre') preProcessWiddershins(data)
       return data
     },
@@ -99,7 +97,7 @@ function runWiddershins (api, languages) {
 
 function getLanguageTabs (languages) {
   const tabs = []
-  if (languages.trim() !== '\\') {
+  if (languages) {
     const map = {
       console: 'OSC CLI',
       'console--oapi-cli': 'oapi-cli',
@@ -120,6 +118,8 @@ function getLanguageTabs (languages) {
       const key = languages[i].trim()
       tabs.push({ [key]: map[key] })
     }
+  } else {
+    tabs.push({ http: 'HTTP' })
   }
 
   return tabs
@@ -161,13 +161,13 @@ function postDocsOutscaleComLinks (apiMarkdown) {
   return apiMarkdown.replaceAll('https://docs.outscale.com/', '')
 }
 
-function runShins (markdown, outputFile) {
+function runShins (markdown, shinsTemplates, outputFile) {
   console.log = turnOffConsoleLog()
 
   // https://github.com/Mermade/shins/blob/master/README.md#api
   const shinsOptions = {
     customCss: true,
-    root: __dirname + '/../data/shins-templates',
+    root: shinsTemplates,
     layout: 'layout.ejs',
   }
   shins.render(markdown, shinsOptions, function (err, html) {

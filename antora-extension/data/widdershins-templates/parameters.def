@@ -1,11 +1,11 @@
 {{= data.tags.section }}
 
-{{ data.parameters = data.custom.concatenateSomeParameterOneOfs(data.parameters); }}
-
 <h3 id="{{=data.operationUniqueSlug}}-parameters">Request Parameters</h3>
 
 {{? data.options.codeSamples || data.operation["x-code-samples"] }}
-{{= data.custom.createTabs(data.options.language_tabs) }}
+
+{{ const tabs = data.custom.createTabs(data.options.language_tabs); }}
+{{? tabs }}{{= tabs }}
 
 > Examples<a name="{{= data.custom.printOperationName(data.operationUniqueName) }}-req-example.sh"></a>
 
@@ -22,21 +22,49 @@
 {{= data.utils.getBodyParameterExamples(data) }}
 {{?}}
 
-{{? data['x-allParametersAreInSameLocation'] }}
+{{?}}
 
 {{? data.parameters && data.parameters.length }}
-|Request Parameter|Type|Description|
+
+{{ const pathParameters = data.parameters.filter((n) => n.in === 'path'); }}
+{{ const queryParameters = data.parameters.filter((n) => n.in === 'query'); }}
+{{ const headerParameters = data.parameters.filter((n) => n.in === 'header'); }}
+{{ const bodyParameters = data.parameters.filter((n) => n.in === 'body'); }}
+
+{{? pathParameters.length }}
+**Path**:
+
+|Path Parameter|Type|Description|
 |---|---|---|
-{{~ data.parameters :p}}|{{=p.name}}{{= data.custom.printRequired(p.required) }}{{= data.custom.getDeprecateState(p.description) }}|{{= data.custom.printType(p.safeType) }}|{{= data.custom.printDescription(p.description) }}{{= data.custom.printPattern(p) }}|
+{{~ pathParameters :p}}|{{= data.custom.printParameterName(p.name) }}{{= data.custom.printRequired(p.required) }}{{= data.custom.getDeprecateState(p.description) }}|{{= data.custom.printType(p) }}|{{= data.custom.printDescription(p) }}|
 {{~}}
 {{?}}
 
-{{??}}
+{{? queryParameters.length }}
+**Query**:
 
-{{? data.parameters && data.parameters.length }}
-|Request Parameter|In|Type|Description|
-|---|---|---|---|
-{{~ data.parameters :p}}|{{=p.name}}{{= data.custom.printRequired(p.required) }}{{= data.custom.getDeprecateState(p.description) }}|{{=p.in}}|{{= data.custom.printType(p.safeType) }}|{{= data.custom.printDescription(p.description) }}{{= data.custom.printPattern(p) }}|
+|Query Parameter|Type|Description|
+|---|---|---|
+{{~ queryParameters :p}}|{{= data.custom.printParameterName(p.name) }}{{= data.custom.printRequired(p.required) }}{{= data.custom.getDeprecateState(p.description) }}|{{= data.custom.printType(p) }}|{{= data.custom.printDescription(p) }}|
+{{~}}
+{{?}}
+
+{{? headerParameters.length }}
+**Headers**:
+
+|Header Parameter|Type|Description|
+|---|---|---|
+{{~ headerParameters :p}}|{{= data.custom.printParameterName(p.name) }}{{= data.custom.printRequired(p.required) }}{{= data.custom.getDeprecateState(p.description) }}|{{= data.custom.printType(p) }}|{{= data.custom.printDescription(p) }}|
+{{~}}
+{{?}}
+
+{{? bodyParameters.length }}
+**Body** ({{= data.custom.printType(bodyParameters[0]) }}):
+
+{{ bodyParameters.shift(); }}
+|Body Parameter|Type|Description|
+|---|---|---|
+{{~ bodyParameters :p}}|{{= data.custom.printParameterName(p.name) }}{{= data.custom.printRequired(p.required) }}{{= data.custom.getDeprecateState(p.description) }}|{{= data.custom.printType(p) }}|{{= data.custom.printDescription(p) }}|
 {{~}}
 {{?}}
 

@@ -1,8 +1,8 @@
 {
   "private": true,
   "name": "@outscale/osc-doc-framework",
-  "version": "1.16.0",
-  "description": "This package contains tooling used to generate OUTSCALE documentations.",
+  "version": "1.17.0",
+  "description": "This package contains tooling for generating OUTSCALE documentations.",
   "license": "MPL-2.0",
   "author": "André Tran (https://github.com/andrepasteur)",
   "repository": {
