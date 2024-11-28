@@ -8,7 +8,7 @@
     if (prompt.textContent.startsWith('\n')) {
       prompts[i].previousSibling.textContent += '\n'
     }
-    if (prompt.textContent.endsWith('$')) {
+    if (prompt.textContent.endsWith('$ ')) {
       prompt.textContent = ''
       command.textContent = command.textContent.trimStart()
     }
