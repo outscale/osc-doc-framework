@@ -15,7 +15,7 @@ async function checkUpdate () {
     url = url.replace(/git@(.+?):/, 'https://$1/')
   }
 
-  const fetch = await git.fetch({ fs, http, onAuth, dir, url, singleBranch: true, ref, depth: 1, singleBranch: true })
+  const fetch = await git.fetch({ fs, http, onAuth, dir, url, singleBranch: true, ref, singleBranch: true })
   const remoteCommitId = fetch.fetchHead
 
   if (localCommitId !== remoteCommitId) {
