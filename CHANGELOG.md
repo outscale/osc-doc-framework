@@ -5,6 +5,7 @@
 ## Bugfixes
 
 * (antora-extension) Fix bug in update-checker.js a2e5255731af5b1e1684529d8e9ea4a92da7e851
+* (antora-extension / widdershins) Fix regression in terminal prompt display 46464f5adb838fd90abf36c1bdc93d1ea0f90d7f
 * (antora-extension / widdershins) Fix default value for server/endpoint f6c769d81acf2e9d4951fc562303604d8f6d3acc
 * (antora-extension / widdershins) Prevent infinite loop when API has recursive schemas 86792dff3a27fa34c02cb9a304bcc9bb923b406e
 * (antora-extension / widdershins) Fix query string syntax in HTTP code samples f347cfbcd03aec986f4f13643d11308572afc72b
