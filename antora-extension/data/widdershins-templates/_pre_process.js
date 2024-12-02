@@ -126,7 +126,7 @@ function _getServers (data) {
     content += '|---|---|\n'
     const entries = Object.entries(server.variables || {})
     const [k, v] = entries[0] || ['', {}]
-    for (e of v.enum || ['default']) {
+    for (e of v.enum || [v.default]) {
       const url = server.url.replace('{' + k + '}', e).replace(/(\{.+?\})/g, '`$1`')
       content += '|' + e
       if (v.default === e) {
