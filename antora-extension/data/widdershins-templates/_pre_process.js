@@ -559,7 +559,12 @@ function schemaToArray(schema,offset,options,data) {
   wsState.combine = true
   wsState.allowRefSiblings = true
   walkSchema(schema,{},wsState,function(schema,parent,state){
+
     state.seen.delete(schema)
+
+    if (schema.items && schema.items['x-widdershins-oldRef'] === schema['x-widdershins-oldRef']) {
+      state.seen.set(schema)
+    }
 
     let isBlock = false
     if (state.property && (state.property.startsWith('allOf') || state.property.startsWith('anyOf') || state.property.startsWith('oneOf') || (state.property === 'not'))) {
