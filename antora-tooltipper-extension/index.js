@@ -24,7 +24,7 @@ function processPage (page, tooltipsComponentConfig) {
   const pattern = tooltipsComponentConfig.pattern || '<h([1-2]).*?>.+?</h\\1>|(?<=</h[1-2]>)[\\s\\S]+?(?=<h2|</main>)'
   const tooltips = tooltipsComponentConfig.tooltips || []
   const flag = tooltipsComponentConfig.flag || ''
-  const exemptedTags = tooltipsComponentConfig.exemptedTags || 'h1|h2|a|code|span|strong'
+  const exemptedTags = '(' + (tooltipsComponentConfig.exemptedTags || 'h1|h2|a|code|span|strong') + ')'
 
   let text = page.contents.toString()
   const pageChunks = text.match(new RegExp(pattern, 'g'))
@@ -59,12 +59,11 @@ function swapPagePartsWithNewPageParts (text, pageChunks, newPageChunks) {
 }
 
 function removeTooltipsFromExemptedTags (text, exemptedTags) {
-  const pattern = new RegExp(
-    '(?<tag_start><(' + exemptedTags + ').*?>[^<]*?)' +
-    '<span class="tooltip" data-tooltip=".+?">(?<term>.+?)</span>' +
-    '(?<tag_end>[^<]*?</\\2>)',
-    'g',
-  )
+  const tooltipTag = '<span class="tooltip" data-tooltip=".+?">' + '(?<term>.+?)' + '</span>'
+  const tagPattern = new RegExp('(?<start><' + exemptedTags + '.*?>[^<]*?)' + tooltipTag + '(?<end>[^<]*?</\\2>)', 'g')
+  const idPattern = new RegExp('(?<start>id="[^<]*?)' + tooltipTag + '(?<end>.*?")', 'g')
+  text = text.replace(tagPattern, '$<start>$<term>$<end>')
+  text = text.replace(idPattern, '$<start>$<term>$<end>')
 
-  return text.replace(pattern, '$<tag_start>$<term>$<tag_end>')
+  return text
 }
