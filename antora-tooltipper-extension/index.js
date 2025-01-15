@@ -7,7 +7,7 @@ module.exports.register = function ({ config }) {
       tooltipsConfig[componentName] = contentAggregate[i].ext?.antoraTooltipperExtension || {}
     }
     if (Object.keys(tooltipsConfig.ROOT || {}).length === 0) {
-      tooltipsConfig.ROOT = tooltipsConfig.en
+      tooltipsConfig.ROOT = tooltipsConfig.en || {}
     }
   })
 
