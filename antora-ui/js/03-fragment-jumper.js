@@ -3,7 +3,7 @@
 
   var article = document.querySelector('article.doc')
   if (!article) return
-  var toolbar = document.querySelector('.toolbar')
+  var topMenu = document.querySelector('#top-menu')
   var supportsScrollToOptions = 'scrollTo' in document.documentElement
 
   function decodeFragment (hash) {
@@ -20,7 +20,7 @@
       window.location.hash = '#' + this.id
       e.preventDefault()
     }
-    var y = computePosition(this, 0) - toolbar.getBoundingClientRect().bottom
+    var y = computePosition(this, 0) - topMenu.getBoundingClientRect().bottom
     var instant = e === false && supportsScrollToOptions
     instant ? window.scrollTo({ left: 0, top: y, behavior: 'instant' }) : window.scrollTo(0, y)
   }
