@@ -2,6 +2,8 @@ const checkUpdate = require('./lib/update-checker')
 const fs = require('fs')
 const resolveResource = require('@antora/content-classifier/lib/util/resolve-resource')
 
+const TEMP_DIR = 'build/.tmp'
+
 module.exports.register = function ({ config }) {
   const logger = this.getLogger('@outscale/antora-extension')
   const compConfig = {}
@@ -11,13 +13,18 @@ module.exports.register = function ({ config }) {
   })
 
   this.once('contentAggregated', ({ contentAggregate }) => {
+    fs.rmSync(TEMP_DIR, { recursive: true, force: true })
     for (let i = 0, length = contentAggregate.length; i < length; i++) {
+      const files = contentAggregate[i].files
+      const origins = contentAggregate[i].origins
+      for (let j = 0, length = origins.length; j < length; j++) {
+        contentAggregate[i].origins[j] = processApiContentBuildOptions(origins[j], files)
+      }
       const componentName = contentAggregate[i].name
       compConfig[componentName] = contentAggregate[i].ext?.antoraExtension || {}
       if (Object.keys(compConfig.ROOT || {}).length === 0) {
-        compConfig.ROOT = compConfig.en
+        compConfig.ROOT = compConfig.en || {}
       }
-      const files = contentAggregate[i].files
       for (let j = 0, length = files.length; j < length; j++) {
         if (files[j].stem) {
           files[j].stem = files[j].stem.normalize('NFC')
@@ -56,6 +63,46 @@ module.exports.register = function ({ config }) {
     addQueryParamToRedirect(outputDir + '/fr/userguide/Notes-de-releases-OUTSCALE-Marketplace.html', '?f=Marketplace')
     updateRobotsTxt('robots.txt', playbook)
   })
+}
+
+function processApiContentBuildOptions (origin, files) {
+  if (origin.descriptor.ext?.buildOptions) {
+    const repoName = origin.url.split('/').pop().split('.git')[0]
+    origin.descriptor.ext.repoName = repoName
+    origin.descriptor.ext.buildOptions = setFileTempPaths(files, origin.descriptor.ext.buildOptions, repoName)
+    const collector = {
+      run: {
+        command: '$NODE node_modules/@outscale/osc-doc-framework/antora-extension/lib/apidocs.js',
+        dir: process.cwd(),
+        env: [{ name: 'APIDOC', value: JSON.stringify(origin.descriptor.ext) }]
+      },
+      scan: {
+        dir: process.cwd() + '/' + TEMP_DIR,
+      },
+      clean: true,
+    }
+    if (origin.descriptor.ext.collector) {
+      origin.descriptor.ext.collector.push(collector)
+    } else {
+      origin.descriptor.ext.collector = [collector]
+    }
+  }
+
+  return origin
+}
+
+function setFileTempPaths (files, buildOptions, repoName) {
+  const keys = Object.keys(buildOptions).filter((k) => k.endsWith('File'))
+  for (let key of keys) {
+    const file = files.filter((n) => n.path === buildOptions[key])[0]
+    if (file) {
+      fs.mkdirSync(TEMP_DIR + '/' + repoName, { recursive: true })
+      fs.writeFileSync(TEMP_DIR + '/' + repoName + '/' + buildOptions[key], file.contents.toString())
+    }
+    buildOptions[key] = TEMP_DIR + '/' + repoName + '/' + buildOptions[key]
+  }
+
+  return buildOptions
 }
 
 function modifyAsciiDoc (file) {

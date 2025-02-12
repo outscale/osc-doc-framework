@@ -36,10 +36,10 @@ module.exports = {
   async fill ({ url }) {
     this.urls[url] = 'requested'
     if (process.env.GITLAB_CI) {
-        return { username: 'gitlab-ci-token', password: process.env.CI_JOB_TOKEN }
+      return { username: 'gitlab-ci-token', password: process.env.CI_JOB_TOKEN }
     }
     else {
-        return callGitCredentialFill(url)
+      return callGitCredentialFill(url)
     }
   },
   async approved ({ url }) {

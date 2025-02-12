@@ -1,0 +1,32 @@
+= Antora Sourcer Extension
+
+How this extension works:
+
+.antora-playbook.yml
+[source,yaml]
+----
+...
+content:
+  sources:
+    - url: some-repo
+      branches: HEAD
+      x-url: https://github.com/example/some-repo.git
+      x-branches: $SAME_AS_PLAYBOOK
+      version: ~
+...
+----
+
+`some-repo` is a repository for an Antora content source. By default, your playbook's directory doesn't include `some-repo` as a sub-directory, so the following behavior occurs:
+
+*Behavior 1: Remote content source (`x-url` and `x-branches` are used)*:
+
+* This extension will look for the content source in the remote URL specified in the `x-url` key, and the branches specified in the `x-branches` key.
+* In addition, if one of the branches in `x-branches` is the special value `$SAME_AS_PLAYBOOK`, then this extension will try to find a branch in the remote content source that has the same name as the playbook's branch (for example, if your playbook is in a "feature/XXXX" branch, then this extension will try to find a "feature/XXXX" branch in the content source). If a branch of that name doesn't exist, then the default branch of the content source will be used instead.
+* This behavior enables you work on doc modifications that affect multiple repositories, provided that the modifications are in branches that you've named with the same names.
+
+Alternatively, you can clone `some-repo` locally, inside your playbook's directory. In that case, the following behavior occurs:
+
+*Behavior 2: Local content source (`url` and `branches` are used)*:
+
+* This extension will use the content source found in the local path specified in `url`, and the branches specified in the `branches` key (in this example, "HEAD" is used, meaning whatever you have checked out locally).
+* This behavior enables you to work with convenient, flexible local clones whose branches you can freely check out to whatever you want, without having to push your modifications to the remote until you are ready and without the complexity of working with submodules.
