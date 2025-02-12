@@ -1,4 +1,4 @@
     <footer class="footer">
-      <p>Copyright © {{year}} Outscale SAS. {{{or page.attributes.copyright-text 'All rights reserved.'}}} | <a href="{{#if (eq page.layout '404')}}{{siteRootPath}}/{{page.component.name}}/{{#if page.version}}{{page.version}}/{{/if}}{{page.module}}/{{/if}}{{{or page.attributes.legalmentions-url 'Legal-Mentions.html'}}}" class="xref page">{{{or page.attributes.legalmentions-text 'Legal Mentions'}}}</a></p>
+      <p>Copyright © {{year}} Outscale SAS. {{{or page.attributes.copyright-text 'All rights reserved.'}}} | <a href="{{siteRootPath}}/{{{or page.attributes.legalmentions-url 'Legal-Mentions.html'}}}" class="xref page">{{{or page.attributes.legalmentions-text 'Legal Mentions'}}}</a></p>
       <p>{{#if env.GIT_LOG_EXTENSION}}{{page.attributes.gitlog-text}} {{{page.attributes.gitlog}}}. {{/if}}{{{or page.attributes.antoramention-text 'This site was built with'}}} <a href="https://antora.org" target="_blank" rel="noopener">Antora</a> {{#if page.attributes.en}}et{{else}}and{{/if}} <a href="https://github.com/outscale/osc-doc-framework" target="_blank" rel="noopener">osc-doc-framework</a>.</p>
     </footer>
