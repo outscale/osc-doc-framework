@@ -24,6 +24,7 @@ function createCodeSamples (apiMarkdown) {
 }
 
 function createOscCliSections (api, codeSamples, outputFolder, outputFileStem) {
+  const apiName = api?.info.title
   const paths = api.paths
   const schemas = api.components.schemas
 
@@ -31,7 +32,7 @@ function createOscCliSections (api, codeSamples, outputFolder, outputFileStem) {
     const post = path.post
     const operation = post.operationId
     let s = '// tag::main-description[]\n\n'
-    s += formatMainDescription(path.description, operation)
+    s += formatMainDescription(path.description, operation, apiName)
     s += '\n'
     s += '// end::main-description[]\n\n\n\n'
 
@@ -59,9 +60,9 @@ function createOscCliSections (api, codeSamples, outputFolder, outputFileStem) {
   }
 }
 
-function formatMainDescription (description, operation) {
+function formatMainDescription (description, operation, apiName) {
   if (description !== 'NOT_FOUND') {
-    description = formatDescription(description)
+    description = formatDescription(description, isList=false, apiName)
     const match = description.match(/^\[WARNING\]\n====\n(.*?\n)+?====\n/)
     if (match) {
       const warning = match[0]
@@ -76,7 +77,7 @@ function formatMainDescription (description, operation) {
   return description
 }
 
-function formatDescription (description, isList=false) {
+function formatDescription (description, isList=false, apiName) {
   if (description) {
     // Convert line breaks
     description = description.replace(/(<\/?br ?\/?>){2,}/g, '\n')
@@ -84,7 +85,11 @@ function formatDescription (description, isList=false) {
     // Add line break before lists
     description = description.replace(/((\n\*+ .+)+)/g, '\n$1')
     // Convert links
-    description = description.replace(/\[(.+?)\]\((.+?)\)/g, convertLink)
+    if (apiName === 'OKMS API') {
+      description = description.replace(/\[(.+?)\]\((.+?)\)/g, convertLinkForOkms)
+    } else {
+      description = description.replace(/\[(.+?)\]\((.+?)\)/g, convertLinkForOapi)
+    }
     // Unescape pipe characters
     description = description.replace(/\\\|/g, '|')
     // Correctly render monospace when it is a single space character
@@ -101,7 +106,15 @@ function formatDescription (description, isList=false) {
   return description
 }
 
-function convertLink(match, p1, p2) {
+function convertLinkForOkms(match, p1, p2) {
+  if (match.includes('](#')) {
+    return 'xref:ROOT::okms.adoc' + p2 + '[' + p1 + ']'
+  } else {
+    return p2 + '[' + p1 + ']'
+  }
+}
+
+function convertLinkForOapi(match, p1, p2) {
   if (match.includes('](#')) {
     return 'xref:ROOT::api.adoc' + p2 + '[' + p1 + ']'
   } else {
