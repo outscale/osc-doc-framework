@@ -33,6 +33,7 @@ function preProcess (data) {
     getIntroSecondPart,
     getOperationAuthenticationSchemes,
     getOperationDescription,
+    isOscApiOrAwsApi,
     printDescription,
     printEnum,
     printErrorResponses,
@@ -424,6 +425,17 @@ function getOperationDescription (data) {
   }
 
   return data.operation.description
+}
+
+function isOscApiOrAwsApi (host) {
+  return (
+    host === 'api' ||
+    host.startsWith('fcu') ||
+    host.startsWith('lbu') ||
+    host.startsWith('eim') ||
+    host.startsWith('directlink') ||
+    host.startsWith('icu')
+  )
 }
 
 function printDescription (p) {

@@ -1,6 +1,11 @@
-{{=data.methodUpper}} {{=data.method.path}}{{= data.queryString.replace(/\b\?/g, '&') }} HTTP/1.1
+{{ const isOscApiOrAwsApi = !data.custom.isOscApiOrAwsApi(data.host); }}{{? isOscApiOrAwsApi }}# Example with access key/secret key authentication
+
+{{?}}
+{{=data.methodUpper}} {{=data.method.path}}{{= data.queryString.replace(/\b\?/g, '&').replace(/=string/g, '={string}').replace(/=true|=false/g, '={boolean}') }} HTTP/1.1
 {{? data.baseUrl}}Host: {{=data.baseUrl}}{{?}}
-{{? data.bodyParameter.exampleValues.object && data.consumes.length}}Content-Type: {{=data.consumes[0]}}
+{{? isOscApiOrAwsApi }}AccessKey: XXXX
+SecretKey: YYYY
+{{?}}{{? data.bodyParameter.exampleValues.object && data.consumes.length}}Content-Type: {{=data.consumes[0]}}
 {{?}}{{? data.headerParameters.length}}{{~ data.headerParameters :p:index}}{{=p.name}}: {{=p.exampleValues.object}}
 {{~}}
 {{?}}

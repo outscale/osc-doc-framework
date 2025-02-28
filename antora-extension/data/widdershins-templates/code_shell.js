@@ -4,7 +4,7 @@ function generateCurlExamples (data) {
   const options = createGeneralOptions(data)
   let s = printExamples(examples, options, data)
 
-  if (data.security?.find((n) => n.BasicAuth)) {
+  if (data.security?.find((n) => n.BasicAuth) && data.custom.isOscApiOrAwsApi(data.host)) {
     data.operation['x-basicAuthFlag'] = true
     s += '\n\n'
     s += '```\n'
@@ -19,7 +19,7 @@ function generateCurlExamples (data) {
 function createGeneralOptions (data) {
   const options = []
 
-  if (data.host.startsWith('api')) {
+  if (data.host === 'api') {
     if (data.security?.length && !data.operation['x-basicAuthFlag']) {
       options.push({ name: 'user', value: '$OSC_ACCESS_KEY:$OSC_SECRET_KEY' }, { name: 'aws-sigv4', value: 'osc' })
     } else if (data.operation['x-basicAuthFlag']) {
@@ -29,6 +29,11 @@ function createGeneralOptions (data) {
       )
     }
     options.push({ name: 'header', value: 'Content-Type: application/json' })
+  } else if (!data.custom.isOscApiOrAwsApi(data.host)) {
+    if (data.security?.length && data.security.find((n) => n.AccessKeyAuth)) {
+      options.push({ name: 'header', value: 'AccessKey: XXXX' })
+      options.push({ name: 'header', value: 'SecretKey: YYYY' })
+    }
   } else {
     if (data.security?.length && !data.operation['x-basicAuthFlag']) {
       options.push({ name: 'user', value: '$OSC_ACCESS_KEY:$OSC_SECRET_KEY' }, { name: 'aws-sigv4', value: 'aws:amz' })
@@ -58,7 +63,7 @@ function printExamples (examples, options, data) {
   for (let i = 0, length = examples.length; i < length; i++) {
     if (data.security?.length) {
       if (!data.operation['x-basicAuthFlag']) {
-        if (i === 0) {
+        if (i === 0 && data.custom.isOscApiOrAwsApi(data.host)) {
           s += '# You need Curl version 7.75 or later to use the --aws-sigv4 option\n\n'
         }
         if (examples[i].summary) {
@@ -73,48 +78,55 @@ function printExamples (examples, options, data) {
       s += '# ' + examples[i].summary + '\n\n'
     }
 
-    let url = data.baseUrl.replace('{region}', '$OSC_REGION')
-    if (data.host.startsWith('api')) {
-      url += data.method.path
-    }
-
     let verb = ' -X ' + data.methodUpper
-    if (data.methodUpper === 'GET') {
-      verb = ''
+
+    let url = data.url
+    if (data.custom.isOscApiOrAwsApi(data.host) && data.host !== 'api') {
+      url = data.baseUrl
+    }
+    url = url.replace('{region}', '$OSC_REGION')
+
+    let q = ''
+    if (data.queryString) {
+      q = data.queryString.replace(/\b\?/g, '&').replace(/=string/g, '={string}').replace(/=true|=false/g, '={boolean}')
     }
 
-    s += 'curl' + verb + ' ' + url + data.requiredQueryString + ' \\\n'
+    s += 'curl' + verb + ' ' + url + q + ' \\\n'
 
+    for (const header of data.headerParameters) {
+      options.push({ name: 'header', value: header.name + ': ' + header.exampleValues.object })
+    }
     for (const option of options) {
       s += printOption(option.name, option.value)
     }
 
-    if (
-      data.host.startsWith('api') ||
-      data.host.startsWith('icu') ||
-      data.host.startsWith('directlink') ||
-      data.host.startsWith('kms')
-    ) {
-      let obj = JSON.stringify(examples[i].object, (k, v, data) => overrideSomeValues(k, v, data), 2)
-      // Escape shell variables
-      obj = obj.replace(/"(\$.+?)"/g, '"\'$1\'"')
-      // Indent string (except for first line)
-      obj = obj.replace(/\n/g, '\n  ')
-      // Keep level 2+ parameters on one line
-      obj = obj.replace(/(?<=\{)\n( {9} +?".+?",?\n)+? +?(?=\})/g, (m) =>
-        m.replace(/\n/g, '').replace(/, +/g, ', ').replace(/  +/g, '')
-      )
-      obj = obj.replace(/(?<=\[)\n( {5} +?[^{].+?,?\n)+? +?(?=\])/g, (m) =>
-        m.replace(/\n/g, '').replace(/, +/g, ', ').replace(/  +/g, '')
-      )
-      obj = obj.replace(/(?<=[\[\{}])\n( {9} +?".+?": .+?,?\n)+? +?(?=[\]\}])/g, (m) =>
-        m.replace(/\n/g, '').replace(/, +/g, ', ').replace(/  +/g, '')
-      )
-      s += printOption('data', obj)
-    } else {
-      let params = printParamsAsUrlEncodes(examples[i].object, null, data)
-      params = params.replace(/\.member\.N/g, '.member.0')
-      s += params
+    if (data.consumes.length) {
+      if (
+        data.host.startsWith('fcu') ||
+        data.host.startsWith('lbu') ||
+        data.host.startsWith('eim')
+      ) {
+        let params = printParamsAsUrlEncodes(examples[i].object, null, data)
+        params = params.replace(/\.member\.N/g, '.member.0')
+        s += params
+      } else {
+        let obj = JSON.stringify(examples[i].object, (k, v, data) => overrideSomeValues(k, v, data), 2)
+        // Escape shell variables
+        obj = obj.replace(/"(\$.+?)"/g, '"\'$1\'"')
+        // Indent string (except for first line)
+        obj = obj.replace(/\n/g, '\n  ')
+        // Keep level 2+ parameters on one line
+        obj = obj.replace(/(?<=\{)\n( {9} +?".+?",?\n)+? +?(?=\})/g, (m) =>
+          m.replace(/\n/g, '').replace(/, +/g, ', ').replace(/  +/g, '')
+        )
+        obj = obj.replace(/(?<=\[)\n( {5} +?[^{].+?,?\n)+? +?(?=\])/g, (m) =>
+          m.replace(/\n/g, '').replace(/, +/g, ', ').replace(/  +/g, '')
+        )
+        obj = obj.replace(/(?<=[\[\{}])\n( {9} +?".+?": .+?,?\n)+? +?(?=[\]\}])/g, (m) =>
+          m.replace(/\n/g, '').replace(/, +/g, ', ').replace(/  +/g, '')
+        )
+        s += printOption('data', obj)
+      }
     }
     s = s.replace(/ \\\n$/, '')
 
