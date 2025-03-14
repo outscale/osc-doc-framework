@@ -129,7 +129,7 @@ function _getServers (data) {
     const [k, v] = entries[0] || ['', {}]
     for (e of v.enum || [v.default]) {
       const url = server.url.replace('{' + k + '}', e).replace(/(\{.+?\})/g, '`$1`')
-      content += '|' + e
+      content += '|' + (e || '')
       if (v.default === e) {
         content += ' (default)'
       }
