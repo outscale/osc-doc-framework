@@ -650,8 +650,8 @@ html, body {
     padding-top: 1.2em;
     padding-bottom: 1.2em;
     background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0)); }
-  .api h2[id^=tocs_] {
-    margin-bottom: 13.6px;
+  .api h2[id^=tocs_] + a + a + * {
+    margin-top: 13.6px;
   }
   .api h1 + h2, .api h1 + div + h2 {
     margin-top: -21px;
