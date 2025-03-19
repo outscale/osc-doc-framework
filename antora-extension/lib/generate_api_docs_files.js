@@ -7,7 +7,7 @@ const fillApiExamples = require('./fill_api_examples')
 const generateErrorMarkdown = require('./generate_error_markdown')
 const generateOscCliPartials = require('./generate_osc_cli_partials')
 const generateOapiCliPartials = require('./generate_oapi_cli_partials')
-const preProcessWiddershins = require('../data/widdershins-templates/_pre_process')
+const widdershinsPreProcess = require('../data/widdershins-templates/_pre_process')
 const CONSOLE_LOG = console.log
 
 async function runInCli () {
@@ -85,7 +85,7 @@ function runWiddershins (api, languages, widdershinsTemplates) {
     user_templates: widdershinsTemplates,
     sample: true,
     templateCallback: function myCallBackFunction (_, stage, data) {
-      if (stage === 'pre') preProcessWiddershins(data)
+      if (stage === 'pre') widdershinsPreProcess.preProcess(data)
       return data
     },
   }

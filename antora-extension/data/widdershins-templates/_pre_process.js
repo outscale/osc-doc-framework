@@ -36,7 +36,6 @@ function preProcess (data) {
     getOperationDescription,
     isOscApiOrAwsApi,
     printDescription,
-    printEnum,
     printErrorResponses,
     printOperationName,
     printParameterName,
@@ -468,26 +467,54 @@ function isOscApiOrAwsApi (host) {
   )
 }
 
-function printDescription (p) {
-  let s = p.description
+function printDescription (p, host) {
+  let s = p.description || ''
+
+  // Expand the description by reading the other OpenAPI keywords of the schema
+  let array = []
+  if (isOscApiOrAwsApi(host)) {
+    array = getValuePattern(array, p.schema)
+  } else {
+    array = getValueLength(array, p.schema)
+    array = getValuePattern(array, p.schema)
+    array = getValueMinimumMaximum(array, p.schema)
+    array = getValueEnum(array, p.schema)
+    array = getValueDefault(array, p.schema)
+  }
+  if (array.length) {
+    if (p.description) {s += '<br />'}
+    s += array.join('. ') + '.'
+  }
 
   if (s) {
-    let array = []
-    array = _getValuePattern(array, p)
-    if (array.length) {
-      s += '<br />' + array.join('. ') + '.'
-    }
     s = s.replace(/\n/g, '')
     s = s.replace(/\|/g, '\\|')
-  } else {
-    s = ''
   }
 
   return s
 }
 
-function _getValuePattern (array, p) {
-  let pattern = (p.schema.items && p.schema.items.pattern) || p.schema.pattern
+function getValueLength (array, schema) {
+  let minLength = schema.items?.minLength || schema.minLength
+  let maxLength = schema.items?.maxLength || schema.maxLength
+
+  if (minLength !== undefined && maxLength !== undefined) {
+    array.push('Length: ' + minLength + ' to ' + maxLength + ' characters')
+  } else if (minLength !== undefined) {
+    let s = 's'
+    if (minLength === 1) {s = ''}
+    array.push('Length: minimum ' + minLength + ' character' + s)
+  } else if (maxLength !== undefined) {
+    let s = 's'
+    if (minLength === 1) {s = ''}
+    array.push('Length: maximum ' + maxLength + ' character' + s)
+  }
+
+  return array
+}
+
+function getValuePattern (array, schema) {
+  let pattern = schema.items?.pattern || schema.pattern
 
   if (pattern !== undefined) {
     array.push('Pattern: `' + pattern + '`')
@@ -496,13 +523,62 @@ function _getValuePattern (array, p) {
   return array
 }
 
-function printEnum (p) {
-  let s = ''
-  if (p.schema.enum) {
-    s += '<br />Possible values: `' + p.schema.enum.join('`, `') + '`.'
+function getValueMinimumMaximum (array, schema) {
+  let minimum = schema.items?.minimum || schema.minimum
+  let maximum = schema.items?.maximum || schema.maximum
+
+  if (minimum !== undefined) {
+    let parenthesis = ' (included)'
+    if (schema.items?.exclusiveMinimum || schema.exclusiveMinimum) {
+      parenthesis = ' (excluded)'
+    }
+    array.push('Minimum: `' + minimum + '`' + parenthesis)
   }
 
-  return s
+  if (maximum !== undefined) {
+    let parenthesis = ' (included)'
+    if (schema.items?.exclusiveMaximum || schema.exclusiveMaximum) {
+      parenthesis = ' (excluded)'
+    }
+    array.push('Maximum: `' + maximum + '`' + parenthesis)
+  }
+
+  return array
+}
+
+function getValueEnum (array, schema) {
+  let enums = schema.items?.enum || schema.enum
+
+  if (enums !== undefined) {
+    array.push('Possible values: `' + enums.join('` | `') + '`')
+  }
+
+  return array
+}
+
+function getValueDefault (array, schema) {
+  let v = schema.items?.default || schema.default
+
+  if (v !== undefined) {
+    // https://stackoverflow.com/a/57467694
+    v = JSON.stringify(v, null, 1) // stringify, with line-breaks and indents
+    v = v.replace(/^ +/gm, ' ') // remove all but the first space for each line
+    v = v.replace(/\n/g, '') // remove line-breaks
+    v = v.replace(/{ /g, '{').replace(/ }/g, '}') // remove spaces between object-braces and first/last props
+    v = v.replace(/\[ /g, '[').replace(/ \]/g, ']') // remove spaces between array-brackets and first/last items
+
+    v = v.replace(/^"/, '').replace(/"$/, '') // remove quotes if it's a single string
+
+    if (v === 'true' || v === 'false') {
+      array.push('Default: ' + v)
+    } else if (v) {
+      array.push('Default: `' + v + '`')
+    } else {
+      array.push('Default: <code></code>')
+    }
+  }
+
+  return array
 }
 
 function printErrorResponses (responses) {
@@ -854,4 +930,11 @@ function supportOperationMultipleExamples (data) {
   return data
 }
 
-module.exports = preProcess
+module.exports = {
+  preProcess,
+  getValueLength,
+  getValuePattern,
+  getValueMinimumMaximum,
+  getValueEnum,
+  getValueDefault,
+}
