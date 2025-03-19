@@ -1,4 +1,4 @@
 <aside class="warning">
-This action needs to be authenticated by
+This action needs to be authenticated with
 {{= data.custom.getOperationAuthenticationSchemes(data) }}.
 </aside>

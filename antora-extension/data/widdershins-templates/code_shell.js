@@ -67,15 +67,21 @@ function printExamples (examples, options, data) {
           s += '# You need Curl version 7.75 or later to use the --aws-sigv4 option\n\n'
         }
         if (examples[i].summary) {
-          s += '# ' + examples[i].summary + '\n\n'
+          s += '# ' + examples[i].summary + '\n'
         } else if (i === 0 && data.security.find((n) => n.BasicAuth)) {
-          s += '# Example with access key/secret key authentication\n\n'
+          s += '# Example with access key/secret key authentication\n'
         }
       } else {
-        s += '# Example with login/password authentication\n\n'
+        s += '# Example with login/password authentication\n'
       }
     } else if (examples[i].summary) {
-      s += '# ' + examples[i].summary + '\n\n'
+      s += '# ' + examples[i].summary + '\n'
+    }
+
+    if (data.custom.isOscApiOrAwsApi(data.host)) {
+      s += '\n'
+    } else {
+      s += '# (See the "Authentication Schemes" section for other authentications)\n\n'
     }
 
     let verb = ' -X ' + data.methodUpper

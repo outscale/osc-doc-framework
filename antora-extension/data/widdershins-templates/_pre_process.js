@@ -22,6 +22,7 @@ function preProcess (data) {
     createTabs,
     evaluateResponses,
     fakeBodyParameter,
+    generateAuthenticationSchemesSection,
     generateCurlExamples,
     generateHclExamples,
     generateJavaScriptExamples,
@@ -363,6 +364,54 @@ function fakeBodyParameter(data) {
   }
 }
 
+function generateAuthenticationSchemesSection (data) {
+  let s = ''
+  const security = data.api.security
+  const securitySchemes = data.api.components.securitySchemes
+  if (security.length > 1) {
+    s = 'There are ' + security.length + ' possible ways to authenticate your requests with'
+    if (data.api.info?.title) {
+      s += ' the ' + data.api.info?.title + ':\n\n'
+    } else {
+      s == ' this API:\n\n'
+    }
+  }
+  for (const sec of security) {
+    const heading = _formatAuthenticationRequirement(sec, data.host)
+    s += '### ' + heading + '\n\n'
+    s += '|HTTP Header|Description|\n'
+    s += '|---|---|\n'
+    for (const key of Object.keys(sec)) {
+      const item = securitySchemes[key]
+      if (item.scheme === 'basic') {
+        s += '|`Authorization`|' + item.description + '|\n'
+      } else {
+        s += '|`' + item.name + '`|' + item.description + '|\n'
+      }
+    }
+    s += '\n\n'
+  }
+
+  return s
+}
+
+function _formatAuthenticationRequirement (array, host) {
+  let name = Object.keys(array).join('/')
+  if (isOscApiOrAwsApi(host)) {
+    if (name === 'ApiKeyAuth' || name === 'ApiKeyAuthSec') {
+      name = 'access key/secret key'
+    } else if (name === 'BasicAuth') {
+      name = 'login/password'
+    }  
+  } else {
+    name = name.replace(/\B([A-Z][a-z])/g, " $1")
+    name = name.replace(/Basic Auth/g, 'Basic Authentication').replace(/ Auth\b/g, '')
+    name = name.replace(/\/OTP Code/g, '')
+  }
+
+  return name
+}
+
 function getDeprecateState (description) {
   const match = description?.match('Deprecated:')
   if (match) {
@@ -385,38 +434,19 @@ function getIntroSecondPart (description) {
   }
 }
 
-// Modified from Widdershins
 function getOperationAuthenticationSchemes (data) {
-  let list = ''
-  for (const s in data.security) {
-    let count = 0
-    const keys = Object.keys(data.security[s])
-    for (const sse in keys) {
-      let secName = keys[sse]
-      if (secName === 'ApiKeyAuth' || secName === 'ApiKeyAuthSec') {
-        secName = 'access key/secret key'
-      } else if (secName === 'BasicAuth') {
-        secName = 'login/password'
-      }
-      const sep = count > 0 ? ' & ' : ' or '
-      list += (list ? sep : '') + '<a href="#authentication-schemes">' + secName + '</a>'
-      const scopes = data.security[s][secName]
-      if (Array.isArray(scopes) && scopes.length > 0) {
-        list += ' ( ' + data.translations.secDefScopes + ': '
-        for (const scope in scopes) {
-          list += scopes[scope] + ' '
-        }
-        list += ')'
-      }
-      count++
-    }
-    if (count === 0) {
-      // 'null' security
-      list += (list ? ', ' : '') + data.translations.secDefNone
-    }
+  const list = []
+  const security = data.operation.security || data.security
+  for (const sec of security) {
+    let name = _formatAuthenticationRequirement(sec, data.host)
+    name = name.replace(/([A-Z][a-z])/g, (x) => x.toLowerCase())
+    list.push('<a href="#authentication-schemes">' + name + '</a>')
   }
-
-  return list
+  if (list.length <= 2) {
+    return list.join(' or ')
+  } else {
+    return list.join(', or ')
+  }
 }
 
 function getOperationDescription (data) {
