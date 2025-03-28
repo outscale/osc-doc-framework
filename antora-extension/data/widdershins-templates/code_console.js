@@ -50,7 +50,7 @@ function printExamples (examples, options, data) {
       s += '# ' + examples[i].summary + '\n\n'
     }
 
-    s += 'osc-cli ' + data.host + ' ' + data.method.path.replace('/', '')
+    s += 'osc-cli ' + data.host.split('.')[0] + ' ' + data.method.path.replace('/', '')
     for (const option of options) {
       s += printOption(option.name, option.value, true)
     }

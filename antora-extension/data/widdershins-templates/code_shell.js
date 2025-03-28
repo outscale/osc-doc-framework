@@ -4,7 +4,7 @@ function generateCurlExamples (data) {
   const options = createGeneralOptions(data)
   let s = printExamples(examples, options, data)
 
-  if (data.security?.find((n) => n.BasicAuth) && data.custom.isOscApiOrAwsApi(data.host)) {
+  if (data.security?.find((n) => n.BasicAuth) && data.custom.isAGatewayApi(data.host)) {
     data.operation['x-basicAuthFlag'] = true
     s += '\n\n'
     s += '```\n'
@@ -19,7 +19,12 @@ function generateCurlExamples (data) {
 function createGeneralOptions (data) {
   const options = []
 
-  if (data.host === 'api') {
+  if (!data.custom.isAGatewayApi(data.host)) {
+    if (data.security?.length && data.security.find((n) => n.AccessKeyAuth)) {
+      options.push({ name: 'header', value: 'AccessKey: XXXX' })
+      options.push({ name: 'header', value: 'SecretKey: YYYY' })
+    }
+  } else if (data.host.startsWith('api')) {
     if (data.security?.length && !data.operation['x-basicAuthFlag']) {
       options.push({ name: 'user', value: '$OSC_ACCESS_KEY:$OSC_SECRET_KEY' }, { name: 'aws-sigv4', value: 'osc' })
     } else if (data.operation['x-basicAuthFlag']) {
@@ -29,11 +34,6 @@ function createGeneralOptions (data) {
       )
     }
     options.push({ name: 'header', value: 'Content-Type: application/json' })
-  } else if (!data.custom.isOscApiOrAwsApi(data.host)) {
-    if (data.security?.length && data.security.find((n) => n.AccessKeyAuth)) {
-      options.push({ name: 'header', value: 'AccessKey: XXXX' })
-      options.push({ name: 'header', value: 'SecretKey: YYYY' })
-    }
   } else {
     if (data.security?.length && !data.operation['x-basicAuthFlag']) {
       options.push({ name: 'user', value: '$OSC_ACCESS_KEY:$OSC_SECRET_KEY' }, { name: 'aws-sigv4', value: 'aws:amz' })
@@ -63,7 +63,7 @@ function printExamples (examples, options, data) {
   for (let i = 0, length = examples.length; i < length; i++) {
     if (data.security?.length) {
       if (!data.operation['x-basicAuthFlag']) {
-        if (i === 0 && data.custom.isOscApiOrAwsApi(data.host)) {
+        if (i === 0 && data.custom.isAGatewayApi(data.host)) {
           s += '# You need Curl version 7.75 or later to use the --aws-sigv4 option\n\n'
         }
         if (examples[i].summary) {
@@ -78,7 +78,7 @@ function printExamples (examples, options, data) {
       s += '# ' + examples[i].summary + '\n'
     }
 
-    if (data.custom.isOscApiOrAwsApi(data.host)) {
+    if (data.custom.isAGatewayApi(data.host)) {
       s += '\n'
     } else {
       s += '# (See the "Authentication Schemes" section for other authentications)\n\n'
@@ -87,7 +87,7 @@ function printExamples (examples, options, data) {
     let verb = ' -X ' + data.methodUpper
 
     let url = data.url
-    if (data.custom.isOscApiOrAwsApi(data.host) && data.host !== 'api') {
+    if (data.custom.isAGatewayApi(data.host) && !data.host.startsWith('api')) {
       url = data.baseUrl
     }
     url = url.replace('{region}', '$OSC_REGION')

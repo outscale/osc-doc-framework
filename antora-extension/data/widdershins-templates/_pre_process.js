@@ -14,7 +14,7 @@ function preProcess (data) {
   data = _concatenateOneOfsAndAnyOfs(data)
   data.api.servers = _getServers(data)
   if (data.baseUrl === '//') {data.baseUrl = DEFAULT_BASE_URL}
-  data.host = (data.host || '').replace(/\.$/, '')
+  data.host = computeApiHost(data)
   data.resources = _sortTags(data)
   data.version = _getVersion(data)
 
@@ -34,7 +34,7 @@ function preProcess (data) {
     getIntroSecondPart,
     getOperationAuthenticationSchemes,
     getOperationDescription,
-    isOscApiOrAwsApi,
+    isAGatewayApi,
     printDescription,
     printErrorResponses,
     printOperationName,
@@ -144,6 +144,18 @@ function _getServers (data) {
   }
 
   return content
+}
+
+function computeApiHost (data) {
+  let host = ''
+  if (data.servers) {
+    const serverUrl = data.servers[0]?.url
+    if (serverUrl && serverUrl !== '//') {
+      host = new URL(serverUrl).host
+    }  
+  }
+
+  return host
 }
 
 function _getVersion (data) {
@@ -396,7 +408,7 @@ function generateAuthenticationSchemesSection (data) {
 
 function _formatAuthenticationRequirement (array, host) {
   let name = Object.keys(array).join('/')
-  if (isOscApiOrAwsApi(host)) {
+  if (isAGatewayApi(host)) {
     if (name === 'ApiKeyAuth' || name === 'ApiKeyAuthSec') {
       name = 'access key/secret key'
     } else if (name === 'BasicAuth') {
@@ -456,9 +468,9 @@ function getOperationDescription (data) {
   return data.operation.description
 }
 
-function isOscApiOrAwsApi (host) {
+function isAGatewayApi (host) {
   return (
-    host === 'api' ||
+    (host.startsWith('api') && !host.includes('oks')) ||
     host.startsWith('fcu') ||
     host.startsWith('lbu') ||
     host.startsWith('eim') ||
@@ -473,7 +485,7 @@ function printDescription (p, host) {
 
   // Expand the description by reading the other OpenAPI keywords of the schema
   let array = []
-  if (isOscApiOrAwsApi(host) && !host.startsWith('kms')) {
+  if (isAGatewayApi(host) && !host.startsWith('kms')) {
     array = getValuePattern(array, p.schema)
   } else {
     array = getValueLength(array, p.schema)
@@ -933,6 +945,8 @@ function supportOperationMultipleExamples (data) {
 
 module.exports = {
   preProcess,
+  computeApiHost,
+  isAGatewayApi,
   getValueLength,
   getValuePattern,
   getValueMinimumMaximum,

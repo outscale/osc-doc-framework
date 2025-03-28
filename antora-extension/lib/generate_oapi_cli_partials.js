@@ -1,4 +1,5 @@
 const fs = require('fs')
+const widdershinsPreProcess = require('../data/widdershins-templates/_pre_process')
 
 function generateOapiCliPartials (apiMarkdown, api, outputFolder) {
   const codeSamples = createCodeSamples(apiMarkdown)
@@ -26,6 +27,7 @@ function createCodeSamples (apiMarkdown) {
 function createOapiCliSections (api, codeSamples, outputFolder) {
   const paths = api.paths
   const schemas = api.components.schemas
+  const host = widdershinsPreProcess.computeApiHost(api)
 
   for (const path of Object.values(paths)) {
     const post = path.post
@@ -40,12 +42,12 @@ function createOapiCliSections (api, codeSamples, outputFolder) {
     s += 'This command contains the following attributes that you need to specify:\n\n'
     const reqRef = post.requestBody.content['application/json'].schema['x-widdershins-oldRef'].split('/').pop()
     s += '// tag::request-parameters[]\n\n'
-    s += getRef(schemas[reqRef], 1, true) + '\n'
+    s += getRef(schemas[reqRef], 1, host, true) + '\n'
     s += '// end::request-parameters[]\n\n\n\n'
 
     s += 'The **' + operation + '** command returns the following elements:\n\n'
     const respRef = post.responses['200'].content['application/json'].schema['x-widdershins-oldRef'].split('/').pop()
-    s += getRef(schemas[respRef], 1, false) + '\n\n\n'
+    s += getRef(schemas[respRef], 1, host, false) + '\n\n\n'
 
     // s += (
     //     ".Result sample\n[source,json]\n----\n"
@@ -109,7 +111,7 @@ function convertLink(match, p1, p2) {
   }
 }
 
-function getRef (schema, level, requestFlag) {
+function getRef (schema, level, host, requestFlag) {
   let s = ''
   const properties = schema.properties || schema.items?.properties || {}
   for (const [k, v] of Object.entries(properties)) {
@@ -123,7 +125,24 @@ function getRef (schema, level, requestFlag) {
       }
     }
     s += ' ' + formatDescription(v.description, isList=true) + '\n'
-    s += getRef(v, level + 1, requestFlag)
+
+    // Expand the description by reading the other OpenAPI keywords of the schema
+    let array = []
+    if (widdershinsPreProcess.isAGatewayApi(host) && !host.startsWith('kms')) {
+      array = widdershinsPreProcess.getValuePattern(array, v)
+    } else {
+      array = widdershinsPreProcess.getValueLength(array, v)
+      array = widdershinsPreProcess.getValuePattern(array, v)
+      array = widdershinsPreProcess.getValueMinimumMaximum(array, v)
+      array = widdershinsPreProcess.getValueEnum(array, v)
+      array = widdershinsPreProcess.getValueDefault(array, v)
+    }
+    if (array.length) {
+      if (v.description) {s += ' +\n'}
+      s += array.join('. ').replace(/`(.+?)`/g, '`+++$1+++`') + '.\n'
+    }
+
+    s += getRef(v, level + 1, host, requestFlag)
     if (requestFlag) {
       s += '// end::' + k + '[]\n'
     }
