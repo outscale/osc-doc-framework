@@ -463,7 +463,8 @@ function isOscApiOrAwsApi (host) {
     host.startsWith('lbu') ||
     host.startsWith('eim') ||
     host.startsWith('directlink') ||
-    host.startsWith('icu')
+    host.startsWith('icu') ||
+    host.startsWith('kms')
   )
 }
 
@@ -472,7 +473,7 @@ function printDescription (p, host) {
 
   // Expand the description by reading the other OpenAPI keywords of the schema
   let array = []
-  if (isOscApiOrAwsApi(host)) {
+  if (isOscApiOrAwsApi(host) && !host.startsWith('kms')) {
     array = getValuePattern(array, p.schema)
   } else {
     array = getValueLength(array, p.schema)
