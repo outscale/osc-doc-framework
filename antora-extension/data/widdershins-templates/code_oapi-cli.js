@@ -91,8 +91,6 @@ function printParams (object, data) {
     }
   }
   params = params.replace(/\.member\.N/g, '.member.0')
-  params = params.replace(/\btrue\b/g, 'True')
-  params = params.replace(/\bfalse\b/g, 'False')
 
   return params
 }

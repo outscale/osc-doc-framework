@@ -91,13 +91,14 @@ function printExamples (examples, options, data) {
       url = data.baseUrl
     }
     url = url.replace('{region}', '$OSC_REGION')
+    url = url.replace('{', '----highlight-string-start----{').replace('}', '}----highlight-end----')
 
-    let q = ''
+    let query = ''
     if (data.queryString) {
-      q = data.queryString.replace(/\b\?/g, '&').replace(/=string/g, '={string}').replace(/=true|=false/g, '={boolean}')
+      query = '----highlight-string-start----' + data.queryString.replace(/\b\?/g, '&') + '----highlight-end----'
     }
 
-    s += 'curl' + verb + ' ' + url + q + ' \\\n'
+    s += 'curl' + verb + ' ' + url + query + ' \\\n'
 
     for (const header of data.headerParameters) {
       options.push({ name: 'header', value: header.name + ': ' + header.exampleValues.object })

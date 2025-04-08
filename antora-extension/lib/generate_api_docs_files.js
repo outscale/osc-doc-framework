@@ -175,6 +175,7 @@ function runShins (markdown, shinsTemplates, outputFile) {
       console.error(err)
     } else {
       html = postProcessIndentsAfterShins(html)
+      html = postProcessExtraHighlights(html)
       html = postProcessCollapsibles(html)
       html = postProcessLinksInHclExamples(html)
       html = postProcessDeprecateTags(html)
@@ -200,6 +201,14 @@ function postProcessIndentsAfterShins (html) {
     return '<span class="' + type + ' indent-' + (offset + 1) + '"></span>'
   }
   html = html.replace(/<td>([├│└▉]+?) /g, replacer1)
+
+  return html
+}
+
+function postProcessExtraHighlights (html) {
+  html = html.replace(/----highlight-string-start----/g, '<span class="hljs-string">')
+  html = html.replace(/----highlight-comment-start----/g, '<span class="hljs-comment">')
+  html = html.replace(/----highlight-end----/g, '</span>')
 
   return html
 }
