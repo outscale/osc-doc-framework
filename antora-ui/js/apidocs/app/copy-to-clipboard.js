@@ -72,9 +72,8 @@
 
   function writeToClipboard (code) {
     var text = code.innerText.replace(TRAILING_SPACE_RX, '')
-    text = text.replace(/^# .+?\n\n/g, '')
-    text = text.replace(/^# .+?\n\n/g, '')
-    text = text.replace(/\n$/, '')
+    text = text.replace(/^# .+?\n/gm, '')
+    text = text.trim()
     if (code.dataset.lang === 'console' && text.startsWith('$ ')) text = extractCommands(text)
     window.navigator.clipboard.writeText(text).then(
       function () {
@@ -87,8 +86,7 @@
   }
   function writeToClipboard2 (code) {
     var text = code.innerText.replace(TRAILING_SPACE_RX, '')
-    text = text.replace(/^# .+?\n\n/g, '')
-    text = text.replace(/^# .+?\n\n/g, '')
+    text = text.replace(/^# .+?\n/gm, '')
     text = text.replace(/( \\)?\n +/g, ' ')
     text = text.trim()
     if (code.dataset.lang === 'console' && text.startsWith('$ ')) text = extractCommands(text)
