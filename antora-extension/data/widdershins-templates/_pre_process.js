@@ -482,15 +482,15 @@ function printDescription (p, host) {
 
   // Expand the description by reading the other OpenAPI keywords of the schema
   let array = []
-  // if (isAGatewayApi(host) && !host.startsWith('kms')) {
-  //   array = getValuePattern(array, p.schema)
-  // } else {
+  if (isAGatewayApi(host) && !host.startsWith('kms')) {
+    array = getValuePattern(array, p.schema)
+  } else {
     array = getValueLength(array, p.schema)
     array = getValuePattern(array, p.schema)
     array = getValueMinimumMaximum(array, p.schema)
     array = getValueEnum(array, p.schema)
     array = getValueDefault(array, p.schema)
-  // }
+  }
   if (array.length) {
     if (p.description) {s += '<br />'}
     s += array.join('. ') + '.'
