@@ -118,29 +118,26 @@ function _getServers (data) {
   const servers = data.api.servers || [{url: DEFAULT_BASE_URL}]
   if (servers) {
     content += '### Endpoints\n\n'
+    content += '|Base URLs|\n'
+    content += '|---|\n'
   }
   for (const server of servers) {
     if (server.description) {
-      content += server.description + ':\n'
+      content += '|' + server.description + '|\n'
     }
-    content += '|Name|Base URL|\n'
-    content += '|---|---|\n'
     const entries = Object.entries(server.variables || {})
     const [k, v] = entries[0] || ['', {}]
-    for (e of v.enum || [v.default]) {
-      const url = server.url.replace('{' + k + '}', e).replace(/(\{.+?\})/g, '`$1`')
-      content += '|' + (e || '')
-      if (v.default === e) {
-        content += ' (default)'
-      }
-      if (url === DEFAULT_BASE_URL) {
-        content += '|' + url
+    for (e of v .enum || [v.default]) {
+      content += '|'
+      if (server.url === DEFAULT_BASE_URL) {
+        content += DEFAULT_BASE_URL
       } else {
-        content += '|[' + url + '](' + url + ')'
+        const server_text = server.url.replace('{' + k + '}', '`' + e + '`')
+        const server_url = server.url.replace('{' + k + '}', e)
+        content += '[' + server_text + '](' + server_url + ')'
       }
       content += '|\n'
     }
-    content += '\n'
   }
 
   return content
@@ -485,15 +482,15 @@ function printDescription (p, host) {
 
   // Expand the description by reading the other OpenAPI keywords of the schema
   let array = []
-  if (isAGatewayApi(host) && !host.startsWith('kms')) {
-    array = getValuePattern(array, p.schema)
-  } else {
+  // if (isAGatewayApi(host) && !host.startsWith('kms')) {
+  //   array = getValuePattern(array, p.schema)
+  // } else {
     array = getValueLength(array, p.schema)
     array = getValuePattern(array, p.schema)
     array = getValueMinimumMaximum(array, p.schema)
     array = getValueEnum(array, p.schema)
     array = getValueDefault(array, p.schema)
-  }
+  // }
   if (array.length) {
     if (p.description) {s += '<br />'}
     s += array.join('. ') + '.'
