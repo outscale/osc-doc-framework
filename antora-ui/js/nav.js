@@ -283,7 +283,7 @@
         }
         if (navItemData.url === page.url) {
           ;(lineage || []).forEach(function (el) {
-            el.classList.add('is-active')
+            el.classList.add('is-active', 'is-current-path')
           })
           navItem.classList.add('is-active')
           navLink.setAttribute('aria-current', 'page')

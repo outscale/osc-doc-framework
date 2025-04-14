@@ -466,6 +466,10 @@ html {
   font-size: 1.35em;
 }
 
+.nav-item .is-current-path > a {
+  background: var(--brandPrimaryIndigo700);
+}
+
 .nav-item a:hover,
 .nav-item-toggle:hover + a {
   background: var(--brandPrimaryIndigo600);
