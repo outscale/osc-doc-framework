@@ -47,6 +47,6 @@ Feel free to open an issue in case of bugs.
 
 == License
 
-Copyright Outscale SAS
+Copyright OUTSCALE SAS
 
 MPL-2.0
