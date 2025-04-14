@@ -790,11 +790,12 @@ i.fa.icon-tip::before {color: var(--feedbackSuccess300); content: "\f058"; font-
 i.fa.icon-important::before {color: var(--feedbackWarning300); content: "\f071";}
 i.fa.icon-warning::before {color: var(--feedbackError300); content: "\f071";}
 
-.language-shell .hljs-meta:before {
-  content: "$ ";
-  color: #999;
-  font-weight: 600;
-  pointer-events: none;
+.language-shell .hljs-meta.prompt_ {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  display: inline-block;
   margin-left: -1.2em;
 }
 .doc pre.highlight > code.language-shell {

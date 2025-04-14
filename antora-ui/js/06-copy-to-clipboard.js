@@ -58,16 +58,24 @@
     if (copy) copy.addEventListener('click', writeToClipboard.bind(copy, code))
   })
 
-  function extractCommands (text) {
+  function extractConsoleCommands (text) {
     var cmds = []
     var m
     while ((m = CMD_RX.exec(text))) cmds.push(m[1].replace(LINE_CONTINUATION_RX, '$1$2'))
     return cmds.join(' && ')
   }
 
+  function extractShellCommands (text) {
+    var cmds = []
+    var m
+    while ((m = CMD_RX.exec(text))) cmds.push(m[1])
+    return cmds.join('\n\n')
+  }
+
   function writeToClipboard (code) {
     var text = code.innerText.replace(TRAILING_SPACE_RX, '')
-    if (code.dataset.lang === 'console' && text.startsWith('$ ')) text = extractCommands(text)
+    if (code.dataset.lang === 'console' && text.startsWith('$ ')) text = extractConsoleCommands(text)
+    if (code.dataset.lang === 'shell' && text.startsWith('$ ')) text = extractShellCommands(text)
     window.navigator.clipboard.writeText(text).then(
       function () {
         this.classList.add('clicked')
