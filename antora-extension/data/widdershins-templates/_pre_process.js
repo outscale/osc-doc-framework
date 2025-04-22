@@ -375,7 +375,7 @@ function fakeBodyParameter(data) {
 
 function generateAuthenticationSchemesSection (data) {
   let s = ''
-  const security = data.api.security
+  const security = data.api.security || []
   const securitySchemes = data.api.components.securitySchemes
   if (security.length > 1) {
     s = 'There are ' + security.length + ' possible ways to authenticate your requests with'
