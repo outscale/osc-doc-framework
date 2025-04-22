@@ -7,6 +7,7 @@ const generateJavaScriptExamples = require('./code_javascript')
 const generateOapiCliExamples = require('./code_oapi-cli')
 const generateOscCliExamples = require('./code_console')
 const generatePythonExamples = require('./code_python')
+const xml = require('jgexml/json2xml.js')
 
 const DEFAULT_BASE_URL = '/'
 
