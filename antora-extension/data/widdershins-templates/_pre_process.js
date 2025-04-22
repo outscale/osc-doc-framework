@@ -407,11 +407,11 @@ function generateAuthenticationSchemesSection (data) {
 function _formatAuthenticationRequirement (array, host) {
   let name = Object.keys(array).join('/')
   if (isAGatewayApi(host)) {
-    if (name === 'ApiKeyAuth' || name === 'ApiKeyAuthSec') {
-      name = 'access key/secret key'
+    if (name === 'ApiKeyAuth' || name === 'ApiKeyAuthSec' || name === 'aksk') {
+      name = 'Access Key/Secret Key'
     } else if (name === 'BasicAuth') {
-      name = 'login/password'
-    }  
+      name = 'Login/Password'
+    }
   } else {
     name = name.replace(/\B([A-Z][a-z])/g, " $1")
     name = name.replace(/Basic Auth/g, 'Basic Authentication').replace(/ Auth\b/g, '')
