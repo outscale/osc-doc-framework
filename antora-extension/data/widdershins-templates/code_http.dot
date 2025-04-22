@@ -10,4 +10,4 @@ SecretKey: YYYY
 {{?}}{{? data.headerParameters.length}}{{~ data.headerParameters :p:index}}{{=p.name}}: {{=p.exampleValues.object}}
 {{~}}
 {{?}}
-{{? data.bodyParameter.exampleValues.object}}{{? data.consumes.length && data.consumes[0].endsWith('json')}}{{= data.bodyParameter.exampleValues.json}}{{??}}...{{?}}{{?}}
+{{? data.bodyParameter.exampleValues.object}}{{? data.consumes.length && data.consumes[0].includes('json')}}{{= data.bodyParameter.exampleValues.json}}{{??}}...{{?}}{{?}}
