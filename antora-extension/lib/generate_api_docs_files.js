@@ -1,4 +1,5 @@
 const fs = require('fs')
+const path = require('path')
 const shins = require('shins')
 const widdershins = require('widdershins')
 const helperFunctions = require('./helper_functions')
@@ -181,7 +182,7 @@ function runShins (markdown, shinsTemplates, outputFile) {
       html = postProcessDeprecateTags(html)
       html = postProcessAdmonitionsInTables(html)
       const title = html.match(/(?<=<h1.*?>).+?(?=<\/h1>)/)[0]
-      fs.mkdirSync(outputFile.split('/').slice(0, -1).join('/'), { recursive: true })
+      fs.mkdirSync(path.parse(outputFile).dir, { recursive: true })
       fs.writeFileSync(outputFile, '= ' + title + '\n:page-role: apidocs\n:noindex:\n\n++++\n' + html + '\n++++\n')
     }
   })
@@ -264,7 +265,7 @@ function turnOnConsoleLog () {
   return CONSOLE_LOG
 }
 
-if (process.argv[1].split('/').at(-1) === __filename.split('/').at(-1)) {
+if (path.parse(process.argv[1]).base === path.parse(__filename).base) {
   runInCli()
 }
 

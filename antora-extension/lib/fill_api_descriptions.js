@@ -1,4 +1,5 @@
 const fs = require('fs')
+const path = require('path')
 const csvParse = require('csv-parse')
 const helperFunctions = require('./helper_functions')
 
@@ -79,7 +80,7 @@ function insertDescriptions (obj, descriptions, apiName) {
   return obj
 }
 
-if (process.argv[1].split('/').at(-1) === __filename.split('/').at(-1)) {
+if (path.parse(process.argv[1]).base === path.parse(__filename).base) {
   runInCli()
 }
 

@@ -1,4 +1,5 @@
 const fs = require('fs')
+const path = require('path')
 const helperFunctions = require('./helper_functions')
 const git = require('isomorphic-git')
 const http = require("isomorphic-git/http/node")
@@ -53,7 +54,7 @@ async function cloneRepository (dir, url, ref) {
   await git.clone({ fs, http, onAuth, dir, url, ref, singleBranch: true, depth: 1 })
 }
 
-if (process.argv[1].split('/').at(-1) === __filename.split('/').at(-1)) {
+if (path.parse(process.argv[1]).base === path.parse(__filename).base) {
   runInCli()
 }
 

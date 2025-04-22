@@ -1,4 +1,5 @@
 const fs = require('fs')
+const path = require('path')
 const openapiExamplesValidator = require('openapi-examples-validator')
 const helperFunctions = require('./helper_functions')
 
@@ -74,7 +75,7 @@ async function runOpenapiExamplesValidator (api) {
   }
 }
 
-if (process.argv[1].split('/').at(-1) === __filename.split('/').at(-1)) {
+if (path.parse(process.argv[1]).base === path.parse(__filename).base) {
   runInCli()
 }
 

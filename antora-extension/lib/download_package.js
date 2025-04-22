@@ -1,4 +1,5 @@
 const fs = require('fs')
+const path = require('path')
 const git = require('isomorphic-git')
 const helperFunctions = require('./helper_functions')
 const { execSync } = require("child_process")
@@ -60,7 +61,7 @@ async function extractFilesFromPackage (options, url, package) {
   const filepath = options.outputDir + '/' + package.name + '.tar.gz'
   await writeFile(file, filepath)
 
-  const filesToExtract = (options.api || '').split('/').at(-1) + ' ' + (options.errors || '').split('/').at(-1)
+  const filesToExtract = path.parse(options.api || '').base + ' ' + path.parse(options.errors || '').base
   fs.mkdirSync(options.outputDir + '/' + options.repoName, { recursive: true })
   execSync('tar -xf ' + filepath + ' -C ' + options.outputDir + '/' + options.repoName + ' ' + filesToExtract)
 }
@@ -152,7 +153,7 @@ function checkIfError (response) {
   }
 }
 
-if (process.argv[1].split('/').at(-1) === __filename.split('/').at(-1)) {
+if (path.parse(process.argv[1]).base === path.parse(__filename).base) {
   runInCli()
 }
 
