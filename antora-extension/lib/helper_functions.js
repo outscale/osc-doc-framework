@@ -53,6 +53,7 @@ function dumpYaml (api) {
   // https://github.com/nodeca/js-yaml/blob/master/README.md#dump-object---options-
   const yamlOptions = {
     noArrayIndent: true,
+    sortKeys: true,
     lineWidth: -1,
   }
 
