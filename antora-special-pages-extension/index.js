@@ -103,7 +103,7 @@ function getConfig (playbook, componentName, config={}, searchEnabled) {
         + ':page-layout: 404\n\n'
         + '[discrete]\n'
         + "=== Nous avons cherché partout, mais nous n'avons pas trouvé votre page.\n\n"
-        + "link:/{page-component-name}/{page-module}/Accueil.html[Retour à l'Accueil, role=action-button]"
+        + "link:{site-url}/{page-component-name}/{page-module}/Accueil.html[Retour à l'Accueil, role=action-button]"
       ),
     }
   }
@@ -115,7 +115,7 @@ function getConfig (playbook, componentName, config={}, searchEnabled) {
         + ':page-layout: 404\n\n'
         + '[discrete]\n'
         + '=== We looked everywhere, but we could not find your page.\n\n'
-        + 'link:/{page-component-name}/{page-module}/Home.html[Back to Home, role=action-button]'
+        + 'link:{site-url}/{page-component-name}/{page-module}/Home.html[Back to Home, role=action-button]'
       ),
     }
   }
