@@ -468,6 +468,7 @@ function getOperationDescription (data) {
 function isAGatewayApi (host) {
   return (
     (host.startsWith('api') && !host.includes('oks')) ||
+    host.startsWith('okms') ||
     host.startsWith('fcu') ||
     host.startsWith('lbu') ||
     host.startsWith('eim') ||
@@ -482,7 +483,7 @@ function printDescription (p, host) {
 
   // Expand the description by reading the other OpenAPI keywords of the schema
   let array = []
-  if (isAGatewayApi(host) && !host.startsWith('kms')) {
+  if (isAGatewayApi(host) && !host.startsWith('okms') && !host.startsWith('kms')) {
     array = getValuePattern(array, p.schema)
   } else {
     array = getValueLength(array, p.schema)

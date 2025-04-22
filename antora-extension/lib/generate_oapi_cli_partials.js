@@ -128,7 +128,7 @@ function getRef (schema, level, host, requestFlag) {
 
     // Expand the description by reading the other OpenAPI keywords of the schema
     let array = []
-    if (widdershinsPreProcess.isAGatewayApi(host) && !host.startsWith('kms')) {
+    if (widdershinsPreProcess.isAGatewayApi(host) && !host.startsWith('okms') && !host.startsWith('kms')) {
       array = widdershinsPreProcess.getValuePattern(array, v)
     } else {
       array = widdershinsPreProcess.getValueLength(array, v)
