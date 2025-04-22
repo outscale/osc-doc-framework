@@ -15,23 +15,24 @@ async function runInCli () {
   }
 
   let api = helperFunctions.parseYaml(options.api)
+  const apiFilename = path.parse(options.api).base 
   const examples = helperFunctions.parseYaml(options.examples)
-  api = insertExamples(api, examples, options.api)
+  api = insertExamples(api, examples, apiFilename)
   await runOpenapiExamplesValidator(api)
   const s = helperFunctions.dumpYaml(api)
   fs.writeFileSync(options.output, s)
 }
 
-async function runInNode (api, examplesFile, outputFileStem) {
+async function runInNode (api, examplesFile, apiFilepath) {
   const examples = helperFunctions.parseYaml(examplesFile)
-  const apiName = outputFileStem + ' v' + api.info.version
-  api = await insertExamples(api, examples, apiName)
+  const apiFilename = path.parse(apiFilepath).base + ' v' + api.info.version
+  api = await insertExamples(api, examples, apiFilename)
   await runOpenapiExamplesValidator(api)
 
   return api
 }
 
-function insertExamples (api, examples, apiName) {
+function insertExamples (api, examples, apiFilename) {
   const paths = api.paths
   for (const path of Object.values(paths)) {
     const op = path.post || path.get
@@ -43,7 +44,7 @@ function insertExamples (api, examples, apiName) {
     op.responses['200'].content['application/json'].examples = respExamples
 
     if (!reqExamples || !respExamples) {
-      let msg = `${ERROR_START}NOT_FOUND example (${apiName}):${ERROR_END} ${operationId}`
+      let msg = `${ERROR_START}NOT_FOUND example (${apiFilename}):${ERROR_END} ${operationId}`
       if (!reqExamples) {
         msg += ' (request)'
       }

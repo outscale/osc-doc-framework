@@ -15,16 +15,17 @@ async function runInCli () {
   }
 
   let api = helperFunctions.parseYaml(options.api)
+  const apiFilename = path.parse(options.api).base
   const descriptions = await parseCsv(options.descriptions)
-  api = await insertDescriptions(api, descriptions, options.api)
+  api = await insertDescriptions(api, descriptions, apiFilename)
   const s = helperFunctions.dumpYaml(api)
   fs.writeFileSync(options.output, s)
 }
 
-async function runInNode (api, descriptionsFile, outputFileStem) {
+async function runInNode (api, descriptionsFile, apiFilepath) {
   const descriptions = await parseCsv(descriptionsFile)
-  const apiName = outputFileStem + ' v' + api.info.version
-  api = await insertDescriptions(api, descriptions, apiName)
+  const apiFilename = path.parse(apiFilepath).base + ' v' + api.info.version
+  api = await insertDescriptions(api, descriptions, apiFilename)
 
   return api
 }
@@ -65,14 +66,14 @@ async function parseCsv (filepath) {
   }
 }
 
-function insertDescriptions (obj, descriptions, apiName) {
+function insertDescriptions (obj, descriptions, apiFilename) {
   for (const [k, v] of Object.entries(obj)) {
     if (typeof v === 'object') {
-      insertDescriptions(v, descriptions, apiName)
+      insertDescriptions(v, descriptions, apiFilename)
     } else if (k === 'description') {
-      obj[k] = descriptions[v] || '**NOT_FOUND description: ' + v + '**'
-      if (obj[k] == '**NOT_FOUND description: ' + v + '**') {
-        console.error(`${ERROR_START}NOT_FOUND description (${apiName}):${ERROR_END} ${v}`)
+      obj[k] = descriptions[v] || '**&lt;NOT_FOUND description: ' + v + '&gt;**'
+      if (obj[k] == '**&lt;NOT_FOUND description: ' + v + '&gt;**') {
+        console.error(`${ERROR_START}NOT_FOUND description (${apiFilename}):${ERROR_END} ${v}`)
       }
     }
   }

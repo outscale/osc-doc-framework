@@ -44,11 +44,11 @@ async function generateApiDocsFiles (options) {
   let api = helperFunctions.parseYaml(apiFile)
 
   if (descriptionsFile) {
-    api = await fillApiDescriptions(api, descriptionsFile, outputFileStem)
+    api = await fillApiDescriptions(api, descriptionsFile, apiFile)
   }
 
   if (examplesFile) {
-    api = await fillApiExamples(api, examplesFile, outputFileStem)
+    api = await fillApiExamples(api, examplesFile, apiFile)
   }
 
   let apiMarkdown = await runWiddershins(api, languages, widdershinsTemplates)
