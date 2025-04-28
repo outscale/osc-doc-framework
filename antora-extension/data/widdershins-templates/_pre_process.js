@@ -1,11 +1,11 @@
 const jptr = require('reftools/lib/jptr.js').jptr
 const walkSchema = require('oas-schema-walker').walkSchema
 const wsGetState = require('oas-schema-walker').getDefaultState
-const generateCurlExamples = require('./code_shell')
+const generateCurlExamples = require('./code_curl')
 const generateHclExamples = require('./code_hcl')
 const generateJavaScriptExamples = require('./code_javascript')
 const generateOapiCliExamples = require('./code_oapi-cli')
-const generateOscCliExamples = require('./code_console')
+const generateOscCliExamples = require('./code_osc-cli')
 const generatePythonExamples = require('./code_python')
 const xml = require('jgexml/json2xml.js')
 

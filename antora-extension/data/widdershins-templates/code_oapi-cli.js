@@ -1,16 +1,16 @@
-function generateOapiCliExamples(data) {
+function generateOapiCliExamples(data, lang) {
   data.operation['x-basicAuthFlag'] = false
   const examples = data['x-customRequestExamples'] || {}
   const options = createGeneralOptions(data)
-  let s = printExamples(examples, options, data)
+  let s = printExamples(examples, options, data, lang)
 
   if (data.security?.find((n) => n.BasicAuth)) {
     data.operation['x-basicAuthFlag'] = true
     s += '\n\n'
     s += '```\n'
-    s += '```console--oapi-cli\n'
+    s += '```' + lang + '\n'
     const options = createGeneralOptions(data)
-    s += printExamples([examples[examples.length - 1]], options, data)
+    s += printExamples([examples[examples.length - 1]], options, data, lang)
   }
 
   return s
@@ -31,7 +31,7 @@ function createGeneralOptions (data) {
   return options
 }
 
-function printExamples (examples, options, data) {
+function printExamples (examples, options, data, lang) {
   let s = ''
 
   for (let i = 0, length = examples.length; i < length; i++) {
@@ -62,7 +62,7 @@ function printExamples (examples, options, data) {
     if (length && i < length - 1) {
       s += '\n'
       s += '```\n'
-      s += '```console--oapi-cli\n'
+      s += '```' + lang + '\n'
     }
   }
 

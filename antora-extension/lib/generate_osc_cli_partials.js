@@ -8,7 +8,7 @@ function generateOscCliPartials (apiMarkdown, api, outputFolder, outputFileStem)
 
 function createCodeSamples (apiMarkdown) {
   const matches = [
-    ...apiMarkdown.matchAll(/<a name="(?<name>.+?-example\.sh)"><\/a>\n(?<examples>(\n```console\n[\s\S]+?\n```)+)/g),
+    ...apiMarkdown.matchAll(/<a name="(?<name>.+?-example\.sh)"><\/a>\n(?<examples>(\n```shell--osc-cli\n[\s\S]+?\n```)+)/g),
   ]
   const codeSamples = {}
   for (let i = 0, length = matches.length; i < length; i++) {

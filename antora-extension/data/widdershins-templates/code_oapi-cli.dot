@@ -1,2 +1,1 @@
-{{= data.custom.generateOapiCliExamples(data)}}
-    
+{{= data.custom.generateOapiCliExamples(data, 'shell--oapi-cli') }}

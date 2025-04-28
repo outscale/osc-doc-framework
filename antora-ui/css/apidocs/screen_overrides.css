@@ -67,8 +67,8 @@ main > .content {
   }
 }
 .toc-wrapper .lang-selector a {
-  padding-left: 0.475em;
-  padding-right: 0.475em;
+  padding-left: 0.5em;
+  padding-right: 0.5em;
 }
 .toc-wrapper a {
   text-decoration: none;
@@ -306,7 +306,7 @@ h3 + p + blockquote a {
   max-width: 54.2rem;
 }
 
-.api pre.highlight.tab:not(.tab-console):not(.tab-bash):not(.tab-json) {
+.api pre.highlight.tab:not(.tab-shell--osc-cli):not(.tab-bash):not(.tab-json) {
   display: none;
 }
 .api pre a {
