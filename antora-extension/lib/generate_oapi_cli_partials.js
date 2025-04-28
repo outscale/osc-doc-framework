@@ -8,7 +8,7 @@ function generateOapiCliPartials (apiMarkdown, api, outputFolder) {
 
 function createCodeSamples (apiMarkdown) {
   const matches = [
-    ...apiMarkdown.matchAll(/<a name="(?<name>.+?-example\.sh)"><\/a>\n((\n```console\n[\s\S]+?\n```)+\n)?(?<examples>(\n```console--oapi-cli\n[\s\S]+?\n```)+)/g),
+    ...apiMarkdown.matchAll(/<a name="(?<name>.+?-example\.sh)"><\/a>\n((\n```shell--osc-cli\n[\s\S]+?\n```)+\n)?(?<examples>(\n```shell--oapi-cli\n[\s\S]+?\n```)+)/g),
   ]
   const codeSamples = {}
   for (let i = 0, length = matches.length; i < length; i++) {

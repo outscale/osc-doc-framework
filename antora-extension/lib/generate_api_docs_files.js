@@ -100,8 +100,6 @@ function getLanguageTabs (languages) {
   const tabs = []
   if (languages) {
     const map = {
-      console: 'OSC CLI',
-      'console--oapi-cli': 'oapi-cli',
       csharp: 'C#',
       go: 'Go',
       http: 'HTTP',
@@ -111,12 +109,18 @@ function getLanguageTabs (languages) {
       php: 'PHP',
       python: 'Python',
       ruby: 'Ruby',
-      shell: 'Shell',
+      'shell--curl': 'Curl',
+      'shell--oapi-cli': 'oapi-cli',
+      'shell--osc-cli': 'OSC CLI',
       'text--hcl': 'HCL',
     }
     languages = languages.split(',')
     for (let i = 0; i < languages.length; i++) {
       const key = languages[i].trim()
+      // The following 3 lines are for backward compatibility
+      if (key === 'console') key = 'shell--osc-cli'
+      else if (key === 'console--oapi-cli') key = 'shell--oapi-cli'
+      else if (key === 'shell') key = 'shell--curl'
       tabs.push({ [key]: map[key] })
     }
   } else {

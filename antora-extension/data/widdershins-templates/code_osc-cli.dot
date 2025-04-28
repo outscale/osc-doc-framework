@@ -1,0 +1,1 @@
+{{= data.custom.generateOscCliExamples(data, 'shell--osc-cli') }}
