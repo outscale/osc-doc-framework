@@ -116,7 +116,7 @@ function getLanguageTabs (languages) {
     }
     languages = languages.split(',')
     for (let i = 0; i < languages.length; i++) {
-      const key = languages[i].trim()
+      let key = languages[i].trim()
       // The following 3 lines are for backward compatibility
       if (key === 'console') key = 'shell--osc-cli'
       else if (key === 'console--oapi-cli') key = 'shell--oapi-cli'
