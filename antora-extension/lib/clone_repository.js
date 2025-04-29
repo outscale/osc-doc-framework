@@ -31,7 +31,7 @@ async function runInNode (options) {
   const dir = options.outputDir + '/' + options.repoName + '/' + name.replace(/^.+\//, '')
 
   if (process.env.GITLAB_CI) {
-    url = url.href.replace('https://', 'https://gitlab-ci-token:' + process.env.CI_JOB_TOKEN + '@')
+    url.href = url.href.replace('https://', 'https://gitlab-ci-token:' + process.env.CI_JOB_TOKEN + '@')
   }
 
   const userguideBranch = await git.currentBranch({ fs, dir: '.' })
@@ -44,9 +44,13 @@ async function runInNode (options) {
     console.log(`We will download the repository ${COLOR}${name}${CLR} (default branch), as required by '${options.repoName}'`)
     await cloneRepository(dir, url, undefined)
   }
-  else {
+  else if (await doesRefExists(url, options.apiRef)) {
     console.log(`We will download the repository ${COLOR}${name}${CLR} (tag or branch ${COLOR}${options.apiRef}${CLR}), as required by '${options.repoName}'`)
     await cloneRepository(dir, url, options.apiRef)
+  }
+  else {
+    console.log(`We will download the repository ${COLOR}${name}${CLR} (default branch), as required by '${options.repoName}'`)
+    await cloneRepository(dir, url, undefined)
   }
 
 }
