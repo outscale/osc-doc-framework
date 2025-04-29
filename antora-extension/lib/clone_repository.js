@@ -35,11 +35,12 @@ async function runInNode (options) {
   }
 
   const userguideBranch = await git.currentBranch({ fs, dir: '.' })
-  if (options.apiRef === 'HEAD') {
-    console.log(`We will download the repository ${COLOR}${name}${CLR} (default branch), as required by '${options.repoName}'`)
-    await cloneRepository(dir, url, undefined)
+  const triggerRef = process.env.TRIGGER_REF
+  if (triggerRef && await doesRefExists(url, triggerRef)) {
+    console.log(`We will download the repository ${COLOR}${name}${CLR} (tag or branch ${COLOR}${triggerRef}${CLR}), as required by '${options.repoName}'`)
+    await cloneRepository(dir, url, triggerRef)
   }
-  else if (userguideBranch === 'main' || userguideBranch === 'master') {
+  else if (options.apiRef === 'HEAD' || userguideBranch === 'main' || userguideBranch === 'master') {
     console.log(`We will download the repository ${COLOR}${name}${CLR} (default branch), as required by '${options.repoName}'`)
     await cloneRepository(dir, url, undefined)
   }
@@ -48,6 +49,17 @@ async function runInNode (options) {
     await cloneRepository(dir, url, options.apiRef)
   }
 
+}
+
+async function doesRefExists (url, ref) {
+  const serverRefs = await git.listServerRefs({ http, onAuth, url: url.href, protocolVersion: 1 })
+  const m = serverRefs.filter((n) => n.ref.replace('refs/heads/', '') === ref)
+  if (m.length) {
+    return true
+  }
+  else {
+    return false
+  }
 }
 
 async function cloneRepository (dir, url, ref) {
