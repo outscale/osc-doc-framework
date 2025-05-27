@@ -571,13 +571,16 @@ html, body {
   #nav-button.open {
     left: 230px; }
 
-.page-wrapper {
-  margin-left: 230px;
-  position: relative;
-  z-index: 10;
-  background-color: var(--brandPrimaryDarkBlue50);
-  min-height: 100%;
-  padding-bottom: 1px; }
+@media screen {
+  .page-wrapper {
+    margin-left: 230px;
+    position: relative;
+    z-index: 10;
+    background-color: var(--brandPrimaryDarkBlue50);
+    min-height: 100%;
+    padding-bottom: 1px;
+  }
+}
   .page-wrapper .dark-box {
     width: 50%;
     background-color: #2E3336;
@@ -677,7 +680,6 @@ html, body {
         white-space: nowrap; }
     .api table th {
       padding: 5px 10px;
-      border-bottom: 1px solid #ccc;
       vertical-align: bottom; }
     .api table td {
       padding: 10px; }

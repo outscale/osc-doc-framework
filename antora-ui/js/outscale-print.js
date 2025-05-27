@@ -14,10 +14,6 @@
     }
   }
 
-  function getPath() {
-    return document.querySelector("head [rel=canonical]").href.split("/").slice(0, -1).join("/") + "/"
-  }
-
   function createTimestamp(pageOrigin) {
     const p = document.createElement("p")
     let text = "Retrieved from"
@@ -29,10 +25,13 @@
 
   function adaptToPrint() {
     // Make xrefs absolute
-    const path = getPath()
-    const xrefs = document.querySelectorAll("a.xref:not([href^=http])")
-    for (const xref of xrefs) {
-      xref.href = path + xref.getAttribute("href").normalize('NFC')
+    const basePath = document.querySelector("head [rel=canonical]").href.split("/").slice(0, -1).join("/") + "/"
+    const as = document.querySelectorAll(".article a:not([href^=http]):not([href^='file:']):not([href^='mailto:']):not([href^='#'])")
+    for (const a of as) {
+      if (a.href) {
+        a.setAttribute("hrefOld", a.getAttribute("href"))
+        a.href = basePath + a.getAttribute("href").normalize('NFC')
+      }
     }
     // remove parentheses in tooltip texts
     const tooltipTexts = document.getElementsByClassName("tooltiptext")
@@ -48,10 +47,10 @@
 
   function adaptToScreen() {
     // Make xrefs relative
-    const path = getPath()
-    const xrefs = document.querySelectorAll("a.xref[href^=http]")
-    for (const xref of xrefs) {
-      xref.href = xref.href.replace(path, "")
+    const as = document.querySelectorAll(".article a[hrefOld]")
+    for (const a of as) {
+      a.href = a.getAttribute("hrefOld")
+      a.removeAttribute("hrefOld")
     }
     // Add parentheses back in tooltip texts
     const tooltipTexts = document.getElementsByClassName("tooltiptext")
@@ -63,8 +62,10 @@
     logo.src = logo.src.replace("/logo-darkblue.svg", "/logo.svg")
   }
 
-  const pageOrigin = getPageOrigin()
-  createTimestamp(pageOrigin)
+  if (document.querySelector(".doc h1")) {
+    const pageOrigin = getPageOrigin()
+    createTimestamp(pageOrigin)
+  }
   window.addEventListener("beforeprint", adaptToPrint)
   window.addEventListener("afterprint", adaptToScreen)
 

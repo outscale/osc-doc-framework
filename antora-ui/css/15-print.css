@@ -3,7 +3,8 @@
 }
 
 @media print {
-  .hide-for-print {
+  .hide-for-print,
+  .dt-loading.hidden {
     display: none !important;
   }
 
@@ -12,7 +13,6 @@
   }
 
   a {
-    color: inherit !important;
     text-decoration: underline;
   }
 
@@ -151,22 +151,27 @@
       display: none !important;
   }
 
-  .doc .admonitionblock td.content {
+  .doc .admonitionblock td.content,
+  .api aside.admonitionblock {
       border-radius: initial;
   }
-  .doc .admonitionblock.note td.content {
+  .doc .admonitionblock.note td.content,
+  .api aside.note {
       background: var(--feedbackInformation100);
       border: 2px solid var(--feedbackInformation100);
   }
-  .doc .admonitionblock.tip td.content {
+  .doc .admonitionblock.tip td.content,
+  .api aside.tip {
       background: var(--feedbackSuccess100);
       border: 2px solid var(--feedbackSuccess100);
   }
-  .doc .admonitionblock.important td.content {
+  .doc .admonitionblock.important td.content,
+  .api aside.important {
       background: var(--feedbackWarning100);
       border: 2px solid var(--feedbackWarning100);
   }
-  .doc .admonitionblock.warning td.content {
+  .doc .admonitionblock.warning td.content,
+  .api aside.warning {
       background: var(--feedbackError100);
       border: 2px solid var(--feedbackError100);
   }
@@ -192,13 +197,21 @@
 
   .tableblock th,
   .tableblock > tbody > tr > td,
-  .doc pre.highlight code {
-      border: 1px solid black !important;
-      box-shadow: initial;
+  .doc pre.highlight code,
+  .api th,
+  .api tr > td {
+      border: 1.5px solid black !important;
   }
-  .doc table.tableblock thead th {
-      outline: none;
+  .tableblock > tbody > tr,
+  .api tr > td {
+      border-top-width: 0px !important;
+  }
+  .doc table.tableblock thead th,
+  .api th {
+      border-top-width: 1.5px !important;
+      outline: none !important;
       position: static;
+      box-shadow: none;
   }
   .tableblock td.icon {
       border: none !important;
