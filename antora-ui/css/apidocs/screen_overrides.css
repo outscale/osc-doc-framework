@@ -11,10 +11,12 @@ main > .content {
   max-width: initial;
 }
 
-.api {
-  font-size: 15px;
-  color: var(--neutral1000);
-  padding: 0 60px;
+@media screen {
+  .api {
+    font-size: 15px;
+    color: var(--neutral1000);
+    padding: 0 60px;
+  }
 }
 .api h1, .api h2, .api h3, .api h4, .api h5, .api h6 {
   color: var(--brandPrimaryDarkBlue500);
@@ -299,8 +301,26 @@ h3 + p + blockquote a {
   color: var(--brandPrimaryIndigo500) !important;
 }
 
-.api table td:first-child {
-  white-space: nowrap;
+@media print {
+  .api table td {
+    hyphens: auto;
+    hyphenate-character: "-";
+  }
+  .api table td:first-child,
+  .api table td:nth-child(2) {
+    hyphenate-character: "";
+  }
+  .api table td mark {
+    hyphens: none;
+  }
+  .api table td:last-child {
+    hyphenate-character: "-";
+  }
+  .api table tr {
+    display: table;
+    table-layout: fixed;
+    width: 100%;
+  }
 }
 .api table td {
   max-width: 54.2rem;
@@ -371,7 +391,7 @@ color: var(--brandPrimaryIndigo600);
   content: ' (click to expand)';
 }
 
-@media (max-width: 1023px) {
+@media screen and (max-width: 1023px) {
   .toc-wrapper {
     left: -300px;
     padding-top: 100px;
@@ -536,10 +556,14 @@ color: var(--brandPrimaryIndigo600);
     z-index: 1;
   }
 }
-.api table thead th {
+.api th {
   background: #f4f5f7;
-  border: 1px solid #e1e1e1;
-  outline: 1px solid #e1e1e1;
+}
+@media screen {
+  .api th {
+    border: 1px solid #e1e1e1;
+    outline: 1px solid #e1e1e1;
+  }
 }
 
 .api blockquote,

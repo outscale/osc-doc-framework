@@ -40,7 +40,7 @@ b, strong {
   position: relative;
 }
 span.pipe {
-  border-left: 1px solid var(--neutral700);
+  border-left: 1.5px solid var(--neutral700);
   position: absolute;
   top: -0.5em;
   bottom: 0;
