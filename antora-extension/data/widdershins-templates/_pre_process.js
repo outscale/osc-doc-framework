@@ -1,4 +1,8 @@
+const circularClone = require('reftools/lib/clone.js').circularClone
 const jptr = require('reftools/lib/jptr.js').jptr
+const recurse = require('reftools/lib/recurse.js').recurse
+const sampler = require('openapi-sampler')
+const visit = require('reftools/lib/visit.js').visit
 const walkSchema = require('oas-schema-walker').walkSchema
 const wsGetState = require('oas-schema-walker').getDefaultState
 const generateCurlExamples = require('./code_curl')
@@ -13,6 +17,7 @@ const DEFAULT_BASE_URL = '/'
 
 function preProcess (data) {
   data = _concatenateOneOfsAndAnyOfs(data)
+  data = _appendComponentResponsesToComponentSchemas(data)
   data.api.servers = _getServers(data)
   if (data.baseUrl === '//') {data.baseUrl = DEFAULT_BASE_URL}
   data.host = computeApiHost(data)
@@ -21,7 +26,6 @@ function preProcess (data) {
 
   data.custom = {
     createTabs,
-    evaluateResponses,
     fakeBodyParameter,
     generateAuthenticationSchemesSection,
     generateCurlExamples,
@@ -35,6 +39,8 @@ function preProcess (data) {
     getIntroSecondPart,
     getOperationAuthenticationSchemes,
     getOperationDescription,
+    getResponses,
+    getResponseExamples,
     isAGatewayApi,
     printDescription,
     printErrorResponses,
@@ -112,6 +118,21 @@ function _concatenateOneOfsAndAnyOfs2 (obj) {
       }
     }
   }
+}
+
+function _appendComponentResponsesToComponentSchemas (data) {
+  const responses = Object.entries(data.components?.responses || {})
+  for (const [k, v] of responses) {
+    const firstContentKey = Object.keys(v.content || {})[0]
+    if (firstContentKey) {
+      if (!data.components.schemas[k]) {
+        data.components.schemas[k] = v.content[firstContentKey].schema
+        data.api.components.schemas[k] = data.api.components.responses[k].content[firstContentKey].schema
+      }
+    }
+  }
+
+  return data
 }
 
 function _getServers (data) {
@@ -204,26 +225,53 @@ function createTabs (language_tabs) {
   return s
 }
 
-function evaluateResponses (data) {
-  for (const resp in data.operation.responses) {
-    if (!resp.startsWith('x-')) {
-      const response = data.operation.responses[resp]
-      for (const ct in response.content) {
-        const contentType = response.content[ct]
-        if (contentType.examples || contentType.example) {
-          return _getResponseExamples(data)
-        } else if (contentType.schema) {
-          return data.utils.getResponseExamples(data)
-        }
+// Modified from Widdershins
+function getResponses(data) {
+  let responses = [];
+  for (let r in data.operation.responses) {
+      if (!r.startsWith('x-')) {
+          let response = data.operation.responses[r]
+          let entry = {}
+          entry.status = r
+          entry.meaning = (r === 'default' ? data.translations.responseDefault : data.translations.responseUnknown)
+          entry.description = (typeof response.description === 'string' ? response.description.trim() : undefined)
+          entry.schema = data.translations.schemaNone
+          for (let ct in response.content) {
+              let contentType = response.content[ct]
+              if (contentType.schema) {
+                  entry.type = contentType.schema.type
+                  entry.schema = data.translations.schemaInline
+              }
+              if (contentType.schema && contentType.schema["x-widdershins-oldRef"] && contentType.schema["x-widdershins-oldRef"].startsWith('#/components/')) {
+                  let schemaName = contentType.schema["x-widdershins-oldRef"].replace('#/components/schemas/', '')
+                  entry.schema = '[' + schemaName + '](#schema' + schemaName.toLowerCase() + ')'
+                  entry.$ref = true
+              }
+              else if (response["x-widdershins-oldRef"]) {
+                let schemaName = response["x-widdershins-oldRef"].replace('#/components/responses/', '')
+                entry.schema = '[' + schemaName + '](#schema' + schemaName.toLowerCase() + ')'
+                entry.$ref = true
+              }
+              else {
+                  if (contentType.schema && contentType.schema.type && (contentType.schema.type !== 'object') && (contentType.schema.type !== 'array')) {
+                      entry.schema = contentType.schema.type
+                  }
+              }
+          }
+          entry.content = response.content
+          entry.links = response.links
+          responses.push(entry)
       }
-    }
   }
+  return responses
 }
 
 // Modified from Widdershins
-function _getResponseExamples (data) {
+function getResponseExamples (data) {
   let content = ''
   const examples = []
+  let autoDone = {}
+  const firstContentKey = Object.keys(data.operation.responses)[0]
   for (const resp in data.operation.responses) {
     if (!resp.startsWith('x-')) {
       const response = data.operation.responses[resp]
@@ -240,12 +288,32 @@ function _getResponseExamples (data) {
               cta,
             })
           }
-        } else if (contentType.example) {
+        } else if (resp === firstContentKey && contentType.example) {
+          const firstContentKey = Object.keys(response.content || {})[0]
           examples.push({
-            summary: resp + ' ' + data.translations.response,
+            summary: response.content[firstContentKey].schema?.description || _capitalize(resp) + ' response',
             value: _convertExample(contentType.example),
             cta,
           })
+        } else if (resp === firstContentKey && contentType.schema) {
+          let obj = contentType.schema
+          let autoCT = ''
+          if (_doContentType(cta, 'json')) autoCT = 'json'
+          if (_doContentType(cta, 'yaml')) autoCT = 'yaml'
+          if (_doContentType(cta, 'xml')) autoCT = 'xml'
+          if (_doContentType(cta, 'text')) autoCT = 'text'
+
+          if (!autoDone[autoCT]) {
+              autoDone[autoCT] = true
+              let xmlWrap = false
+              if (obj && obj.xml && obj.xml.name) {
+                  xmlWrap = obj.xml.name
+              }
+              else if (obj["x-widdershins-oldRef"]) {
+                  xmlWrap = obj["x-widdershins-oldRef"].split('/').pop()
+              }
+              examples.push({ summary: _capitalize(resp) + ' response', value: _getSample(obj, data.options, { skipWriteOnly: true, quiet: true }, data.api, data), cta: cta, xmlWrap: xmlWrap })
+          }
         }
       }
     }
@@ -326,6 +394,89 @@ function _doContentType (ctTypes, ctClass) {
     }
   }
   return false
+}
+
+// Modified from Widdershins
+function _getSample(orig, options, samplerOptions, api,data){
+  if (orig && orig.example) return orig.example
+  let result = _getSampleInner(orig,options,samplerOptions,api,data)
+  result = _clean(result)
+  result = _strim(result,options.maxDepth)
+  return result
+}
+
+// Modified from Widdershins
+function _getSampleInner(orig,options,samplerOptions,api,data){
+  if (!options.samplerErrors) options.samplerErrors = new Map()
+  let obj = circularClone(orig)
+  let defs = api //Object.assign({},api,orig)
+  if (options.sample && obj) {
+    try {
+      var sample = sampler.sample(obj,samplerOptions,defs); // was api
+      if (sample && typeof sample.$ref !== 'undefined') {
+        obj = JSON.parse(data.utils.safejson(orig))
+        sample = sampler.sample(obj,samplerOptions,defs)
+      }
+      if (typeof sample !== 'undefined') {
+        if (sample !== null && Object.keys(sample).length) return sample
+        else {
+          return sampler.sample({ type: 'object', properties: { anonymous: obj}},samplerOptions,defs).anonymous
+        }
+      }
+    }
+    catch (ex) {
+      if (options.samplerErrors.has(ex.message)) {
+        process.stderr.write('.')
+      }
+      else {
+        console.error('# sampler ' + ex.message)
+        options.samplerErrors.set(ex.message,true)
+        if (options.verbose) {
+          console.error(ex)
+        }
+      }
+      obj = JSON.parse(data.utils.safejson(orig))
+      try {
+        sample = sampler.sample(obj,samplerOptions,defs)
+        if (typeof sample !== 'undefined') return sample
+      }
+      catch (ex) {
+        if (options.samplerErrors.has(ex.message)) {
+          process.stderr.write('.')
+        }
+        else {
+          console.warn('# sampler 2nd error ' + ex.message)
+          options.samplerErrors.set(ex.message,true)
+        }
+      }
+    }
+  }
+  return obj
+}
+
+// Modified from Widdershins
+function _clean(obj) {
+  if (typeof obj === 'undefined') return {}
+  visit(obj,{},{filter:function(obj,key,state){
+    if (!key.startsWith('x-widdershins')) return obj[key]
+  }})
+  return obj
+}
+
+// Modified from Widdershins
+function _strim(obj,maxDepth) {
+  if (maxDepth <= 0) return obj
+  recurse(obj,{identityDetection:true},function(obj,key,state){
+    if (state.depth >= maxDepth) {
+      if (Array.isArray(state.parent[state.pkey])) {
+        state.parent[state.pkey] = []
+      }
+      else if (typeof state.parent[state.pkey] === 'object') {
+        state.parent[state.pkey] = {}
+      }
+    }
+  })
+  return obj
 }
 
 // Modified from Widdershins
@@ -598,7 +749,7 @@ function printErrorResponses (responses) {
   if (responses.length) {
     s += 'Other responses:\n'
     for (const response of responses) {
-      s += '* **Response ' + response.status + '** (' + response.schema + ')'
+      s += '* **' + _capitalize(response.status) + ' response** (' + response.schema + ')'
       if (response.description) {
         s += ': ' + response.description
       }
@@ -607,6 +758,10 @@ function printErrorResponses (responses) {
   }
 
   return s
+}
+
+function _capitalize (s) {
+  return s.charAt(0).toUpperCase() + s.slice(1)
 }
 
 function printOperationName (operationUniqueName) {
@@ -689,6 +844,12 @@ function schemaToArray(schema,offset,options,data) {
   wsState.combine = true
   wsState.allowRefSiblings = true
   walkSchema(schema,{},wsState,function(schema,parent,state){
+    if (schema.items?.properties && !schema.items["x-widdershins-oldRef"]) {
+      schema.items["x-widdershins-oldRef"] = ""
+    }
+    else if (schema.properties && !schema["x-widdershins-oldRef"]) {
+      schema["x-widdershins-oldRef"] = ""
+    }
 
     state.seen.delete(schema)
 

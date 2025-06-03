@@ -1,4 +1,4 @@
-{{ data.responses = data.utils.getResponses(data); }}
+{{ data.responses = data.custom.getResponses(data); }}
 {{ data.responseSchemas = false; }}
 {{~ data.responses :response }}
 {{ if (response.content) data.responseSchemas = true; }}
@@ -19,7 +19,7 @@
 {{? data.responseSchemas && Object.keys(response.content).length }}
 > Examples<a name="{{= data.custom.printOperationName(data.operationUniqueName) }}-res-example.json"></a>
 
-{{= data.custom.evaluateResponses(data) }}
+{{= data.custom.getResponseExamples(data) }}
 {{?}}
 
 {{~ data.responses.slice(0, 1) :response}}
@@ -29,7 +29,7 @@
 {{ const responseSchema = response.content[responseKey].schema; }}
 {{ const blocks = data.custom.schemaToArray(responseSchema,-1,{trim:true,join:true},data); }}
 
-**Response {{= response.status}}**{{? response.schema}} ({{= response.schema}}){{?}}:
+**{{= response.status}} response**{{? response.schema}} ({{= response.schema}}){{?}}:
 
 {{~ blocks :block}}
 
@@ -46,7 +46,7 @@ Returns an empty body.
 {{~}}
 
 {{??}}
-**Response {{= response.status}}**:
+**{{= response.status}} response**:
 
 Returns an empty body.
 
