@@ -226,6 +226,144 @@ function createTabs (language_tabs) {
 }
 
 // Modified from Widdershins
+function fakeBodyParameter(data) {
+  if (!data.parameters) data.parameters = []
+  let bodyParams = []
+  if (data.bodyParameter.schema) {
+    let param = {}
+    param.in = 'body'
+    param.schema = data.bodyParameter.schema
+    param.name = 'body'
+    if (data.operation.requestBody) {
+      param.required = data.operation.requestBody.required || false
+      param.description = data.operation.requestBody.description
+      if (data.options.useBodyName && data.operation['x-body-name']) {
+        param.name = data.operation['x-body-name']
+      }
+    }
+    param.refName = data.bodyParameter.refName
+    if (!data.options.omitBody || param.schema["x-widdershins-oldRef"]) {
+      bodyParams.push(param)
+    }
+
+    if ((param.schema.type === 'object') && (data.options.expandBody || (!param.schema["x-widdershins-oldRef"]))) {
+      let offset = (data.options.omitBody ? -1 : 0)
+      let props = schemaToArray(data.bodyParameter.schema, offset, { trim: true }, data)
+
+      for (let block of props) {
+        for (let prop of block.rows) {
+          let param = {}
+          param.in = 'body'
+          param.schema = prop.schema
+          param.name = prop.displayName
+          param.required = prop.required
+          param.description = prop.description
+          param.safeType = prop.safeType
+          param.depth = prop.depth
+          bodyParams.push(param)
+        }
+      }
+    }
+
+    if (!data.parameters || !Array.isArray(data.parameters)) data.parameters = []
+    data.parameters = data.parameters.concat(bodyParams)
+  }
+}
+
+function generateAuthenticationSchemesSection (data) {
+  let s = ''
+  const security = data.api.security || []
+  const securitySchemes = data.api.components.securitySchemes
+  if (security.length > 1) {
+    s = 'There are ' + security.length + ' possible ways to authenticate your requests with'
+    if (data.api.info?.title) {
+      s += ' the ' + data.api.info?.title + ':\n\n'
+    } else {
+      s == ' this API:\n\n'
+    }
+  }
+  for (const sec of security) {
+    const heading = _formatAuthenticationRequirement(sec, data.host)
+    s += '### ' + heading + '\n\n'
+    s += '|HTTP Header|Description|\n'
+    s += '|---|---|\n'
+    for (const key of Object.keys(sec)) {
+      const item = securitySchemes[key]
+      if (item.scheme === 'basic') {
+        s += '|`Authorization`|' + item.description + '|\n'
+      } else {
+        s += '|`' + item.name + '`|' + item.description + '|\n'
+      }
+    }
+    s += '\n\n'
+  }
+
+  return s
+}
+
+function _formatAuthenticationRequirement (array, host) {
+  let name = Object.keys(array).join('/')
+  if (isAGatewayApi(host)) {
+    if (name === 'ApiKeyAuth' || name === 'ApiKeyAuthSec' || name === 'aksk') {
+      name = 'Access Key/Secret Key'
+    } else if (name === 'BasicAuth') {
+      name = 'Login/Password'
+    }
+  } else {
+    name = name.replace(/\B([A-Z][a-z])/g, " $1")
+    name = name.replace(/Basic Auth/g, 'Basic Authentication').replace(/ Auth\b/g, '')
+    name = name.replace(/\/OTP Code/g, '')
+  }
+
+  return name
+}
+
+function getDeprecateState (description) {
+  const match = description?.match('Deprecated:')
+  if (match) {
+    // Placeholder tag which is further transformed by antora-extension/lib/generate_api_docs_files.js
+    return '----Deprecated----'
+  }
+  return ''
+}
+
+function getIntroFirstPart (description) {
+  return description.split('# Authentication Schemes').slice(0, 1)
+}
+
+function getIntroSecondPart (description) {
+  const s = description.split('# Authentication Schemes')
+  if (s.length > 1) {
+    return '# Authentication Schemes' + s.slice(-1)
+  } else {
+    return null
+  }
+}
+
+function getOperationAuthenticationSchemes (data) {
+  const list = []
+  const security = data.operation.security || data.security
+  for (const sec of security) {
+    let name = _formatAuthenticationRequirement(sec, data.host)
+    name = name.replace(/([A-Z][a-z])/g, (x) => x.toLowerCase())
+    list.push('<a href="#authentication-schemes">' + name + '</a>')
+  }
+  if (list.length <= 2) {
+    return list.join(' or ')
+  } else {
+    return list.join(', or ')
+  }
+}
+
+function getOperationDescription (data) {
+  if (!data.operation.description) {
+    data.operation.description = data.method.pathItem.description
+  }
+
+  return data.operation.description
+}
+
+// Modified from Widdershins
 function getResponses(data) {
   let responses = [];
   for (let r in data.operation.responses) {
@@ -477,144 +615,6 @@ function _strim(obj,maxDepth) {
     }
   })
   return obj
-}
-
-// Modified from Widdershins
-function fakeBodyParameter(data) {
-  if (!data.parameters) data.parameters = []
-  let bodyParams = []
-  if (data.bodyParameter.schema) {
-    let param = {}
-    param.in = 'body'
-    param.schema = data.bodyParameter.schema
-    param.name = 'body'
-    if (data.operation.requestBody) {
-      param.required = data.operation.requestBody.required || false
-      param.description = data.operation.requestBody.description
-      if (data.options.useBodyName && data.operation['x-body-name']) {
-        param.name = data.operation['x-body-name']
-      }
-    }
-    param.refName = data.bodyParameter.refName
-    if (!data.options.omitBody || param.schema["x-widdershins-oldRef"]) {
-      bodyParams.push(param)
-    }
-
-    if ((param.schema.type === 'object') && (data.options.expandBody || (!param.schema["x-widdershins-oldRef"]))) {
-      let offset = (data.options.omitBody ? -1 : 0)
-      let props = schemaToArray(data.bodyParameter.schema, offset, { trim: true }, data)
-
-      for (let block of props) {
-        for (let prop of block.rows) {
-          let param = {}
-          param.in = 'body'
-          param.schema = prop.schema
-          param.name = prop.displayName
-          param.required = prop.required
-          param.description = prop.description
-          param.safeType = prop.safeType
-          param.depth = prop.depth
-          bodyParams.push(param)
-        }
-      }
-    }
-
-    if (!data.parameters || !Array.isArray(data.parameters)) data.parameters = []
-    data.parameters = data.parameters.concat(bodyParams)
-  }
-}
-
-function generateAuthenticationSchemesSection (data) {
-  let s = ''
-  const security = data.api.security || []
-  const securitySchemes = data.api.components.securitySchemes
-  if (security.length > 1) {
-    s = 'There are ' + security.length + ' possible ways to authenticate your requests with'
-    if (data.api.info?.title) {
-      s += ' the ' + data.api.info?.title + ':\n\n'
-    } else {
-      s == ' this API:\n\n'
-    }
-  }
-  for (const sec of security) {
-    const heading = _formatAuthenticationRequirement(sec, data.host)
-    s += '### ' + heading + '\n\n'
-    s += '|HTTP Header|Description|\n'
-    s += '|---|---|\n'
-    for (const key of Object.keys(sec)) {
-      const item = securitySchemes[key]
-      if (item.scheme === 'basic') {
-        s += '|`Authorization`|' + item.description + '|\n'
-      } else {
-        s += '|`' + item.name + '`|' + item.description + '|\n'
-      }
-    }
-    s += '\n\n'
-  }
-
-  return s
-}
-
-function _formatAuthenticationRequirement (array, host) {
-  let name = Object.keys(array).join('/')
-  if (isAGatewayApi(host)) {
-    if (name === 'ApiKeyAuth' || name === 'ApiKeyAuthSec' || name === 'aksk') {
-      name = 'Access Key/Secret Key'
-    } else if (name === 'BasicAuth') {
-      name = 'Login/Password'
-    }
-  } else {
-    name = name.replace(/\B([A-Z][a-z])/g, " $1")
-    name = name.replace(/Basic Auth/g, 'Basic Authentication').replace(/ Auth\b/g, '')
-    name = name.replace(/\/OTP Code/g, '')
-  }
-
-  return name
-}
-
-function getDeprecateState (description) {
-  const match = description?.match('Deprecated:')
-  if (match) {
-    // Placeholder tag which is further transformed by antora-extension/lib/generate_api_docs_files.js
-    return '----Deprecated----'
-  }
-  return ''
-}
-
-function getIntroFirstPart (description) {
-  return description.split('# Authentication Schemes').slice(0, 1)
-}
-
-function getIntroSecondPart (description) {
-  const s = description.split('# Authentication Schemes')
-  if (s.length > 1) {
-    return '# Authentication Schemes' + s.slice(-1)
-  } else {
-    return null
-  }
-}
-
-function getOperationAuthenticationSchemes (data) {
-  const list = []
-  const security = data.operation.security || data.security
-  for (const sec of security) {
-    let name = _formatAuthenticationRequirement(sec, data.host)
-    name = name.replace(/([A-Z][a-z])/g, (x) => x.toLowerCase())
-    list.push('<a href="#authentication-schemes">' + name + '</a>')
-  }
-  if (list.length <= 2) {
-    return list.join(' or ')
-  } else {
-    return list.join(', or ')
-  }
-}
-
-function getOperationDescription (data) {
-  if (!data.operation.description) {
-    data.operation.description = data.method.pathItem.description
-  }
-
-  return data.operation.description
 }
 
 function isAGatewayApi (host) {
