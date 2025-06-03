@@ -450,7 +450,7 @@ function getResponseExamples (data) {
               else if (obj["x-widdershins-oldRef"]) {
                   xmlWrap = obj["x-widdershins-oldRef"].split('/').pop()
               }
-              examples.push({ summary: _capitalize(resp) + ' response', value: _getSample(obj, data.options, { skipWriteOnly: true, quiet: true }, data.api, data), cta: cta, xmlWrap: xmlWrap })
+              examples.push({ value: _getSample(obj, data.options, { skipWriteOnly: true, quiet: true }, data.api, data), cta: cta, xmlWrap: xmlWrap })
           }
         }
       }
