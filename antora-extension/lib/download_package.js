@@ -46,6 +46,15 @@ async function runInNode (options) {
   else {
     package = await getPackage(url, options.apiVersion)
     if (package === undefined) {
+      package = await getPackage(url, options.apiVersion + '-rc')
+    }
+    if (package === undefined) {
+      package = await getPackage(url, options.apiVersion + '-beta')
+    }
+    if (package === undefined) {
+      package = await getPackage(url, options.apiVersion + '-alpha')
+    }
+    if (package === undefined) {
       console.error(`\nError: Can't find version ${options.apiVersion} in ${name}`)
       process.exit(1)
     }
@@ -99,20 +108,37 @@ function semverSort(a, b) {
   const aSplit = a.version.split('.')
   const bSplit = b.version.split('.')
 
+  // major number
   const _a = Number(aSplit[0])
   const _b = Number(bSplit[0])
   if (_a < _b) {return -1}
   if (_a > _b) {return 1}
 
+  // minor number
   const _aa = Number(aSplit[1])
   const _bb = Number(bSplit[1])
   if (_aa < _bb) {return -1}
   if (_aa > _bb) {return 1}
 
+  // patch number
   const _aaa = Number(aSplit[2])
   const _bbb = Number(bSplit[2])
   if (_aaa < _bbb) {return -1}
   if (_aaa > _bbb) {return 1}
+
+  // '-alpha', '-beta', '-rc', or '' suffix
+  let _aaaa
+  if (aSplit[2]) {
+    _aaaa = aSplit[2].split('-')
+    if (!_aaaa[1]) {_aaaa[1] = '\uFFFF'}
+  }
+  let _bbbb
+  if (bSplit[2]) {
+    _bbbb = bSplit[2].split('-')
+    if (!_bbbb[1]) {_bbbb[1] = '\uFFFF'}
+  }
+  if (_aaaa < _bbbb) {return -1}
+  if (_aaaa > _bbbb) {return 1}
 
   return 0
 }
