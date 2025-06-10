@@ -28,7 +28,7 @@ async function runInCli () {
   options.outputDir = '.'
   options.repoName = ''
   const url = options.apiProject
-  const package = await getPackage(url, options.version)
+  const package = await figureOutPackage(url, options.version, options.apiProject)
 
   await extractFilesFromPackage(options, url, package)
 }
@@ -44,20 +44,7 @@ async function runInNode (options) {
     console.log(`We will download the package ${COLOR}${name}${CLR} (latest version: ${COLOR}${package.version}${CLR}), as required by '${options.repoName}'`)
   }
   else {
-    package = await getPackage(url, options.apiVersion)
-    if (package === undefined) {
-      package = await getPackage(url, options.apiVersion + '-rc')
-    }
-    if (package === undefined) {
-      package = await getPackage(url, options.apiVersion + '-beta')
-    }
-    if (package === undefined) {
-      package = await getPackage(url, options.apiVersion + '-alpha')
-    }
-    if (package === undefined) {
-      console.error(`\nError: Can't find version ${options.apiVersion} in ${name}`)
-      process.exit(1)
-    }
+    package = await figureOutPackage(url, options.apiVersion)
     console.log(`We will download the package ${COLOR}${name}${CLR} (version ${COLOR}${package.version}${CLR}), as required by '${options.repoName}'`)
   }
 
@@ -90,6 +77,26 @@ async function getLatestPackage (url) {
   packages.sort(semverSort)
 
   return packages.pop()
+}
+
+async function figureOutPackage (url, specifiedVersion, name) {
+  let package = await getPackage(url, specifiedVersion)
+
+  if (package === undefined) {
+    package = await getPackage(url, specifiedVersion + '-rc')
+  }
+  if (package === undefined) {
+    package = await getPackage(url, specifiedVersion + '-beta')
+  }
+  if (package === undefined) {
+    package = await getPackage(url, specifiedVersion + '-alpha')
+  }
+  if (package === undefined) {
+    console.error(`\nError: Can't find version ${specifiedVersion} in ${name}`)
+    process.exit(1)
+  }
+
+  return package
 }
 
 async function getPackage (url, specifiedVersion) {
