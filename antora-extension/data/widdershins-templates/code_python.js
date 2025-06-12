@@ -30,7 +30,7 @@ function generatePythonExamples (data) {
       s += '# ' + examples[n].summary + '\n'
     }
     s += 'result = gw.' + data.operationUniqueName + '(\n'
-    for (let [k, v] of Object.entries(objJson)) {
+    for (let [k, v] of Object.entries(objJson || {})) {
       // osc-sdk-python doesn't implement the DryRun parameter, so skip it
       if (k === 'DryRun' || k === 'dryRun') {
         continue

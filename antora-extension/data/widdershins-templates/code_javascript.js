@@ -55,7 +55,7 @@ function getExampleContent (objJson, data, increment) {
   }
   s += '    const ' + result + ' = await api.' + operationUniqueName + '({\n'
   s += '        ' + operationUniqueName + 'Request: {\n'
-  for (let [k, v] of Object.entries(objJson)) {
+  for (let [k, v] of Object.entries(objJson || {})) {
     k = lowercaseFirstLetter(k)
     s += '            ' + k + ':'
     if (typeof v === 'object') {

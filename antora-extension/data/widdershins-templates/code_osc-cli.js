@@ -71,7 +71,7 @@ function printExamples (examples, options, data, lang) {
 
 function printParams (object, data) {
   let params = ''
-  for (const [key, valueRaw] of Object.entries(object)) {
+  for (const [key, valueRaw] of Object.entries(object || {})) {
     let value = JSON.stringify(valueRaw, null, 2)
     value = overrideSomeValues(key, value, data)
     if (value) {
