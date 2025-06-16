@@ -1,70 +1,35 @@
 const fs = require('fs')
 const path = require('path')
-const csvParse = require('csv-parse')
 const helperFunctions = require('./helper_functions')
 const widdershinsPreProcess = require('../data/widdershins-templates/_pre_process')
 
 const VERBS = ['delete', 'get', 'head', 'options', 'patch', 'post', 'put', 'trace']
-const ERROR_START = '\u001b[31m'
-const ERROR_END = '\u001b[0m'
 let SEP = '_'
+let CSV_ARRAY = []
 
 async function runInCli () {
   const options = helperFunctions.parseArgs()
 
-  if (!options.api || !options.descriptions || !options.output) {
-    console.log(
-      'Please specify --api, --descriptions, [--reset-description-keys], [--no-sort-keys], [--separator], and --output.'
-    )
+  if (!options.api || !options.outputYaml || !options.outputCsv) {
+    console.log('Please specify --api, [--no-sort-keys], [--separator], --output-yaml, and --output-csv.')
     process.exit(1)
   }
+  SEP = options.separator || SEP
 
   let api = helperFunctions.parseYaml(options.api)
-  const apiFilename = path.parse(options.api).base
-  const descriptions = await parseCsv(options.descriptions)
-  if (options.resetDescriptionKeys) {
-    SEP = options.separator || SEP
-    api = await setDescriptionFields(api)
-  }
-  api = await insertDescriptions(api, descriptions, apiFilename)
-  const s = helperFunctions.dumpYaml(api, options.noSortKeys)
-  fs.writeFileSync(options.output, s)
+  api = await setDescriptionFields(api)
+
+  const yaml_string = helperFunctions.dumpYaml(api, options.noSortKeys)
+  fs.writeFileSync(options.outputYaml, yaml_string)
+
+  const csv_string = 'Key;English\n' + CSV_ARRAY.sort().join('\n') + '\n'
+  fs.writeFileSync(options.outputCsv, csv_string)
 }
 
-async function runInNode (api, descriptionsFile, apiFilepath, resetDescriptionKeys, separator) {
-  const descriptions = await parseCsv(descriptionsFile)
-  const apiFilename = path.parse(apiFilepath).base + ' v' + api.info.version
-  if (resetDescriptionKeys) {
-    SEP = separator || SEP
-    api = setDescriptionFields(api)
-  }
-  api = await insertDescriptions(api, descriptions, apiFilename)
+async function runInNode (api) {
+  api = setDescriptionFields(api)
 
   return api
-}
-
-async function parseCsv (filepath) {
-  try {
-    const stream = fs.createReadStream(filepath)
-
-    // https://csv.js.org/parse/options/
-    const csvOptions = {
-      delimiter: ';',
-      from_line: 2,
-      trim: true,
-    }
-    const csv = stream.pipe(csvParse.parse(csvOptions))
-
-    const descriptions = {}
-    for await (const [k, v] of csv) {
-      descriptions[k] = v
-    }
-
-    return descriptions
-  } catch (err) {
-    console.error(ERROR_START + 'CSV ' + err.toString() + ERROR_END)
-    process.exit(1)
-  }
 }
 
 function setDescriptionFields (api) {
@@ -78,8 +43,8 @@ function setDescriptionFields (api) {
 
   if (api.info) {
     // delete api.info.summary
+    CSV_ARRAY.push(writeCsv(SEP + 'info', api.info.description))
     delete api.info.description
-    api.info = placeDescriptionFieldInObj(SEP + 'info', api.info)
   }
 
   if (api.servers) {
@@ -131,28 +96,39 @@ function processServers (servers) {
 
 function processPathItems (pathItems, isItAGatewayApi) {
   for (const [k, v] of Object.entries(pathItems)) {
-    processObj('', v, isItAGatewayApi)
+    processObj('', v, isItAGatewayApi, k)
     for (const verb of VERBS) {
       if (v[verb]) {
         const operation = v[verb].operationId || k.slice(1)
-        processObj(SEP + operation, v[verb], isItAGatewayApi)
+        processObj(SEP + operation, v[verb], isItAGatewayApi, k)
       }
     }
   }
 }
 
-function processObj (k, obj, isItAGatewayApi) {
+function processObj (k, obj, isItAGatewayApi, parentK = null) {
   if (obj.$ref) {
     // delete obj.summary
     delete obj.description
   } else {
     if (k && !k.endsWith(SEP + 'items')) {
-      // delete obj.summary
-      delete obj.description
-      delete obj.items?.description
-      obj = placeDescriptionFieldInObj(k, obj)
       if (isItAGatewayApi) {
         tweakObjDescriptionForGateway(k, obj)
+      }
+      // delete obj.summary
+      if (obj.description) {
+        if (k.includes(SEP + 'responses' + SEP)) {
+          k = SEP + 'responses' + SEP + parentK
+          obj.description = k
+          const s = writeCsv(k, obj.description)
+          if (!CSV_ARRAY.includes(s)) {
+            CSV_ARRAY.push(s)
+          }
+        } else {
+          CSV_ARRAY.push(writeCsv(k, obj.description))
+          delete obj.description
+          delete obj.items?.description
+        }
       }
     } else if (!k) {
       // delete obj.summary
@@ -198,7 +174,8 @@ function processObj (k, obj, isItAGatewayApi) {
       prefix = tweakPrefixForGateway(k, prefix)
     }
     for (const parameter of parameters) {
-      parameter.description = prefix + SEP + parameter.name
+      CSV_ARRAY.push(writeCsv(prefix + SEP + parameter.name, parameter.description))
+      delete parameter.description
       // processObj(prefix + SEP + parameter.name, parameter.schema || {}, isItAGatewayApi)
     }
 
@@ -209,7 +186,7 @@ function processObj (k, obj, isItAGatewayApi) {
     }
     const responses = Object.entries(obj.responses || {})
     for (const [k2, response] of responses) {
-      processObj(obj.operationId + SEP + 'responses' + SEP + k2, response || {}, isItAGatewayApi)
+      processObj(obj.operationId + SEP + 'responses' + SEP + k2, response || {}, isItAGatewayApi, k2)
     }
     const headers = Object.entries(obj.headers || {})
     for (const [k2, header] of headers) {
@@ -229,9 +206,7 @@ function tweakObjDescriptionForGateway (k, obj) {
   if (k.endsWith(SEP + 'member') || k.endsWith('Request') || k.endsWith('Response')) {
     delete obj.description
   } else if (k.endsWith('DryRun') || k.endsWith('dryRun')) {
-    obj.description = 'DryRun'
-  } else if (k.includes(SEP + 'responses' + SEP)) {
-    obj.description = SEP + 'responses' + SEP + k.split(SEP + 'responses' + SEP)[1]
+    delete obj.description
   }
 }
 
@@ -246,39 +221,17 @@ function tweakPrefixForGateway (k, prefix) {
   return prefix
 }
 
-function placeDescriptionFieldInObj (descriptionPlaceholder, obj) {
-  const entries = Object.entries(obj)
-  const keys = Object.keys(obj)
-  if (keys[0] === 'content' || !keys.includes('title')) {
-    obj.description = descriptionPlaceholder
-  }
-  for (const [k, v] of entries) {
-    delete obj[k]
-    obj[k] = v
-    if (k === 'title' || k === 'summary') {
-      obj.description = descriptionPlaceholder
+function writeCsv (key, value) {
+  let s = ''
+  if (value) {
+    value = value.replaceAll('"', '&quot;')
+    if (value.includes(';') || value.includes('\n')) {
+      value = '"' + value.trimEnd() + '"'
     }
-  }
-  if (!obj.description) {
-    obj.description = descriptionPlaceholder
+    s = key + ';' + value
   }
 
-  return obj
-}
-
-function insertDescriptions (obj, descriptions, apiFilename) {
-  for (const [k, v] of Object.entries(obj)) {
-    if (typeof v === 'object') {
-      insertDescriptions(v, descriptions, apiFilename)
-    } else if (k === 'description') {
-      obj[k] = descriptions[v] || '**&lt;NOT_FOUND description: ' + v + '&gt;**'
-      if (obj[k] == '**&lt;NOT_FOUND description: ' + v + '&gt;**') {
-        console.error(`${ERROR_START}NOT_FOUND description (${apiFilename}):${ERROR_END} ${v}`)
-      }
-    }
-  }
-
-  return obj
+  return s
 }
 
 if (path.parse(process.argv[1]).base === path.parse(__filename).base) {

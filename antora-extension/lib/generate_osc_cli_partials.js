@@ -1,6 +1,8 @@
 const fs = require('fs')
 const widdershinsPreProcess = require('../data/widdershins-templates/_pre_process')
 
+const VERBS = ['delete', 'get', 'head', 'options', 'patch', 'post', 'put', 'trace']
+
 function generateOscCliPartials (apiMarkdown, api, outputFolder, outputFileStem) {
   const codeSamples = createCodeSamples(apiMarkdown)
   createOscCliSections(api, codeSamples, outputFolder, outputFileStem)
@@ -34,7 +36,16 @@ function createOscCliSections (api, codeSamples, outputFolder, outputFileStem) {
     const post = path.post
     const operation = post.operationId
     let s = '// tag::main-description[]\n\n'
-    s += formatMainDescription(path.description, operation, apiName)
+    let description = path.description
+    if (!description) {
+      for (const verb of VERBS) {
+        if (path[verb]) {
+          description = path[verb].description
+          break
+        }
+      }
+    }
+    s += formatMainDescription(description, operation, apiName)
     s += '\n'
     s += '// end::main-description[]\n\n\n\n'
 

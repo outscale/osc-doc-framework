@@ -49,11 +49,14 @@ function parseYaml (path_or_string) {
   }
 }
 
-function dumpYaml (api) {
+function dumpYaml (api, noSortKeys) {
+  let sortKeys = true
+  if (noSortKeys) sortKeys = false
+
   // https://github.com/nodeca/js-yaml/blob/master/README.md#dump-object---options-
   const yamlOptions = {
     noArrayIndent: true,
-    sortKeys: true,
+    sortKeys,
     lineWidth: -1,
   }
 
