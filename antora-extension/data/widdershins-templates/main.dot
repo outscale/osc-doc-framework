@@ -14,7 +14,7 @@
 
 {{? data.api.components && data.api.components.securitySchemes }}
 
-{{ const secondPartofIntro = data.custom.getIntroSecondPart(data.api.info.description); }}
+{{ const secondPartofIntro = data.custom.getIntroSecondPart(data.api.info.description || ''); }}
 {{? secondPartofIntro !== null }}{{=secondPartofIntro}}
 {{?? secondPartofIntro === null }}{{#def.security}}{{?}}
 

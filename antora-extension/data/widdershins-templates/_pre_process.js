@@ -290,9 +290,9 @@ function generateAuthenticationSchemesSection (data) {
     for (const key of Object.keys(sec)) {
       const item = securitySchemes[key]
       if (item.scheme === 'basic') {
-        s += '|`Authorization`|' + item.description + '|\n'
+        s += '|`Authorization`|' + (item.description || '') + '|\n'
       } else {
-        s += '|`' + item.name + '`|' + item.description + '|\n'
+        s += '|`' + item.name + '`|' + (item.description || '') + '|\n'
       }
     }
     s += '\n\n'
