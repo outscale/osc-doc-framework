@@ -23,14 +23,17 @@ async function runInNode (options) {
 async function generateApiDocsFiles (options) {
   if (!options.api || !options.outputFileStem) {
     console.log(
-      'Please specify --api, [--descriptions], [--examples], [--errors], [--languages], [--widdershins-templates], ' +
-        '[--shins-templates], [--osc-cli-partials], [--oapi-cli-partials], [--output-dir], and --output-file-stem.'
+      'Please specify --api, [--descriptions], [--reset-descriptions-keys], [--separator], [--examples], [--errors], ' +
+      '[--languages], [--widdershins-templates], [--shins-templates], [--osc-cli-partials], [--oapi-cli-partials], ' +
+      '[--output-dir], and --output-file-stem.'
     )
     process.exit(1)
   }
 
   const apiFile = options.api
   const descriptionsFile = options.descriptions
+  const resetDescriptionKeys = options.resetDescriptionKeys
+  const separator = options.separator
   const examplesFile = options.examples
   const errorsFile = options.errors
   const languages = options.languages
@@ -44,7 +47,7 @@ async function generateApiDocsFiles (options) {
   let api = helperFunctions.parseYaml(apiFile)
 
   if (descriptionsFile) {
-    api = await fillApiDescriptions(api, descriptionsFile, apiFile)
+    api = await fillApiDescriptions(api, descriptionsFile, apiFile, resetDescriptionKeys, separator)
   }
 
   if (examplesFile) {

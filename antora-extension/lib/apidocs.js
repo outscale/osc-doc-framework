@@ -13,6 +13,9 @@ async function main () {
   const options = {
     api: obj.buildOptions.apiFile,
     descriptions: obj.buildOptions.descriptionsFile,
+    resetDescriptionKeys: obj.buildOptions.resetDescriptionKeys,
+    noSortKeys: obj.buildOptions.noSortKeys,
+    separator: obj.buildOptions.separator,
     examples: obj.buildOptions.examplesFile,
     errors: obj.buildOptions.errorsFile,
     languages: obj.buildOptions.languages,
