@@ -75,6 +75,10 @@ function setDescriptionFields (api) {
   } else {
     isItAGatewayApi = api.info?.title?.startsWith('AWS')
   }
+  // For the purpose of this script, OKS is treated like Gateway APIs
+  if (api.info?.title === 'OKS API') {
+    isItAGatewayApi = true
+  }
 
   if (api.info) {
     // delete api.info.summary

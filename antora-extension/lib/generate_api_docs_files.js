@@ -23,7 +23,7 @@ async function runInNode (options) {
 async function generateApiDocsFiles (options) {
   if (!options.api || !options.outputFileStem) {
     console.log(
-      'Please specify --api, [--descriptions], [--reset-descriptions-keys], [--separator], [--examples], [--errors], ' +
+      'Please specify --api, [--descriptions], [--reset-description-keys], [--separator], [--examples], [--errors], ' +
       '[--languages], [--widdershins-templates], [--shins-templates], [--osc-cli-partials], [--oapi-cli-partials], ' +
       '[--output-dir], and --output-file-stem.'
     )
