@@ -30,12 +30,12 @@ async function generateApiDocsFiles (options) {
     process.exit(1)
   }
 
-  const apiFile = options.api
+  let apiFile = options.api
   const descriptionsFile = options.descriptions
   const resetDescriptionKeys = options.resetDescriptionKeys
   const separator = options.separator
   const examplesFile = options.examples
-  const errorsFile = options.errors
+  let errorsFile = options.errors
   const languages = options.languages
   const widdershinsTemplates = options.templates || __dirname + '/../data/widdershins-templates'
   const shinsTemplates = options.templates || __dirname + '/../data/shins-templates'
@@ -44,6 +44,9 @@ async function generateApiDocsFiles (options) {
   const outputDir = options.outputDir || 'build/.tmp'
   const outputFileStem = options.outputFileStem
 
+  if (!fs.existsSync(apiFile)) {
+    apiFile = apiFile.split('/').slice(0, -2).join('/') + '/' + apiFile.split('/').slice(-1)
+  }
   let api = helperFunctions.parseYaml(apiFile)
 
   if (descriptionsFile) {
@@ -62,6 +65,9 @@ async function generateApiDocsFiles (options) {
   runShins(apiMarkdown, shinsTemplates, `${outputDir}/modules/ROOT/pages/${outputFileStem}.adoc`)
 
   if (errorsFile) {
+    if (!fs.existsSync(errorsFile)) {
+      errorsFile = errorsFile.split('/').slice(0, -2).join('/') + '/' + errorsFile.split('/').slice(-1)
+    }
     const errors = helperFunctions.parseYaml(errorsFile)
     const errorsMarkdown = generateErrorMarkdown(errors, api)
     runShins(errorsMarkdown, shinsTemplates, `${outputDir}/modules/ROOT/pages/${outputFileStem}-errors.adoc`)

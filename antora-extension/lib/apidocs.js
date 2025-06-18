@@ -43,7 +43,7 @@ async function main () {
 
   const api_package = obj.apiPackage
   if (api_package) {
-    options.apiProject = api_package.project
+    options.apiProject = api_package.url
     options.apiVersion = api_package.version
     await downloadPackage(options)
   }
