@@ -21,6 +21,7 @@ async function main () {
     languages: obj.buildOptions.languages,
     oscCliPartials: obj.buildOptions.generateOscCliPartials,
     oapiCliPartials: obj.buildOptions.generateOapiCliPartials,
+    outputYamlPath: obj.buildOptions.outputYamlPath,
     outputFileStem: obj.buildOptions.outputPageName,
     repoName: obj.repoName,
     outputDir: TEMP_DIR,

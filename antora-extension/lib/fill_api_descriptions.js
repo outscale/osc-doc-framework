@@ -12,9 +12,10 @@ let SEP = '_'
 async function runInCli () {
   const options = helperFunctions.parseArgs()
 
-  if (!options.api || !options.descriptions || !options.output) {
+  if (!options.api || !options.descriptions) {
     console.log(
-      'Please specify --api, --descriptions, [--reset-description-keys], [--no-sort-keys], [--separator], and --output.'
+      'Please specify --api, --descriptions, [--reset-description-keys], [--no-sort-keys], [--separator], '
+      + '[and --output].'
     )
     process.exit(1)
   }
@@ -27,11 +28,12 @@ async function runInCli () {
     api = await setDescriptionFields(api)
   }
   api = await insertDescriptions(api, descriptions, apiFilename)
-  const s = helperFunctions.dumpYaml(api, options.noSortKeys)
-  fs.writeFileSync(options.output, s)
+  if (options.output) {
+    writeFile(api, options.noSortKeys, options.output)
+  }
 }
 
-async function runInNode (api, descriptionsFile, apiFilepath, resetDescriptionKeys, separator) {
+async function runInNode (api, descriptionsFile, apiFilepath, resetDescriptionKeys, separator, noSortKeys, separator, outputYamlPath) {
   const descriptions = await parseCsv(descriptionsFile)
   const apiFilename = path.parse(apiFilepath).base + ' v' + api.info.version
   if (resetDescriptionKeys) {
@@ -39,6 +41,9 @@ async function runInNode (api, descriptionsFile, apiFilepath, resetDescriptionKe
     api = setDescriptionFields(api)
   }
   api = await insertDescriptions(api, descriptions, apiFilename)
+  if (outputYamlPath) {
+    writeFile(api, noSortKeys, outputYamlPath)
+  }
 
   return api
 }
@@ -253,7 +258,7 @@ function tweakPrefixForGateway (k, prefix) {
 function placeDescriptionFieldInObj (descriptionPlaceholder, obj) {
   const entries = Object.entries(obj)
   const keys = Object.keys(obj)
-  if (keys[0] === 'content' || !keys.includes('title')) {
+  if (keys[0] === 'content' || (!keys.includes('title') && keys[0] !== 'tags')) {
     obj.description = descriptionPlaceholder
   }
   for (const [k, v] of entries) {
@@ -262,6 +267,9 @@ function placeDescriptionFieldInObj (descriptionPlaceholder, obj) {
     if (k === 'title' || k === 'summary') {
       obj.description = descriptionPlaceholder
     }
+  }
+  if (obj.type === "apiKey" || obj.type === "http" || obj.type === "mutualTLS" || obj.type === "oauth2" || obj.type === "openIdConnect") {
+    delete obj.description
   }
   if (!obj.description) {
     obj.description = descriptionPlaceholder
@@ -283,6 +291,13 @@ function insertDescriptions (obj, descriptions, apiFilename) {
   }
 
   return obj
+}
+
+function writeFile (api, noSortKeys, outputYamlPath) {
+  const s = helperFunctions.dumpYaml(api, noSortKeys)
+  const dir = path.parse(outputYamlPath).dir
+  fs.mkdirSync(dir, { recursive: true })
+  fs.writeFileSync(outputYamlPath, s)
 }
 
 if (path.parse(process.argv[1]).base === path.parse(__filename).base) {

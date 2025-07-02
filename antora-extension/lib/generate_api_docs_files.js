@@ -23,9 +23,9 @@ async function runInNode (options) {
 async function generateApiDocsFiles (options) {
   if (!options.api || !options.outputFileStem) {
     console.log(
-      'Please specify --api, [--descriptions], [--reset-description-keys], [--separator], [--examples], [--errors], ' +
-      '[--languages], [--widdershins-templates], [--shins-templates], [--osc-cli-partials], [--oapi-cli-partials], ' +
-      '[--output-dir], and --output-file-stem.'
+      'Please specify --api, [--descriptions], [--reset-description-keys], [--no-sort-keys], [--separator], ' +
+      '[--examples], [--errors], [--languages], [--widdershins-templates], [--shins-templates], ' +
+      '[--osc-cli-partials], [--oapi-cli-partials], [--output-yaml-path], [--output-dir], and --output-file-stem.'
     )
     process.exit(1)
   }
@@ -33,6 +33,7 @@ async function generateApiDocsFiles (options) {
   let apiFile = options.api
   const descriptionsFile = options.descriptions
   const resetDescriptionKeys = options.resetDescriptionKeys
+  const noSortKeys = options.noSortKeys
   const separator = options.separator
   const examplesFile = options.examples
   let errorsFile = options.errors
@@ -41,6 +42,7 @@ async function generateApiDocsFiles (options) {
   const shinsTemplates = options.templates || __dirname + '/../data/shins-templates'
   const oscCliPartials = options.oscCliPartials
   const oapiCliPartials = options.oapiCliPartials
+  const outputYamlPath = options.outputYamlPath
   const outputDir = options.outputDir || 'build/.tmp'
   const outputFileStem = options.outputFileStem
 
@@ -50,7 +52,7 @@ async function generateApiDocsFiles (options) {
   let api = helperFunctions.parseYaml(apiFile)
 
   if (descriptionsFile) {
-    api = await fillApiDescriptions(api, descriptionsFile, apiFile, resetDescriptionKeys, separator)
+    api = await fillApiDescriptions(api, descriptionsFile, apiFile, resetDescriptionKeys, separator, noSortKeys, separator, outputYamlPath)
   }
 
   if (examplesFile) {
