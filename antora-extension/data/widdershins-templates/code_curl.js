@@ -21,8 +21,11 @@ function createGeneralOptions (data) {
 
   if (!data.custom.isAGatewayApi(data.host)) {
     if (data.security?.length && data.security.find((n) => n.AccessKeyAuth)) {
-      options.push({ name: 'header', value: 'AccessKey: XXXX' })
-      options.push({ name: 'header', value: 'SecretKey: YYYY' })
+      options.push({ name: 'header', value: 'AccessKey: $OSC_ACCESS_KEY' })
+      options.push({ name: 'header', value: 'SecretKey: $OSC_SECRET_KEY' })
+      if (data.consumes?.length) {
+        options.push({ name: 'header', value: 'Content-Type: ' + data.consumes })
+      }
     }
   } else if (data.host.startsWith('api')) {
     if (data.security?.length && !data.operation['x-basicAuthFlag']) {
@@ -107,7 +110,7 @@ function printExamples (examples, options, data, lang) {
       s += printOption(option.name, option.value)
     }
 
-    if (data.consumes.length) {
+    if (data.consumes?.length) {
       if (
         data.host.startsWith('fcu') ||
         data.host.startsWith('lbu') ||
