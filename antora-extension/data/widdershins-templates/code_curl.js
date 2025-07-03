@@ -156,6 +156,11 @@ function printOption (option, value) {
   else if (value.includes("'")) quote = '"'
   else if (value.includes('$(')) quote = '"'
   else if (value.startsWith('$')) quote = ''
+  else if (value.includes('$')) {
+    quote = ''
+    value = "'" + value.replace(/(\$[A-Z_]+?\b)/g, "'$1'") + "'"
+    value = value.replace(/''$/g, '')
+  }
 
   return '  --' + option + ' ' + quote + value + quote + ' \\\n'
 }
