@@ -93,7 +93,7 @@ function printExamples (examples, options, data, lang) {
     if (data.custom.isAGatewayApi(data.host) && !data.host.startsWith('api')) {
       url = data.baseUrl
     }
-    url = url.replace('{region}', '$OSC_REGION')
+    url = url.replace('{region}', "'$OSC_REGION'").replace('eu-west-2', "'$OSC_REGION'")
     url = url.replace('{', '----highlight-string-start----{').replace('}', '}----highlight-end----')
 
     let query = ''
@@ -101,7 +101,7 @@ function printExamples (examples, options, data, lang) {
       query = '----highlight-string-start----' + data.queryString.replace(/\b\?/g, '&') + '----highlight-end----'
     }
 
-    s += 'curl' + verb + ' ' + url + query + ' \\\n'
+    s += 'curl' + verb + " '" + url + query + "' \\\n"
 
     for (const header of data.headerParameters) {
       options.push({ name: 'header', value: header.name + ': ' + header.exampleValues.object })
