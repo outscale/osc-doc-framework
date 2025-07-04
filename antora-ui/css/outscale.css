@@ -686,6 +686,7 @@ a.action-button:active {
   font-style:normal;
   letter-spacing:initial;
   margin-top: 1rem;
+  margin-bottom: 0;
   padding: .075rem .5rem;
 }
 .doc .listingblock code {
