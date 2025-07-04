@@ -663,7 +663,7 @@ html, body {
       vertical-align: top;
       line-height: 1.6; }
       .api table th code, .api table td code {
-        white-space: nowrap; }
+        white-space: pre-wrap; }
     .api table th {
       padding: 5px 10px;
       vertical-align: bottom; }
