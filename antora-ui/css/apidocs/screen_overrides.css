@@ -183,8 +183,6 @@ div .highlight {
 .toc-link {
   padding-top: 0;
   padding-bottom: 0;
-}
-.toc-link, .toc-footer li {
   overflow-x: initial;
 }
 .well {
@@ -634,7 +632,17 @@ color: var(--brandPrimaryIndigo600);
 }
 #api-body .toc-menu {
   overflow-y: scroll;
-  height: calc(100vh - var(--topbar-height) - 42px - var(--search-bar-vertical-margin) - 44px - var(--search-bar-vertical-margin) - 2px);
+  height: calc(100vh - var(--topbar-height) - 125px - var(--search-bar-vertical-margin) - 44px - var(--search-bar-vertical-margin) - 21px);
+}
+@media screen and (min-width: 1024px) {
+  #api-body .toc-menu {
+    height: calc(100vh - var(--topbar-height) - 76px - var(--search-bar-vertical-margin) - 44px - var(--search-bar-vertical-margin) - 21px);
+  }
+}
+@media screen and (min-width: 1301px) {
+  #api-body .toc-menu {
+    height: calc(100vh - var(--topbar-height) - 42px - var(--search-bar-vertical-margin) - 44px - var(--search-bar-vertical-margin) - 21px);
+  }
 }
 #api-body .toc-link {
   overflow-x: hidden;
