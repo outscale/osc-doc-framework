@@ -832,9 +832,6 @@ function schemaToArray(schema,offset,options,data) {
   let depthQueue = new Map()
   let block = { title: '', rows: [] }
   if (schema) {
-    if (schema.title) block.title = schema.title
-    if (!block.title && schema.description)
-      block.title = schema.description
     block.description = schema.description
     if (schema.externalDocs)
       block.externalDocs = schema.externalDocs

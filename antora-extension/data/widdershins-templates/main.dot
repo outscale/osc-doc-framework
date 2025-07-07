@@ -65,10 +65,6 @@
 
 {{? (block.rows.length === 1 && block.rows[0].name === '*anonymous*') }}
 
-{{? (block.title && block.title !== s && block.title !== block.rows[0].description) }}
-{{= block.title}}{{= '\n\n'}}
-{{?}}
-
 |Type|Description|
 |---|---|
 {{~ block.rows :p}}|{{= data.custom.printType(p) }}|{{= data.custom.printDescription(p, data.host) }}|
@@ -76,8 +72,8 @@
 
 {{?? block.rows.length }}
 
-{{? (block.title && block.title !== s && block.title !== block.rows[0].description) }}
-{{= block.title}}{{= '\n\n'}}
+{{? block.description }}
+{{= block.description}}{{= '\n\n'}}
 {{?}}
 
 |Property|Type|Description|
