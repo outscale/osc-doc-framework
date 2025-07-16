@@ -671,10 +671,13 @@ html, body {
       padding: 10px; }
     .api table tr:last-child {
       border-bottom: 1px solid #ccc; }
-    .api table tr:nth-child(odd) > td {
+    .api table tr:nth-child(odd) {
       background-color: white; }
-    .api table tr:nth-child(even) > td {
+    .api table tr:nth-child(even) {
       background-color: #fbfcfd; }
+    /* .api table tr:hover {
+      background: #f8f8f8;
+    } */
   .api dt {
     font-weight: bold; }
   .api dd {

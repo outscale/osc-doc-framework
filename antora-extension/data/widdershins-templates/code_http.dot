@@ -1,13 +1,1 @@
-{{ const isAGatewayApi = !data.custom.isAGatewayApi(data.host); }}{{? isAGatewayApi }}----highlight-comment-start----# Example with access key/secret key authentication----highlight-end----
-----highlight-comment-start----# (See the "Authentication Schemes" section for other authentications)----highlight-end----
-
-{{?}}
-{{=data.methodUpper}} {{=data.method.path}}{{= data.queryString.replace(/\b\?/g, '&') }} HTTP/1.1
-{{? data.baseUrl}}Host: {{=data.baseUrl}}{{?}}
-{{? isAGatewayApi }}AccessKey: XXXX
-SecretKey: YYYY
-{{?}}{{? data.bodyParameter.exampleValues.object && data.consumes.length}}Content-Type: {{=data.consumes[0]}}
-{{?}}{{? data.headerParameters.length}}{{~ data.headerParameters :p:index}}{{=p.name}}: {{=p.exampleValues.object}}
-{{~}}
-{{?}}
-{{? data.bodyParameter.exampleValues.object}}{{? data.consumes.length && data.consumes[0].includes('json')}}{{= data.bodyParameter.exampleValues.json}}{{??}}...{{?}}{{?}}
+{{= data.custom.generateHttpExamples(data, 'http') }}

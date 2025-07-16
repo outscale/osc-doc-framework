@@ -2,7 +2,7 @@
 
 <h3 id="{{=data.operationUniqueSlug}}-parameters">Request Parameters</h3>
 
-{{? data.options.codeSamples || data.operation["x-code-samples"] }}
+{{? !data.operation['x-webhook'] && (data.options.codeSamples || data.operation["x-code-samples"]) }}
 
 {{ const tabs = data.custom.createTabs(data.options.language_tabs); }}
 {{? tabs }}{{= tabs }}
@@ -12,15 +12,14 @@
 {{= data.utils.getCodeSamples(data) }}
 {{?}}
 
-{{? !data.options.codeSamples && data.operation.requestBody}}
-> Schema
+{{??}}
 
-{{? data.bodyParameter.exampleValues.description }}
-> {{= data.bodyParameter.exampleValues.description }}
-{{?}}
+> Examples
 
-{{= data.utils.getBodyParameterExamples(data) }}
-{{?}}
+{{ const language_tabs_backup = data.options.language_tabs; }}
+{{ data.options.language_tabs = [{ http: 'HTTP' }]; }}
+{{= data.utils.getCodeSamples(data) }}
+{{ data.options.language_tabs = language_tabs_backup; }}
 
 {{?}}
 
@@ -36,7 +35,7 @@
 
 |Path Parameter|Type|Description|
 |---|---|---|
-{{~ pathParameters :p}}|{{= data.custom.printParameterName(p.name) }}{{= data.custom.printRequired(p.required) }}{{= data.custom.getDeprecateState(p.description) }}|{{= data.custom.printType(p) }}|{{= data.custom.printDescription(p, data.host) }}|
+{{~ pathParameters :p}}|{{= data.custom.printParameterName(p.name) }}{{= data.custom.printRequired(p.required) }}{{= data.custom.getDeprecateState(p) }}|{{= data.custom.printType(p) }}|{{= data.custom.printDescription(p) }}|
 {{~}}
 {{?}}
 
@@ -45,7 +44,7 @@
 
 |Query Parameter|Type|Description|
 |---|---|---|
-{{~ queryParameters :p}}|{{= data.custom.printParameterName(p.name) }}{{= data.custom.printRequired(p.required) }}{{= data.custom.getDeprecateState(p.description) }}|{{= data.custom.printType(p) }}|{{= data.custom.printDescription(p, data.host) }}|
+{{~ queryParameters :p}}|{{= data.custom.printParameterName(p.name) }}{{= data.custom.printRequired(p.required) }}{{= data.custom.getDeprecateState(p) }}|{{= data.custom.printType(p) }}|{{= data.custom.printDescription(p) }}|
 {{~}}
 {{?}}
 
@@ -54,17 +53,22 @@
 
 |Header Parameter|Type|Description|
 |---|---|---|
-{{~ headerParameters :p}}|{{= data.custom.printParameterName(p.name) }}{{= data.custom.printRequired(p.required) }}{{= data.custom.getDeprecateState(p.description) }}|{{= data.custom.printType(p) }}|{{= data.custom.printDescription(p, data.host) }}|
+{{~ headerParameters :p}}|{{= data.custom.printParameterName(p.name) }}{{= data.custom.printRequired(p.required) }}{{= data.custom.getDeprecateState(p) }}|{{= data.custom.printType(p) }}|{{= data.custom.printDescription(p) }}|
 {{~}}
 {{?}}
 
 {{? bodyParameters.length }}
-**Body** ({{= data.custom.printType(bodyParameters[0]) }}):
 
+{{? bodyParameters[0].name === 'body' && bodyParameters[0].refName}}
+**Body** ({{= data.custom.printType(bodyParameters[0]) }}):
 {{ bodyParameters.shift(); }}
+{{??}}
+**Body** ({{= data.bodyParameter.contentType }}):
+{{?}}
+
 |Body Parameter|Type|Description|
 |---|---|---|
-{{~ bodyParameters :p}}|{{= data.custom.printParameterName(p.name) }}{{= data.custom.printRequired(p.required) }}{{= data.custom.getDeprecateState(p.description) }}|{{= data.custom.printType(p) }}|{{= data.custom.printDescription(p, data.host) }}|
+{{~ bodyParameters :p}}|{{= data.custom.printParameterName(p.name) }}{{= data.custom.printRequired(p.required) }}{{= data.custom.getDeprecateState(p) }}|{{= data.custom.printType(p) }}|{{= data.custom.printDescription(p) }}|
 {{~}}
 {{?}}
 

@@ -3,13 +3,20 @@
 {{= data.tags.section }}
 <h1 id="{{=data.title_prefix}}">{{=data.api.info && data.api.info.title}}{{? data.version}} {{=data.version}}{{?}}</h1>
 
+<div class="heading-description">
+{{? data.api.info?.contact?.email}}Email: <a href="mailto:{{=data.api.info.contact.email}}">{{=data.api.info.contact.email}}</a>{{? data.api.info.contact.name}} ({{=data.api.info.contact.name}}){{?}}.
+{{?}}{{? data.api.info?.contact?.url}}Web: <a href="{{=data.api.info.contact.url}}">{{= data.api.info.contact.name || 'Support'}}</a>.
+{{?}}{{? data.api.info?.license}}License: {{? data.api.info.license.url}}<a href="{{=data.api.info.license.url}}">{{=data.api.info.license.name}}</a>{{?? data.api.info.license.identifier}}<a href="https://spdx.org/licenses/{{=data.api.info.license.identifier}}">{{=data.api.info.license.name}}</a>{{??}}{{=data.api.info.license.name}}{{?}}.
+{{?}}{{? data.api.info?.termsOfService}}<a href="{{=data.api.info.termsOfService}}">Terms of service</a>.
+{{?}}
+</div>
+
 {{? data.api.info && data.api.info.description}}{{= data.custom.getIntroFirstPart(data.api.info.description) }}{{?}}
 
-{{= data.api.servers }}
+{{? data.api.externalDocs}}[{{= data.api.externalDocs.description || data.translations.externalDocs }}]({{= data.api.externalDocs.url}}){{?}}
 
-{{? data.api.info && data.api.info.termsOfService}}<a href="{{=data.api.info.termsOfService}}">Terms of service</a>.{{?}}
-{{? data.api.info && data.api.info.contact}}{{? data.api.info.contact.email}}Email: <a href="mailto:{{=data.api.info.contact.email}}">{{=data.api.info.contact.name || data.api.info.contact.email}}</a>. {{?}}{{? data.api.info.contact.url}}Web: <a href="{{=data.api.info.contact.url}}">{{= data.api.info.contact.name || 'Support'}}</a>. {{?}}{{?}}
-{{? data.api.info && data.api.info.license}}{{? data.api.info.license.url}}License: <a href="{{=data.api.info.license.url}}">{{=data.api.info.license.name}}</a>.{{??}} License: {{=data.api.info.license.name}}.{{?}}{{?}}
+{{= data.custom.generateServersSection(data.api.servers) }}
+
 {{= data.tags.endSection }}
 
 {{? data.api.components && data.api.components.securitySchemes }}
@@ -26,7 +33,9 @@
 {{= data.tags.section }}
 <h1 id="{{=data.title_prefix+'-'+data.utils.slugify(r)}}">{{= r}}</h1>
 
-{{? data.resource.description }}{{= data.resource.description}}{{?}}
+{{? data.resource.description }}<div class="heading-description">
+{{= data.resource.description}}
+</div>{{?}}
 
 {{ for (const m in data.resource.methods) { }}
 {{ data.operationUniqueName = m; }}
@@ -53,7 +62,8 @@
 <a class="offset-up" id="schema{{=s.toLowerCase()}}"></a>
 <a class="offset-up" id="tocs{{=s.toLowerCase()}}"></a>
 
-{{ const blocks = data.custom.schemaToArray(origSchema,-1,{trim:true,join:true},data); }}
+{{ let blocks = data.custom.schemaToArray(origSchema,-1,{trim:true,join:true},data); }}
+{{ blocks = data.custom.mergeXxxOfRowsIntoSingleBlock(blocks); }}
 
 {{~ blocks :block}}
 
@@ -67,7 +77,7 @@
 
 |Type|Description|
 |---|---|
-{{~ block.rows :p}}|{{= data.custom.printType(p) }}|{{= data.custom.printDescription(p, data.host) }}|
+{{~ block.rows :p}}|{{= data.custom.printType(p) }}|{{= data.custom.printDescription(p, data) }}|
 {{~}}
 
 {{?? block.rows.length }}
@@ -78,7 +88,7 @@
 
 |Property|Type|Description|
 |---|---|---|
-{{~ block.rows :p}}|{{= data.custom.printParameterName(p.displayName) }}{{= data.custom.getDeprecateState(p.description) }}|{{= data.custom.printType(p) }}|{{= data.custom.printDescription(p, data.host) }}|
+{{~ block.rows :p}}|{{= data.custom.printParameterName(p.displayName) }}{{= data.custom.getDeprecateState(p) }}|{{= data.custom.printType(p) }}|{{= data.custom.printDescription(p) }}|
 {{~}}
 
 > Schema

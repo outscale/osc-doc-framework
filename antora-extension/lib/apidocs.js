@@ -12,8 +12,10 @@ async function main () {
   const obj = JSON.parse(process.env.APIDOC)
   const options = {
     api: obj.buildOptions.apiFile,
+    mergeAllofs: obj.buildOptions.mergeAllofs,
     descriptions: obj.buildOptions.descriptionsFile,
     resetDescriptionKeys: obj.buildOptions.resetDescriptionKeys,
+    showSummaryKeys: obj.buildOptions.showSummaryKeys,
     noSortKeys: obj.buildOptions.noSortKeys,
     separator: obj.buildOptions.separator,
     examples: obj.buildOptions.examplesFile,

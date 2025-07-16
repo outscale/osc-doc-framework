@@ -30,6 +30,17 @@ main > .content {
   border-color: #e1e1e1;
   font-size: 24px;
 }
+.api h1 + .heading-description {
+  background: #fff;
+  border-bottom: 1px solid #e1e1e1;
+  font-style: italic;
+  margin-top: -23px;
+  margin-bottom: 21px;
+  padding: 0 28px 0.5em;
+}
+.api h1 + .heading-description p {
+  margin-bottom: initial;
+}
 .api h2 {
   font-size: 20px;
 }
@@ -568,6 +579,17 @@ color: var(--brandPrimaryIndigo600);
 .api pre.highlight {
   position: relative;
   z-index: -1;
+}
+.api .heading-description blockquote {
+  background: initial;
+  margin: initial;
+  z-index: initial;
+}
+.api .heading-description blockquote p {
+  background: initial;
+  color: var(--neutral1000);
+  padding-left: initial;
+  padding-right: initial;
 }
 
 /* @media screen and (max-width: 1300px) { */

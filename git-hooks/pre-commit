@@ -24,4 +24,4 @@ LINTSTAGED_CONFIG='{
             --output='${DIR}'/Vale/'${VALE_TEMPLATE}'"
 }'
 
-echo ${LINTSTAGED_CONFIG} | ${LINTSTAGED_BIN} --shell=/bin/sh --quiet --verbose --config -
+echo ${LINTSTAGED_CONFIG} | ${LINTSTAGED_BIN} --quiet --verbose --config -

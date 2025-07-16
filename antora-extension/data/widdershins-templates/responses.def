@@ -1,4 +1,5 @@
 {{ data.responses = data.custom.getResponses(data); }}
+{{ data.responseHeaders = data.utils.getResponseHeaders(data); }}
 {{ data.responseSchemas = false; }}
 {{~ data.responses :response }}
 {{ if (response.content) data.responseSchemas = true; }}
@@ -12,24 +13,37 @@
 {{ if (response.content && !data.utils.isPrimitive(response.type)) data.responseSchemas = true; }}
 {{~}}
 
-{{? data.responseSchemas && Object.keys(response.content).length }}
+{{? (data.responseSchemas && Object.keys(response.content || {}).length) || response.description }}
 
 <h3 id="{{=data.operationUniqueSlug}}-responses">Response Elements</h3>
-
-{{? data.responseSchemas && Object.keys(response.content).length }}
-> Examples<a name="{{= data.custom.printOperationName(data.operationUniqueName) }}-res-example.json"></a>
-
-{{= data.custom.getResponseExamples(data) }}
-{{?}}
 
 {{~ data.responses.slice(0, 1) :response}}
 {{? !data.utils.isPrimitive(response.type)}}
 {{? Object.keys(response.content || {}).length }}
+{{ response.safeType = response.schema; }}
 {{ const responseKey = Object.keys(response.content)[0]; }}
 {{ const responseSchema = response.content[responseKey].schema; }}
-{{ const blocks = data.custom.schemaToArray(responseSchema,-1,{trim:true,join:true},data); }}
+{{ let blocks = data.custom.schemaToArray(responseSchema,-1,{trim:true,join:true},data); }}
+{{ blocks = data.custom.mergeXxxOfRowsIntoSingleBlock(blocks); }}
 
-**{{= response.status}} response**{{? response.schema}} ({{= response.schema}}){{?}}:
+> Examples<a name="{{= data.custom.printOperationName(data.operationUniqueName) }}-res-example.json"></a>
+
+{{= data.custom.getResponseExamples(data) }}
+
+{{? blocks[0]?.rows[0]?.name === '*anonymous*' }}
+**{{= response.status}} response**{{? data.custom.printType(response)}} ({{= data.custom.printType(blocks[0].rows[0]) }}){{?}}:
+{{ blocks[0].rows.shift(); }}
+{{??}}
+**{{= response.status}} response**{{? response.type}} ({{? response.schema}}{{= data.custom.printType(response)}} {{?}}{{= response.type}}){{?}}:
+{{?}}
+
+{{ const responseHeaders = data.responseHeaders.filter(x => x.status === response.status); }}
+{{? responseHeaders.length }}
+|Response Header|Type|Description|
+|---|---|---|
+{{~ responseHeaders :h}}|{{=h.header}}|{{=h.type}}{{? h.format}} ({{=h.format}}){{?}}|{{= data.custom.printDescription(h, data.host) }}|
+{{~}}
+{{?}}
 
 {{~ blocks :block}}
 
@@ -37,10 +51,10 @@
 
 |Response Element|Type|Description|
 |---|---|---|
-{{~block.rows :p}}|{{= data.custom.printParameterName(p.displayName) }}{{= data.custom.getDeprecateState(p.description) }}|{{= data.custom.printType(p) }}|{{= data.custom.printDescription(p, data.host) }}|
+{{~block.rows :p}}|{{= data.custom.printParameterName(p.displayName) }}{{= data.custom.getDeprecateState(p) }}|{{= data.custom.printType(p) }}|{{= data.custom.printDescription(p) }}|
 {{~}}
-{{??}}
-Returns an empty body.
+{{?? block.rows === undefined }}
+{{? !data.operation['x-webhook']}}Returns an empty object.{{??}}{{= response.description}}{{?}}
 {{?}}
 
 {{~}}
@@ -48,7 +62,7 @@ Returns an empty body.
 {{??}}
 **{{= response.status}} response**:
 
-Returns an empty body.
+{{? !data.operation['x-webhook']}}Returns an empty response.{{??}}{{= response.description}}{{?}}
 
 {{?}}
 
@@ -57,20 +71,23 @@ Returns an empty body.
 
 {{?}}
 {{~}}
+
 {{?}}
 
-{{ data.responseHeaders = data.utils.getResponseHeaders(data); }}
-{{? data.responseHeaders.length }}
+{{? !(data.responseSchemas && Object.keys(response.content || {}).length) }}
 
-### Response Headers
+{{ const responseHeaders = data.responseHeaders.filter(x => x.status === response.status); }}
+{{? responseHeaders.length }}
+**{{= response.status}} response**:
 
-|Status|Header|Type|Format|Description|
-|---|---|---|---|---|
-{{~ data.responseHeaders :h}}|{{=h.status}}|{{=h.header}}|{{=h.type}}|{{=h.format||''}}|{{=h.description||''}}|
+|Response Header|Type|Description|
+|---|---|---|
+{{~ responseHeaders :h}}|{{=h.header}}|{{=h.type}}{{? h.format}} ({{=h.format}}){{?}}|{{= data.custom.printDescription(h, data.host) }}|
 {{~}}
+{{?}}
 
 {{?}}
 
-{{= data.custom.printErrorResponses(data.responses.slice(1)) }}
+{{= data.custom.printErrorResponses(data.responses.slice(1), data.translations) }}
 
 {{= data.tags.endSection }}

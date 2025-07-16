@@ -3,7 +3,7 @@
 {{ data.operation.description = data.custom.getOperationDescription(data); }}
 
 ## {{= data.custom.printOperationName(data.operationUniqueName) }}
-{{= data.custom.getDeprecateState(data.operation.description) }}
+{{= data.custom.getDeprecateState(data.operation) }}
 
 {{ data.methodUpper = data.method.verb.toUpperCase(); }}
 {{ data.url = data.utils.slashes(data.baseUrl + data.method.path); }}
@@ -13,18 +13,27 @@
 {{ data.utils.mergePathParameters(data); }}
 {{ data.utils.getParameters(data); }}
 
+{{? !data.operation['x-webhook'] }}
 `{{= data.methodUpper}} {{=data.method.path}}`
+{{??}}
+`(Webhook)`
+{{?}}
 
-{{? data.operation.externalDocs}}[{{= data.operation.externalDocs.description || data.translations.externalDocs }}]({{= data.operation.externalDocs.url}}){{?}}
+{{? data.operation.summary && !data.options.tocSummary && data.options.showSummaryKeys}}*{{= data.operation.summary }}*{{?}}
 
 {{? data.operation.description}}{{= data.operation.description }}{{?}}
 
+{{? data.operation.externalDocs}}[{{= data.operation.externalDocs.description || data.translations.externalDocs }}]({{= data.operation.externalDocs.url}}){{?}}
+
+{{? !data.operation['x-webhook'] }}
 {{ data.security = data.operation.security ? data.operation.security : data.api.security; }}
 {{? data.security && data.security.length }}
 {{#def.authentication}}
 {{??}}
 {{#def.authentication_none}}
 {{?}}
+{{?}}
+
 {{= data.tags.endSection }}
 
 {{#def.parameters}}
