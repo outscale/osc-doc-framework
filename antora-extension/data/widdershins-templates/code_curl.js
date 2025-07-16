@@ -23,11 +23,11 @@ function createGeneralOptions (data) {
     if (data.security?.length && data.security.find((n) => n.AccessKeyAuth)) {
       options.push({ name: 'header', value: 'AccessKey: $OSC_ACCESS_KEY' })
       options.push({ name: 'header', value: 'SecretKey: $OSC_SECRET_KEY' })
-      if (data.consumes?.length) {
-        options.push({ name: 'header', value: 'Content-Type: ' + data.consumes })
-      }
     }
-  } else if (data.host.startsWith('api')) {
+    if (data.consumes?.length) {
+      options.push({ name: 'header', value: 'Content-Type: ' + data.consumes })
+    }
+  } else if (data.host.startsWith('api') || data.host.startsWith('okms')) {
     if (data.security?.length && !data.operation['x-basicAuthFlag']) {
       options.push({ name: 'user', value: '$OSC_ACCESS_KEY:$OSC_SECRET_KEY' }, { name: 'aws-sigv4', value: 'osc' })
     } else if (data.operation['x-basicAuthFlag']) {
@@ -90,7 +90,7 @@ function printExamples (examples, options, data, lang) {
     let verb = ' -X ' + data.methodUpper
 
     let url = data.url
-    if (data.custom.isAGatewayApi(data.host) && !data.host.startsWith('api')) {
+    if (data.custom.isAGatewayApi(data.host) && !data.host.startsWith('api') && !data.host.startsWith('okms')) {
       url = data.baseUrl
     }
     url = url.replace('{region}', "'$OSC_REGION'").replace('eu-west-2', "'$OSC_REGION'")

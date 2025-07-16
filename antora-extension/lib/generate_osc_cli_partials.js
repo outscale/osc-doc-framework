@@ -142,28 +142,40 @@ function getRef (schema, level, host, requestFlag) {
     if (requestFlag) {
       s += '// tag::' + k + '[]\n'
     }
-    s += '*'.repeat(level) + ' `' + k + '`:'
+    let description = '*'.repeat(level) + ' `' + k + '`:'
     if (requestFlag) {
       if ((schema.required?.includes(k) === false) || schema.required === undefined) {
-        s += ' (optional)'
+        description += ' (optional)'
       }
     }
-    s += ' ' + formatDescription(v.description, isList=true) + '\n'
+    description += ' ' + formatDescription(v.description, isList=true) + '\n'
 
     // Expand the description by reading the other OpenAPI keywords of the schema
     let array = []
-    if (widdershinsPreProcess.isAGatewayApi(host) && !host.startsWith('okms') && !host.startsWith('kms')) {
-      array = widdershinsPreProcess.getValuePattern(array, v)
-    } else {
-      array = widdershinsPreProcess.getValueLength(array, v)
-      array = widdershinsPreProcess.getValuePattern(array, v)
-      array = widdershinsPreProcess.getValueMinimumMaximum(array, v)
-      array = widdershinsPreProcess.getValueEnum(array, v)
-      array = widdershinsPreProcess.getValueDefault(array, v)
+    let valueDefault
+    let valueExamples
+    array = widdershinsPreProcess.pushValueMinItemsMaxItems(array, v)
+    array = widdershinsPreProcess.pushValueLength(array, v)
+    array = widdershinsPreProcess.pushValuePattern(array, v)
+    array = widdershinsPreProcess.pushValueMultipleOf(array, v)
+    array = widdershinsPreProcess.pushValueMinimumMaximum(array, v)
+    array = widdershinsPreProcess.pushValueEnum(array, v)
+    valueDefault = widdershinsPreProcess.getValueDefault(v)
+    if (valueDefault) {
+      array.push(valueDefault)
     }
+    valueExamples = widdershinsPreProcess.getValueExamples(v)
+    array = widdershinsPreProcess.pushValueConst(array, v)
+    const arrayTotal = []
+    arrayTotal.push(description)
     if (array.length) {
-      if (v.description) {s += ' +\n'}
-      s += array.join('. ').replace(/`(.+?)`/g, '`+++$1+++`') + '.\n'
+      arrayTotal.push(array.join('. ').replace(/`(.+?)`/g, '`+++$1+++`') + '.\n')
+    }
+    if (valueExamples && valueDefault.replace('Default: ', '') !== valueExamples.replace(/^Examples?: /, '')) {
+      arrayTotal.push(valueExamples + '.\n')
+    }
+    if (arrayTotal.length) {
+      s += arrayTotal.join(' +\n')
     }
 
     s += getRef(v, level + 1, host, requestFlag)

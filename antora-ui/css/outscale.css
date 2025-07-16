@@ -162,8 +162,14 @@ html {
   main > .content.release-notes {
     max-width: 100rem;
   }
-  .doc, .tableblock td:not(.icon) {
+  .doc, .tableblock tr {
     background: #fff;
+  }
+  /* .tableblock tr:hover {
+    background: #fafafa;
+  } */
+  .tableblock td.icon {
+    background: initial;
   }
   .doc {
     border: 1px solid var(--brandPrimaryDarkBlue100);

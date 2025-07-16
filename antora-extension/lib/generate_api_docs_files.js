@@ -2,6 +2,7 @@ const fs = require('fs')
 const path = require('path')
 const shins = require('shins')
 const widdershins = require('widdershins')
+const allofMerge = require('allof-merge')
 const helperFunctions = require('./helper_functions')
 const fillApiDescriptions = require('./fill_api_descriptions')
 const fillApiExamples = require('./fill_api_examples')
@@ -9,7 +10,9 @@ const generateErrorMarkdown = require('./generate_error_markdown')
 const generateOscCliPartials = require('./generate_osc_cli_partials')
 const generateOapiCliPartials = require('./generate_oapi_cli_partials')
 const widdershinsPreProcess = require('../data/widdershins-templates/_pre_process')
+
 const CONSOLE_LOG = console.log
+const VERBS = ['delete', 'get', 'head', 'options', 'patch', 'post', 'put', 'trace']
 
 async function runInCli () {
   const options = helperFunctions.parseArgs()
@@ -23,16 +26,19 @@ async function runInNode (options) {
 async function generateApiDocsFiles (options) {
   if (!options.api || !options.outputFileStem) {
     console.log(
-      'Please specify --api, [--descriptions], [--reset-description-keys], [--no-sort-keys], [--separator], ' +
-      '[--examples], [--errors], [--languages], [--widdershins-templates], [--shins-templates], ' +
-      '[--osc-cli-partials], [--oapi-cli-partials], [--output-yaml-path], [--output-dir], and --output-file-stem.'
+      'Please specify --api, [--merge-allofs], [--descriptions], [--reset-description-keys], ' +
+      '[--show-summary-keys], [--no-sort-keys], [--separator], [--examples], [--errors], [--languages], ' +
+      '[--widdershins-templates], [--shins-templates], [--osc-cli-partials], [--oapi-cli-partials], ' +
+      '[--output-yaml-path], [--output-dir], and --output-file-stem.'
     )
     process.exit(1)
   }
 
   let apiFile = options.api
+  const mergeAllofs = options.mergeAllofs
   const descriptionsFile = options.descriptions
   const resetDescriptionKeys = options.resetDescriptionKeys
+  const showSummaryKeys = options.showSummaryKeys
   const noSortKeys = options.noSortKeys
   const separator = options.separator
   const examplesFile = options.examples
@@ -51,6 +57,10 @@ async function generateApiDocsFiles (options) {
   }
   let api = helperFunctions.parseYaml(apiFile)
 
+  if (mergeAllofs) {
+    api = runAllofMerge(api)
+  }
+
   if (descriptionsFile) {
     api = await fillApiDescriptions(api, descriptionsFile, apiFile, resetDescriptionKeys, separator, noSortKeys, separator, outputYamlPath)
   }
@@ -59,8 +69,10 @@ async function generateApiDocsFiles (options) {
     api = await fillApiExamples(api, examplesFile, apiFile)
   }
 
-  let apiMarkdown = await runWiddershins(api, languages, widdershinsTemplates)
+  let apiMarkdown = await runWiddershins(api, languages, widdershinsTemplates, showSummaryKeys)
+  apiMarkdown = postProcessImagesAfterWiddershins(apiMarkdown)
   apiMarkdown = postProcessIndentsAfterWiddershins(apiMarkdown)
+  fs.writeFileSync(outputDir + '/' + outputFileStem + '.md', apiMarkdown)
   if (!apiFile.includes('okms')) {
     apiMarkdown = postDocsOutscaleComLinks(apiMarkdown)
   }
@@ -84,8 +96,23 @@ async function generateApiDocsFiles (options) {
   }
 }
 
-function runWiddershins (api, languages, widdershinsTemplates) {
+function runAllofMerge (api) {
+  // https://www.npmjs.com/package/allof-merge#documentation
+  const allofMergeOptions = {
+    onMergeError: (msg) => {throw new Error(msg)},
+    onRefResolveError: (msg) => {throw new Error(msg)},
+  }
+  
+  return allofMerge.merge(api, allofMergeOptions)
+}
+
+function runWiddershins (api, languages, widdershinsTemplates, showSummaryKeys) {
   console.log = turnOffConsoleLog()
+
+  api = appendWebhooksToApiPaths(api)
+  api = appendComponentResponsesToComponentSchemas(api)
+  api = concatenateOneOfsAndAnyOfs(api)
+
   const languageTabs = getLanguageTabs(languages)
 
   // https://github.com/Mermade/widdershins/blob/main/README.md#options
@@ -96,6 +123,7 @@ function runWiddershins (api, languages, widdershinsTemplates) {
     language_tabs: languageTabs,
     user_templates: widdershinsTemplates,
     sample: true,
+    showSummaryKeys: showSummaryKeys,
     templateCallback: function myCallBackFunction (_, stage, data) {
       if (stage === 'pre') widdershinsPreProcess.preProcess(data)
       return data
@@ -105,6 +133,126 @@ function runWiddershins (api, languages, widdershinsTemplates) {
   console.log = turnOnConsoleLog()
 
   return apiMarkdown
+}
+
+function appendWebhooksToApiPaths (api) {
+  const webhooks = Object.entries(api.webhooks || {})
+  for (const [k, v] of webhooks) {
+    for (const verb of VERBS) {
+      if (v[verb]) {
+        v[verb]['x-webhook'] = true
+      }
+    }
+    if (api.paths) {
+      api.paths[k] = v
+    }
+  }
+
+  return api
+}
+
+function appendComponentResponsesToComponentSchemas (api) {
+  const responses = Object.entries(api.components?.responses || {})
+  for (const [k, v] of responses) {
+    const firstContentKey = Object.keys(v.content || {})[0]
+    if (firstContentKey && !api.components.schemas[k]) {
+      api.components.schemas[k] = api.components.responses[k].content[firstContentKey].schema
+    }
+  }
+
+  return api
+}
+
+function concatenateOneOfsAndAnyOfs (api) {
+  const paths = Object.values(api.paths || {})
+  for (const path of paths) {
+    concatenateOneOfsAndAnyOfs2(path)
+    const operations = Object.values(path)
+    for (const operation of operations) {
+      concatenateOneOfsAndAnyOfs2(operation.requestBody?.content || {})
+    }
+  }
+  concatenateOneOfsAndAnyOfs2(api.components?.schemas || {})
+
+  return api
+}
+
+function concatenateOneOfsAndAnyOfs2 (obj) {
+  const values = Object.values(obj)
+  for (const n of values) {
+    const paramsOrProps = n.parameters || Object.values(n.properties || n.schema?.properties || {})
+    for (const paramOrProp of paramsOrProps) {
+      const p = paramOrProp.schema || paramOrProp
+      let xxxOf = p.anyOf || p.oneOf
+      if (xxxOf) {
+        p['x-types'] = []
+        p['x-formats'] = []
+        p['x-hasProperties'] = []
+        for (const n of xxxOf) {
+          const entries = Object.entries(n)
+          for (const [k, v] of entries) {
+            if (k === 'type') {
+              p['x-types'].push(v)
+              if (!p.type) {p.type = v}
+            } else if (k === 'format') {
+              p['x-formats'].push(v)
+              if (!p.format) {p.format = v}
+            } else {
+              if (p[k]) {}
+              else {p[k] = v}
+            }
+          }
+          if (!n.properties) {
+            p['x-hasProperties'].push(false)
+          } else {
+            p['x-hasProperties'].push(true)
+            delete n.type
+          }
+        }
+        if (p['x-hasProperties'].filter((x) => x === false).length) {
+          delete p.anyOf
+          delete p.oneOf
+        } else {
+          delete p.properties
+          delete p.required
+        }
+      }
+      xxxOf = p.items?.anyOf || p.items?.oneOf
+      if (xxxOf) {
+        p.items['x-types'] = []
+        p.items['x-formats'] = []
+        p.items['x-hasProperties'] = []
+        for (const n of xxxOf) {
+          const entries = Object.entries(n)
+          for (const [k, v] of entries) {
+            if (k === 'type') {
+              p.items['x-types'].push(v)
+              if (!p.items.type) {p.items.type = v}
+            } else if (k === 'format') {
+              p.items['x-formats'].push(v)
+              if (!p.items.format) {p.items.format = v}
+            } else {
+              if (p.items[k]) {}
+              else {p.items[k] = v}
+            }
+          }
+          if (!n.items?.properties) {
+            p.items['x-hasProperties'].push(false)
+          } else {
+            p.items['x-hasProperties'].push(true)
+            delete n.items.type
+          }
+        }
+        if (p.items['x-hasProperties'].filter((x) => x === false).length) {
+          delete p.items.anyOf
+          delete p.items.oneOf
+        } else {
+          delete p.items.properties
+          delete p.items.required
+        }
+      }
+    }
+  }
 }
 
 function getLanguageTabs (languages) {
@@ -139,6 +287,11 @@ function getLanguageTabs (languages) {
   }
 
   return tabs
+}
+
+function postProcessImagesAfterWiddershins (apiMarkdown) {
+  // Remove attributes in Markdown images
+  return apiMarkdown.replace(/(!\[.+?\]\(.+?) =.+?\)/g, '$1)')
 }
 
 function postProcessIndentsAfterWiddershins (apiMarkdown) {

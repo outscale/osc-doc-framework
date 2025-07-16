@@ -1,3 +1,4 @@
+const querystring = require('querystring')
 const circularClone = require('reftools/lib/clone.js').circularClone
 const jptr = require('reftools/lib/jptr.js').jptr
 const recurse = require('reftools/lib/recurse.js').recurse
@@ -7,6 +8,7 @@ const walkSchema = require('oas-schema-walker').walkSchema
 const wsGetState = require('oas-schema-walker').getDefaultState
 const generateCurlExamples = require('./code_curl')
 const generateHclExamples = require('./code_hcl')
+const generateHttpExamples = require('./code_http')
 const generateJavaScriptExamples = require('./code_javascript')
 const generateOapiCliExamples = require('./code_oapi-cli')
 const generateOscCliExamples = require('./code_osc-cli')
@@ -16,9 +18,6 @@ const xml = require('jgexml/json2xml.js')
 const DEFAULT_BASE_URL = '/'
 
 function preProcess (data) {
-  data = _concatenateOneOfsAndAnyOfs(data)
-  data = _appendComponentResponsesToComponentSchemas(data)
-  data.api.servers = _getServers(data)
   if (data.baseUrl === '//') {data.baseUrl = DEFAULT_BASE_URL}
   data.host = computeApiHost(data)
   data.resources = _sortTags(data)
@@ -30,10 +29,12 @@ function preProcess (data) {
     generateAuthenticationSchemesSection,
     generateCurlExamples,
     generateHclExamples,
+    generateHttpExamples,
     generateJavaScriptExamples,
     generateOapiCliExamples,
     generateOscCliExamples,
     generatePythonExamples,
+    generateServersSection,
     getDeprecateState,
     getIntroFirstPart,
     getIntroSecondPart,
@@ -42,6 +43,7 @@ function preProcess (data) {
     getResponses,
     getResponseExamples,
     isAGatewayApi,
+    mergeXxxOfRowsIntoSingleBlock,
     printDescription,
     printErrorResponses,
     printOperationName,
@@ -50,119 +52,10 @@ function preProcess (data) {
     printType,
     schemaToArray,
     supportOperationMultipleExamples,
+    urlEncode,
   }
 
   return data
-}
-
-function _concatenateOneOfsAndAnyOfs (data) {
-  const paths = data.api.paths
-  for (const operations of Object.values(paths)) {
-    _concatenateOneOfsAndAnyOfs2(operations)
-    for (const operation of Object.values(operations)) {
-      _concatenateOneOfsAndAnyOfs2(operation.requestBody?.content || {})
-    }
-  }
-  _concatenateOneOfsAndAnyOfs2(data.api.components?.schemas)
-  _concatenateOneOfsAndAnyOfs2(data.components?.schemas)
-
-  return data
-}
-
-function _concatenateOneOfsAndAnyOfs2 (obj) {
-  for (const n of Object.values(obj)) {
-    const paramsOrProps = n.parameters || Object.values(n.properties || n.schema?.properties || {})
-    for (const paramOrProp of paramsOrProps) {
-      const p = paramOrProp.schema || paramOrProp
-      let xxxOf = p.anyOf || p.oneOf
-      if (xxxOf) {
-        p['x-types'] = []
-        p['x-formats'] = []
-        for (const n of xxxOf) {
-          for (const [k, v] of Object.entries(n)) {
-            if (k === 'type') {
-              p['x-types'].push(v)
-              if (!p.type) {p.type = v}
-            } else if (k === 'format') {
-              p['x-formats'].push(v)
-              if (!p.format) {p.format = v}
-            } else {
-              if (p[k]) {}
-              else {p[k] = v}
-            }
-          }
-        }
-        delete p.anyOf
-        delete p.oneOf
-      }
-      xxxOf = p.items?.anyOf || p.items?.oneOf
-      if (xxxOf) {
-        p.items['x-types'] = []
-        p.items['x-formats'] = []
-        for (const n of xxxOf) {
-          for (const [k, v] of Object.entries(n)) {
-            if (k === 'type') {
-              p.items['x-types'].push(v)
-              if (!p.items.type) {p.items.type = v}
-            } else if (k === 'format') {
-              p.items['x-formats'].push(v)
-              if (!p.items.format) {p.items.format = v}
-            } else {
-              if (p.items[k]) {}
-              else {p.items[k] = v}
-            }
-          }
-        }
-        delete p.items.anyOf
-        delete p.items.oneOf
-      }
-    }
-  }
-}
-
-function _appendComponentResponsesToComponentSchemas (data) {
-  const responses = Object.entries(data.components?.responses || {})
-  for (const [k, v] of responses) {
-    const firstContentKey = Object.keys(v.content || {})[0]
-    if (firstContentKey) {
-      if (!data.components.schemas[k]) {
-        data.components.schemas[k] = v.content[firstContentKey].schema
-        data.api.components.schemas[k] = data.api.components.responses[k].content[firstContentKey].schema
-      }
-    }
-  }
-
-  return data
-}
-
-function _getServers (data) {
-  let content = ''
-  const servers = data.api.servers || [{url: DEFAULT_BASE_URL}]
-  if (servers) {
-    content += '### Endpoints\n\n'
-    content += '|Base URLs|\n'
-    content += '|---|\n'
-  }
-  for (const server of servers) {
-    if (server.description) {
-      content += '|' + server.description + '|\n'
-    }
-    const entries = Object.entries(server.variables || {})
-    const [k, v] = entries[0] || ['', {}]
-    for (e of v .enum || [v.default]) {
-      content += '|'
-      if (server.url === DEFAULT_BASE_URL) {
-        content += DEFAULT_BASE_URL
-      } else {
-        const server_text = server.url.replace('{' + k + '}', '`' + e + '`')
-        const server_url = server.url.replace('{' + k + '}', e)
-        content += '[' + server_text + '](' + server_url + ')'
-      }
-      content += '|\n'
-    }
-  }
-
-  return content
 }
 
 function computeApiHost (data) {
@@ -272,27 +165,62 @@ function fakeBodyParameter(data) {
 
 function generateAuthenticationSchemesSection (data) {
   let s = ''
-  const security = data.api.security || []
-  const securitySchemes = data.api.components.securitySchemes
-  if (security.length > 1) {
-    s = 'There are ' + security.length + ' possible ways to authenticate your requests with'
+  const securitySchemes = data.api.components?.securitySchemes || {}
+  const securityRequirements = _getAllSecurityRequirements(data.api.security || [], securitySchemes)
+  if (securityRequirements.length > 1) {
+    s = 'There are ' + securityRequirements.length + ' possible ways to authenticate your requests with'
     if (data.api.info?.title) {
       s += ' the ' + data.api.info?.title + ':\n\n'
     } else {
       s == ' this API:\n\n'
     }
   }
-  for (const sec of security) {
-    const heading = _formatAuthenticationRequirement(sec, data.host)
-    s += '### ' + heading + '\n\n'
-    s += '|HTTP Header|Description|\n'
+  for (const requirement of securityRequirements) {
+    s += '### ' + _formatSecurityRequirementName(requirement, data.host, data.api.info?.title, false) + '\n\n'
+    s += '|Element|Description|\n'
     s += '|---|---|\n'
-    for (const key of Object.keys(sec)) {
-      const item = securitySchemes[key]
-      if (item.scheme === 'basic') {
-        s += '|`Authorization`|' + (item.description || '') + '|\n'
+    for (const n in requirement) {
+      const [_, v] = Object.entries(securitySchemes).filter(([schemeName, _]) => schemeName === n)[0]
+      if (v.type === 'apiKey') {
+        s += '|`' + v.name + '` ' + v.in + '|' + (v.description || '') + '|\n'
+      } else if (v.type === 'http') {
+        if (v.scheme === 'basic') {
+          s += '|`Authorization` header'
+        } else {
+          if (v.bearerFormat) {
+            s += v.bearerFormat + ' '
+          }
+          s += v.scheme
+        }
+        s += '|' + v.description + '|\n'
+      } else if (v.type === 'mutualTLS') {
+        s += '|' + v.type + '|' + (v.description || '') + '|\n'
+      } else if (v.type === 'oauth2') {
+        s += '|' + v.type + '|' + (v.description || '')
+        if (v.description && v.flows) {
+          s += '<br />'
+        }
+        for (const [k2, v2] of Object.entries(v.flows)) {
+          s += _unPascalCase(k2) + ' flow:<br />'
+          for (const [k3, v3] of Object.entries(v2)) {
+            s += '- ' + _unPascalCase(k3) + ': '
+            if (typeof v3 === 'object') {
+              let scopes = []
+              for (const [k4, v4] of Object.entries(v3)) {
+                scopes.push('`' + k4 + '` (' + v4 + ')')
+              }
+              s += scopes.join(', ') + '<br />'
+            } else {
+              s += v3 + '<br />'
+            }
+          }
+        }
+        s += '|\n'
+      } else if (v.type === 'openIdConnect') {
+        s += '|' + v.type + '|' + (v.description || '')
+        s += '<br />' + openIdConnectUrl + '|\n'
       } else {
-        s += '|`' + item.name + '`|' + (item.description || '') + '|\n'
+        s += '|' + v.type + '|' + (v.description || '') + '|\n'
       }
     }
     s += '\n\n'
@@ -301,7 +229,20 @@ function generateAuthenticationSchemesSection (data) {
   return s
 }
 
-function _formatAuthenticationRequirement (array, host) {
+function _getAllSecurityRequirements (securityRequirements, securitySchemes) {
+  const keys = Object.keys(securitySchemes)
+  for (const k of keys) {
+    if (securityRequirements.filter((subarray) => Object.keys(subarray).includes(k)).length === 0) {
+      const obj = {}
+      obj[k] = []
+      securityRequirements.push(obj)
+    }
+  }
+
+  return securityRequirements
+}
+
+function _formatSecurityRequirementName (array, host, apiTitle, lowerCase) {
   let name = Object.keys(array).join('/')
   if (isAGatewayApi(host)) {
     if (name === 'ApiKeyAuth' || name === 'ApiKeyAuthSec' || name === 'aksk') {
@@ -309,17 +250,56 @@ function _formatAuthenticationRequirement (array, host) {
     } else if (name === 'BasicAuth') {
       name = 'Login/Password'
     }
-  } else {
+  } else if (apiTitle === 'OKS API' || host.includes('oks.outscale.')) {
     name = name.replace(/\B([A-Z][a-z])/g, " $1")
     name = name.replace(/Basic Auth/g, 'Basic Authentication').replace(/ Auth\b/g, '')
     name = name.replace(/\/OTP Code/g, '')
+  }
+  if (lowerCase) {
+    name = name.replace(/([A-Z][a-z])/g, (x) => x.toLowerCase())
   }
 
   return name
 }
 
-function getDeprecateState (description) {
-  const match = description?.match('Deprecated:')
+function _unPascalCase (s) {
+  s = s.replace(/([A-Z])/g, " $1").toLowerCase().replaceAll('url', 'URL')
+
+  return _capitalize(s)
+}
+
+function generateServersSection (servers) {
+  let s = ''
+  if (servers) {
+    s += '### Endpoints\n\n'
+    if (servers.filter((x) => x.description).length) {
+      s += '|Base URL|Description|\n'
+      s += '|---|---|\n'
+    } else {
+      s += '|Base URL|\n'
+      s += '|---|\n'
+    }
+    for (const server of servers) {
+      const entries = Object.entries(server.variables || {})
+      const [k, v] = entries[0] || ['', {}]
+      for (e of v.enum || [v.default]) {
+        if (server.url === DEFAULT_BASE_URL) {
+          s += '|' + DEFAULT_BASE_URL + '|'
+        } else {
+          const server_text = server.url.replace('{' + k + '}', '`' + e + '`')
+          const server_url = server.url.replace('{' + k + '}', e)
+          s += '|[' + server_text + '](' + server_url + ')|'
+        }
+        s += (server.description || '') + '|\n'
+      }
+    }
+  }
+
+  return s
+}
+
+function getDeprecateState (obj) {
+  const match = obj.deprecated || obj.schema?.deprecated || obj.description?.match('Deprecated:')
   if (match) {
     // Placeholder tag which is further transformed by antora-extension/lib/generate_api_docs_files.js
     return '----Deprecated----'
@@ -342,11 +322,16 @@ function getIntroSecondPart (description) {
 
 function getOperationAuthenticationSchemes (data) {
   const list = []
-  const security = data.operation.security || data.security
-  for (const sec of security) {
-    let name = _formatAuthenticationRequirement(sec, data.host)
-    name = name.replace(/([A-Z][a-z])/g, (x) => x.toLowerCase())
-    list.push('<a href="#authentication-schemes">' + name + '</a>')
+  const securityRequirements = data.operation.security || data.security
+  for (const requirement of securityRequirements) {
+    let name = _formatSecurityRequirementName(requirement, data.host, data.api.info?.title, true)
+    name = '<a href="#authentication-schemes">' + name + '</a>'
+    for (const v of Object.values(requirement)) {
+      if (v.length) {
+        name += ' (<code>' + v.join('</code>, <code>') + '</code>)'
+      }
+    }
+    list.push(name)
   }
   if (list.length <= 2) {
     return list.join(' or ')
@@ -380,20 +365,20 @@ function getResponses(data) {
                   entry.type = contentType.schema.type
                   entry.schema = data.translations.schemaInline
               }
-              if (contentType.schema && contentType.schema["x-widdershins-oldRef"] && contentType.schema["x-widdershins-oldRef"].startsWith('#/components/')) {
+              if (contentType.schema && contentType.schema["x-widdershins-oldRef"]?.startsWith('#/components/')) {
                   let schemaName = contentType.schema["x-widdershins-oldRef"].replace('#/components/schemas/', '')
                   entry.schema = '[' + schemaName + '](#schema' + schemaName.toLowerCase() + ')'
                   entry.$ref = true
               }
-              else if (response["x-widdershins-oldRef"]) {
-                let schemaName = response["x-widdershins-oldRef"].replace('#/components/responses/', '')
-                entry.schema = '[' + schemaName + '](#schema' + schemaName.toLowerCase() + ')'
-                entry.$ref = true
+              else if (contentType.schema?.items && contentType.schema.items["x-widdershins-oldRef"]?.startsWith('#/components/')) {
+                  let schemaName = contentType.schema.items["x-widdershins-oldRef"].replace('#/components/schemas/', '')
+                  entry.schema = '[' + schemaName + '](#schema' + schemaName.toLowerCase() + ')'
+                  entry.$ref = true
               }
-              else {
-                  if (contentType.schema && contentType.schema.type && (contentType.schema.type !== 'object') && (contentType.schema.type !== 'array')) {
-                      entry.schema = contentType.schema.type
-                  }
+              else if (response["x-widdershins-oldRef"]) {
+                  let schemaName = response["x-widdershins-oldRef"].replace('#/components/responses/', '')
+                  entry.schema = '[' + schemaName + '](#schema' + schemaName.toLowerCase() + ')'
+                  entry.$ref = true
               }
           }
           entry.content = response.content
@@ -427,9 +412,8 @@ function getResponseExamples (data) {
             })
           }
         } else if (resp === firstContentKey && contentType.example) {
-          const firstContentKey = Object.keys(response.content || {})[0]
           examples.push({
-            summary: response.content[firstContentKey].schema?.description || _capitalize(resp) + ' response',
+            summary: _capitalize(resp) + ' response',
             value: _convertExample(contentType.example),
             cta,
           })
@@ -473,12 +457,12 @@ function getResponseExamples (data) {
     }
     if (_doContentType(example.cta, 'json')) {
       content += '```json\n'
-      content += data.utils.safejson(example.value, null, 2) + '\n'
+      content += data.utils.safejson(example.value || {}, null, 2) + '\n'
       content += '```\n\n'
     }
     if (_doContentType(example.cta, 'yaml')) {
       content += '```yaml\n'
-      content += yaml.stringify(example.value) + '\n'
+      content += yaml.stringify(example.value || {}) + '\n'
       content += '```\n\n'
     }
     if (_doContentType(example.cta, 'text')) {
@@ -537,6 +521,7 @@ function _doContentType (ctTypes, ctClass) {
 // Modified from Widdershins
 function _getSample(orig, options, samplerOptions, api,data){
   if (orig && orig.example) return orig.example
+  if (orig && orig.examples) return orig.examples[0]
   let result = _getSampleInner(orig,options,samplerOptions,api,data)
   result = _clean(result)
   result = _strim(result,options.maxDepth)
@@ -630,23 +615,51 @@ function isAGatewayApi (host) {
   )
 }
 
+function mergeXxxOfRowsIntoSingleBlock (blocks) {
+  for (let i = 1, length = blocks.length; i < length; i++) {
+    blocks[0].rows.push(...blocks[i].rows)
+    blocks[i].rows = []
+  }
+
+  return blocks
+}
+
 function printDescription (p, host) {
-  let s = p.description || ''
+  let s = ''
 
   // Expand the description by reading the other OpenAPI keywords of the schema
   let array = []
-  if (isAGatewayApi(host) && !host.startsWith('okms') && !host.startsWith('kms')) {
-    array = getValuePattern(array, p.schema)
-  } else {
-    array = getValueLength(array, p.schema)
-    array = getValuePattern(array, p.schema)
-    array = getValueMinimumMaximum(array, p.schema)
-    array = getValueEnum(array, p.schema)
-    array = getValueDefault(array, p.schema)
+  let valueDefault
+  let valueExamples
+  array = pushValueMinItemsMaxItems(array, p.schema)
+  array = pushValueLength(array, p.schema)
+  array = pushValuePattern(array, p.schema)
+  array = pushValueMultipleOf(array, p.schema)
+  array = pushValueMinimumMaximum(array, p.schema)
+  array = pushValueEnum(array, p.schema)
+
+  valueDefault = getValueDefault(p.schema)
+  if (valueDefault) {
+    array.push(valueDefault)
+  }
+
+  valueExamples = getValueExamples(p)
+
+  // array = pushParameterParameterFields(array, p)
+  array = pushValueConst(array, p.schema)
+
+  const arrayTotal = []
+  if (p.description) {
+    arrayTotal.push(p.description)
   }
   if (array.length) {
-    if (p.description) {s += '<br />'}
-    s += array.join('. ') + '.'
+    arrayTotal.push(array.join('. ') + '.')
+  }
+  if (valueExamples && valueDefault.replace('Default: ', '') !== valueExamples.replace(/^Examples?: /, '')) {
+    arrayTotal.push(valueExamples + '.')
+  }
+  if (arrayTotal.length) {
+    s = arrayTotal.join('<br />')
   }
 
   if (s) {
@@ -657,7 +670,26 @@ function printDescription (p, host) {
   return s
 }
 
-function getValueLength (array, schema) {
+function pushValueMinItemsMaxItems (array, schema) {
+  let minItems = schema.items?.minItems || schema.minItems
+  let maxItems = schema.items?.maxItems || schema.maxItems
+
+  if (minItems !== undefined && maxItems !== undefined) {
+    array.push('Array size: ' + minItems + ' to ' + maxItems + ' items')
+  } else if (minItems !== undefined) {
+    let s = 's'
+    if (minItems === 1) {s = ''}
+    array.push('Array size: minimum ' + minItems + ' item' + s)
+  } else if (maxItems !== undefined) {
+    let s = 's'
+    if (minItems === 1) {s = ''}
+    array.push('Array size: maximum ' + maxItems + ' item' + s)
+  }
+
+  return array
+}
+
+function pushValueLength (array, schema) {
   let minLength = schema.items?.minLength || schema.minLength
   let maxLength = schema.items?.maxLength || schema.maxLength
 
@@ -676,7 +708,7 @@ function getValueLength (array, schema) {
   return array
 }
 
-function getValuePattern (array, schema) {
+function pushValuePattern (array, schema) {
   let pattern = schema.items?.pattern || schema.pattern
 
   if (pattern !== undefined) {
@@ -686,30 +718,40 @@ function getValuePattern (array, schema) {
   return array
 }
 
-function getValueMinimumMaximum (array, schema) {
-  let minimum = schema.items?.minimum || schema.minimum
-  let maximum = schema.items?.maximum || schema.maximum
+function pushValueMultipleOf (array, schema) {
+  let multipleOf = schema.items?.multipleOf || schema.multipleOf
 
-  if (minimum !== undefined) {
-    let parenthesis = ' (included)'
-    if (schema.items?.exclusiveMinimum || schema.exclusiveMinimum) {
-      parenthesis = ' (excluded)'
-    }
-    array.push('Minimum: `' + minimum + '`' + parenthesis)
-  }
-
-  if (maximum !== undefined) {
-    let parenthesis = ' (included)'
-    if (schema.items?.exclusiveMaximum || schema.exclusiveMaximum) {
-      parenthesis = ' (excluded)'
-    }
-    array.push('Maximum: `' + maximum + '`' + parenthesis)
+  if (multipleOf !== undefined) {
+    array.push('Multiple of: ' + multipleOf + '')
   }
 
   return array
 }
 
-function getValueEnum (array, schema) {
+function pushValueMinimumMaximum (array, schema) {
+  let minimum = schema.items?.minimum || schema.minimum
+  let maximum = schema.items?.maximum || schema.maximum
+
+  if (minimum !== undefined) {
+    let parenthesis = ''
+    if (schema.items?.exclusiveMinimum || schema.exclusiveMinimum) {
+      parenthesis = ' (exclusive)'
+    }
+    array.push('Minimum value: `' + minimum + '`' + parenthesis)
+  }
+
+  if (maximum !== undefined) {
+    let parenthesis = ''
+    if (schema.items?.exclusiveMaximum || schema.exclusiveMaximum) {
+      parenthesis = ' (exclusive)'
+    }
+    array.push('Maximum value: `' + maximum + '`' + parenthesis)
+  }
+
+  return array
+}
+
+function pushValueEnum (array, schema) {
   let enums = schema.items?.enum || schema.enum
 
   if (enums !== undefined) {
@@ -719,37 +761,101 @@ function getValueEnum (array, schema) {
   return array
 }
 
-function getValueDefault (array, schema) {
+function getValueDefault (schema) {
+  let s = ''
   let v = schema.items?.default || schema.default
 
   if (v !== undefined) {
-    // https://stackoverflow.com/a/57467694
-    v = JSON.stringify(v, null, 1) // stringify, with line-breaks and indents
-    v = v.replace(/^ +/gm, ' ') // remove all but the first space for each line
-    v = v.replace(/\n/g, '') // remove line-breaks
-    v = v.replace(/{ /g, '{').replace(/ }/g, '}') // remove spaces between object-braces and first/last props
-    v = v.replace(/\[ /g, '[').replace(/ \]/g, ']') // remove spaces between array-brackets and first/last items
+    s = 'Default: ' + _formatInlineCode(v)
+  }
 
-    v = v.replace(/^"/, '').replace(/"$/, '') // remove quotes if it's a single string
+  return s
+}
 
-    if (v === 'true' || v === 'false') {
-      array.push('Default: ' + v)
-    } else if (v) {
-      array.push('Default: `' + v + '`')
+function getValueExamples (obj) {
+  let s = ''
+  let v = (
+    obj.items?.examples ||
+    obj.items?.example ||
+    obj.examples ||
+    obj.example ||
+    obj.schema?.items?.examples ||
+    obj.schema?.items?.example ||
+    obj.schema?.examples ||
+    obj.schema?.example
+  )
+
+  if (v !== undefined) {
+    if (Array.isArray(v)) {
+      if (v.length > 1) {
+        for (let i = 0, length = v.length; i < length; i++) {
+          v[i] = _formatInlineCode(v[i])
+        }
+        s = 'Examples: ' + v.join(', ')
+      } else {
+        s = 'Example: ' + _formatInlineCode(v[0])
+      }
     } else {
-      array.push('Default: <code></code>')
+      s = 'Example: ' + _formatInlineCode(v)
     }
+  }
+
+  return s
+}
+
+function _formatInlineCode (v) {
+  // https://stackoverflow.com/a/57467694
+  v = JSON.stringify(v, null, 1) // stringify, with line-breaks and indents
+  v = v.replace(/^ +/gm, ' ') // remove all but the first space for each line
+  v = v.replace(/\n/g, '') // remove line-breaks
+  v = v.replace(/{ /g, '{').replace(/ }/g, '}') // remove spaces between object-braces and first/last props
+  v = v.replace(/\[ /g, '[').replace(/ \]/g, ']') // remove spaces between array-brackets and first/last items
+
+  v = v.replace(/^"/, '').replace(/"$/, '') // remove quotes if it's a single string
+
+  if (v === 'true' || v === 'false') {
+    return v
+  } else if (v) {
+    return '`' + v + '`'
+  } else {
+    return '<code></code>'
+  }
+}
+
+// function pushParameterParameterFields (array, obj) {
+//   if ('style' in obj) {
+//     array.push('Style: `' + obj.style + '`')
+//   }
+//   if ('explode' in obj) {
+//     array.push('Explode: `' + obj.explode + '`')
+//   }
+//   if ('allowReserved' in obj) {
+//     array.push('Allow reserved: `' + obj.allowReserved + '`')
+//   }
+
+//   return array
+// }
+
+function pushValueConst (array, schema) {
+  let constant = schema.items?.const || schema.const
+
+  if (constant !== undefined) {
+    array.push('Value: `' + constant + '`')
   }
 
   return array
 }
 
-function printErrorResponses (responses) {
+function printErrorResponses (responses, translations) {
   let s = ''
   if (responses.length) {
     s += 'Other responses:\n'
     for (const response of responses) {
-      s += '* **' + _capitalize(response.status) + ' response** (' + response.schema + ')'
+      s += '* **' + _capitalize(response.status) + ' response**'
+      if (response.schema !== translations.schemaNone) {
+        response.safeType = response.schema
+        s += ' (' + printType(response) + ' ' + response.type + ')'
+      }
       if (response.description) {
         s += ': ' + response.description
       }
@@ -788,6 +894,18 @@ function printRequired (boolean) {
 
 function printType (p) {
   let s = p.safeType
+
+  if (p.safeType.startsWith('[#/paths/')) {
+    s = p.type
+  } else {
+    if (p.schema && p.schema['x-widdershins-oldRef'] && p.schema.type) {
+      s = p.safeType + ' ' + p.schema.type
+    }
+    if (p.schema?.items && p.schema.items['x-widdershins-oldRef'] && p.schema.items.type) {
+      s = '[' + p.safeType.slice(1, -1) + ' ' + p.schema.items.type + ']'
+    }
+  }
+
   let xTypes = p.schema['x-types'] || []
   const xTypesCount = [...new Set(xTypes)].length
 
@@ -818,6 +936,8 @@ function printType (p) {
   s = s.replace(/\b\(/, ' (')
   s = s.replace(/\)\(/, ') (')
   s = s.replace('¦null', ' or null')
+  s = s.replace('array[', '[')
+  s = s.replace(/( \(.+?\))( (?!or).+?)\b/g, '$2$1')
 
   return s
 }
@@ -888,14 +1008,20 @@ function schemaToArray(schema,offset,options,data) {
     entry.schema = schema
     entry.in = 'body'
     if (state.property && state.property.indexOf('/')) {
-      if (isBlock) entry.name = '*'+data.translations.anonymous+'*'
+      if (isBlock) {
+        if (schema.title) {
+          entry.name = '*'+state.property+' ('+schema.title+')*'
+        } else {
+          entry.name = '*'+state.property+'*'
+        }
+      }
       else entry.name = state.property.split('/')[1]
     }
     else if (!state.top) console.warn(state.property)
-    if (!entry.name && schema.title) {
-      entry.name = '*item*'
-      if (schema.type === 'array') entry.name = '*array*'
-    }
+    // if (!entry.name && schema.title) {
+    //   entry.name = '*item*'
+    //   if (schema.type === 'array') entry.name = '*array*'
+    // }
 
     if (schema.type === 'array' && schema.items && schema.items["x-widdershins-oldRef"] && !entry.name) {
       state.top = false; // force it in
@@ -1095,18 +1221,28 @@ function supportOperationMultipleExamples (data) {
         data['x-customRequestExamples'] = [{ object: data.bodyParameter.exampleValues.object }]
       }
     }
+  } else {
+    data['x-customRequestExamples'] = []
   }
 
   return data
+}
+
+function urlEncode (obj) {
+  return querystring.stringify(obj)
 }
 
 module.exports = {
   preProcess,
   computeApiHost,
   isAGatewayApi,
-  getValueLength,
-  getValuePattern,
-  getValueMinimumMaximum,
-  getValueEnum,
+  pushValueMinItemsMaxItems,
+  pushValueLength,
+  pushValuePattern,
+  pushValueMultipleOf,
+  pushValueMinimumMaximum,
+  pushValueEnum,
   getValueDefault,
+  getValueExamples,
+  pushValueConst,
 }

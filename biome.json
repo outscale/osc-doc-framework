@@ -1,0 +1,46 @@
+{
+  "$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
+  "files": {
+    "include": ["biome.json", "antora-*/**/*.js"]
+  },
+  "formatter": {
+    "enabled": true,
+    "ignore": ["docs/**/*.js"],
+    "useEditorconfig": true
+  },
+  "javascript": {
+    "formatter": {
+      "quoteStyle": "single",
+      "semicolons": "asNeeded",
+      "trailingCommas": "es5"
+    }
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "recommended": true,
+      "complexity": {
+        "noForEach": "off"
+      },
+      "performance": {
+        "noDelete": "off"
+      },
+      "style": {
+        "noArguments": "off",
+        "noParameterAssign": "off",
+        "useNodejsImportProtocol": "off",
+        "useNumberNamespace": "off",
+        "useNumericLiterals": "off",
+        "useSingleVarDeclarator": "off",
+        "useTemplate": "off"
+      },
+      "suspicious": {
+        "noAssignInExpressions": "off",
+        "noRedundantUseStrict": "off"
+      }
+    }
+  },
+  "organizeImports": {
+    "enabled": false
+  }
+}
