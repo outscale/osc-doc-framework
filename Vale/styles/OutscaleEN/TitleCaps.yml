@@ -5,6 +5,7 @@ scope: heading
 match: $title
 style: AP
 exceptions:
+- cloud-init
 - cockpit-global
 - cockpit-1
 - cockpit-2

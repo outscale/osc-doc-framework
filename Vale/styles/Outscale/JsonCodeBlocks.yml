@@ -1,0 +1,6 @@
+extends: existence
+message: "This code block should probably be labelled as '[source,json]', as it starts with a '{' or '[' like a JSON object or array."
+level: error
+scope: raw
+raw:
+- '\[source,(?!json)(.+?)\]\n----\n(\{|\[)\n'
