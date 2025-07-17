@@ -21,45 +21,41 @@ const CLR = "'\u001b[0m"
 async function runInCli () {
   const options = helperFunctions.parseArgs()
 
-  if (!options.apiProject || !options.version || !options.api) {
-    console.log('Please specify --api-project, --version, --api-file.')
+  if (!options.url || !options.version || !options.api) {
+    console.log('Please specify --url, --version, --api.')
     process.exit(1)
   }
-  options.outputDir = '.'
-  options.repoName = ''
-  const url = options.apiProject
-  const package = await figureOutPackage(url, options.version, options.apiProject)
+  const repoName = options.url.split('/').slice(6)[0].replace(/%2F/g, '/')
+  const package = await figureOutPackage(options.url, options.version, repoName)
 
-  await extractFilesFromPackage(options, url, package)
+  await extractFilesFromPackage(options.url, package, '.', options.api, '')
 }
 
-async function runInNode (options) {
+async function runInNode (url, apiVersion, outputDir, source, apiFile, errorsFile) {
   let package
-  const url = options.apiProject
-  const name = url.split('/').slice(6)[0].replace(/%2F/g, '/')
+  const repoName = url.split('/').slice(6)[0].replace(/%2F/g, '/')
 
   const userguideBranch = await git.currentBranch({ fs, dir: '.' })
-  if (userguideBranch === 'master') {
+  if (userguideBranch === 'main' || userguideBranch === 'master') {
     package = await getLatestPackage(url)
-    console.log(`We will download the package ${COLOR}${name}${CLR} (latest version: ${COLOR}${package.version}${CLR}), as required by '${options.repoName}'`)
+    console.log(`We will download the package ${COLOR}${repoName}${CLR} (latest version: ${COLOR}${package.version}${CLR}), as required by '${source}'`)
   }
   else {
-    package = await figureOutPackage(url, options.apiVersion)
-    console.log(`We will download the package ${COLOR}${name}${CLR} (version ${COLOR}${package.version}${CLR}), as required by '${options.repoName}'`)
+    package = await figureOutPackage(url, apiVersion, repoName)
+    console.log(`We will download the package ${COLOR}${repoName}${CLR} (version ${COLOR}${package.version}${CLR}), as required by '${source}'`)
   }
 
-  await extractFilesFromPackage(options, url, package)
+  await extractFilesFromPackage(url, package, `${outputDir}/${source}/${package.name}`, apiFile, errorsFile)
 }
 
-async function extractFilesFromPackage (options, url, package) {
+async function extractFilesFromPackage (url, package, extractPath, apiFile, errorsFile) {
   const latestFilename = await getLatestFilename(url, package.id)
   const file = await getFile(url, package.name, package.version, latestFilename)
-  const filepath = options.outputDir + '/' + package.name + '.tar.gz'
-  await writeFile(file, filepath)
+  fs.mkdirSync(extractPath, { recursive: true })
+  await writeFile(file, extractPath + '/' + package.name + '.tar.gz')
 
-  const filesToExtract = path.parse(options.api || '').base + ' ' + path.parse(options.errors || '').base
-  fs.mkdirSync(options.outputDir + '/' + options.repoName, { recursive: true })
-  execSync('tar -xf ' + filepath + ' -C ' + options.outputDir + '/' + options.repoName + ' ' + filesToExtract)
+  const filesToExtract = path.parse(apiFile || '').base + ' ' + path.parse(errorsFile || '').base
+  execSync('tar -xf ' + extractPath + '/' + package.name + '.tar.gz -C ' + extractPath + ' ' + filesToExtract)
 }
 
 async function getLatestPackage (url) {
@@ -79,7 +75,7 @@ async function getLatestPackage (url) {
   return packages.pop()
 }
 
-async function figureOutPackage (url, specifiedVersion, name) {
+async function figureOutPackage (url, specifiedVersion, repoName) {
   let package = await getPackage(url, specifiedVersion)
 
   if (package === undefined) {
@@ -92,7 +88,7 @@ async function figureOutPackage (url, specifiedVersion, name) {
     package = await getPackage(url, specifiedVersion + '-alpha')
   }
   if (package === undefined) {
-    console.error(`\nError: Can't find version ${specifiedVersion} in ${name}`)
+    console.error(`\nError: Can't find version ${specifiedVersion} in ${repoName}`)
     process.exit(1)
   }
 

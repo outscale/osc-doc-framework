@@ -62,7 +62,7 @@ async function generateApiDocsFiles (options) {
   }
 
   if (descriptionsFile) {
-    api = await fillApiDescriptions(api, descriptionsFile, apiFile, resetDescriptionKeys, separator, noSortKeys, separator, outputYamlPath)
+    api = await fillApiDescriptions(api, descriptionsFile, apiFile, resetDescriptionKeys, noSortKeys, separator, outputYamlPath)
   }
 
   if (examplesFile) {

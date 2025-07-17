@@ -25,7 +25,6 @@ async function main () {
     oapiCliPartials: obj.buildOptions.generateOapiCliPartials,
     outputYamlPath: obj.buildOptions.outputYamlPath,
     outputFileStem: obj.buildOptions.outputPageName,
-    repoName: obj.repoName,
     outputDir: TEMP_DIR,
   }
 
@@ -39,16 +38,12 @@ async function main () {
 
   const api_repository = obj.apiRepository
   if (api_repository) {
-    options.apiUrl = api_repository.url
-    options.apiRef = api_repository.ref
-    await cloneRepository(options)
+    await cloneRepository(api_repository.url, api_repository.ref, options.outputDir, obj.source)
   }
 
   const api_package = obj.apiPackage
   if (api_package) {
-    options.apiProject = api_package.url
-    options.apiVersion = api_package.version
-    await downloadPackage(options)
+    await downloadPackage(api_package.url, api_package.version, options.outputDir, obj.source, options.api, options.errors)
   }
 
   await generateApiDocsFiles(options)

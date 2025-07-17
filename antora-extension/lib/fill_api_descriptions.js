@@ -33,7 +33,7 @@ async function runInCli () {
   }
 }
 
-async function runInNode (api, descriptionsFile, apiFilepath, resetDescriptionKeys, separator, noSortKeys, separator, outputYamlPath) {
+async function runInNode (api, descriptionsFile, apiFilepath, resetDescriptionKeys, noSortKeys, separator, outputYamlPath) {
   const descriptions = await parseCsv(descriptionsFile)
   const apiFilename = path.parse(apiFilepath).base + ' v' + api.info.version
   if (resetDescriptionKeys) {

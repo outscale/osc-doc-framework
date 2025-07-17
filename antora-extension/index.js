@@ -1,8 +1,7 @@
 const checkUpdate = require('./lib/update-checker')
 const fs = require('fs')
+const path = require('path')
 const resolveResource = require('@antora/content-classifier/lib/util/resolve-resource')
-
-const TEMP_DIR = 'build/.tmp'
 
 module.exports.register = function ({ config }) {
   const logger = this.getLogger('@outscale/antora-extension')
@@ -12,13 +11,14 @@ module.exports.register = function ({ config }) {
     if (!process.env.CI && config.updateChecker === true) checkUpdate()
   })
 
-  this.once('contentAggregated', ({ contentAggregate }) => {
-    fs.rmSync(TEMP_DIR, { recursive: true, force: true })
+  this.once('contentAggregated', ({ playbook, contentAggregate }) => {
+    const tempDir = path.dirname(playbook.output.dir) + '/.tmp'
+    fs.rmSync(tempDir, { recursive: true, force: true })
     for (let i = 0, length = contentAggregate.length; i < length; i++) {
       const files = contentAggregate[i].files
       const origins = contentAggregate[i].origins
       for (let j = 0, length = origins.length; j < length; j++) {
-        contentAggregate[i].origins[j] = processApiContentBuildOptions(origins[j], files)
+        contentAggregate[i].origins[j] = processApiContentBuildOptions(origins[j], files, tempDir)
       }
       const componentName = contentAggregate[i].name
       compConfig[componentName] = contentAggregate[i].ext?.antoraExtension || {}
@@ -65,11 +65,12 @@ module.exports.register = function ({ config }) {
   })
 }
 
-function processApiContentBuildOptions (origin, files) {
+function processApiContentBuildOptions (origin, files, tempDir) {
   if (origin.descriptor.ext?.buildOptions) {
-    const repoName = origin.url.split('/').pop().split('.git')[0]
-    origin.descriptor.ext.repoName = repoName
-    origin.descriptor.ext.buildOptions = setFileTempPaths(files, origin.descriptor.ext.buildOptions, repoName)
+    origin.descriptor.ext.source = origin.url.split('/').pop().split('.git')[0]
+    origin.descriptor.ext.buildOptions = setFileTempPaths(
+      files, origin.descriptor.ext.buildOptions, tempDir, origin.descriptor.ext.source
+    )
     const collector = {
       run: {
         command: '$NODE node_modules/@outscale/osc-doc-framework/antora-extension/lib/apidocs.js',
@@ -77,7 +78,7 @@ function processApiContentBuildOptions (origin, files) {
         env: [{ name: 'APIDOC', value: JSON.stringify(origin.descriptor.ext) }]
       },
       scan: {
-        dir: process.cwd() + '/' + TEMP_DIR,
+        dir: process.cwd() + '/' + tempDir,
       },
       clean: true,
     }
@@ -91,15 +92,16 @@ function processApiContentBuildOptions (origin, files) {
   return origin
 }
 
-function setFileTempPaths (files, buildOptions, repoName) {
+function setFileTempPaths (files, buildOptions, tempDir, source) {
+  buildOptions.outputDir = tempDir
   const keys = Object.keys(buildOptions).filter((k) => k.endsWith('File'))
   for (let key of keys) {
     const file = files.filter((n) => n.path === buildOptions[key])[0]
     if (file) {
-      fs.mkdirSync(TEMP_DIR + '/' + repoName, { recursive: true })
-      fs.writeFileSync(TEMP_DIR + '/' + repoName + '/' + buildOptions[key], file.contents.toString())
+      fs.mkdirSync(tempDir + '/' + source, { recursive: true })
+      fs.writeFileSync(tempDir + '/' + source + '/' + buildOptions[key], file.contents.toString())
     }
-    buildOptions[key] = TEMP_DIR + '/' + repoName + '/' + buildOptions[key]
+    buildOptions[key] = tempDir + '/' + source + '/' + buildOptions[key]
   }
 
   return buildOptions
