@@ -6,6 +6,7 @@ ignorecase: true
 swap:
   back-end: backend
   back-ends: backends
+  (?<![-/])cloud(?![-/]): Cloud
   e-mail: email
   e-mails: emails
   front-end: frontend
