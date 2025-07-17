@@ -1,0 +1,10 @@
+extends: existence
+message: Use straight quotes ('"), not curved quotes (‘’“”), as this could mess with search operations.
+level: error
+scope: raw
+nonword: true
+tokens:
+- '‘'
+- '’'
+- '“'
+- '”'
