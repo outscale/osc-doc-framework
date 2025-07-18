@@ -9,8 +9,8 @@ const ERROR_END = '\u001b[0m'
 async function runInCli () {
   const options = helperFunctions.parseArgs()
 
-  if (!options.api || !options.examples || !options.output) {
-    console.log('Please specify --api, --examples, and --output.')
+  if (!options.api || !options.examples) {
+    console.log('Please specify --api, --examples, [--no-sort-keys], [and --output].')
     process.exit(1)
   }
 
@@ -19,15 +19,19 @@ async function runInCli () {
   const examples = helperFunctions.parseYaml(options.examples)
   api = insertExamples(api, examples, apiFilename)
   await runOpenapiExamplesValidator(api)
-  const s = helperFunctions.dumpYaml(api)
-  fs.writeFileSync(options.output, s)
+  if (options.output) {
+    writeFile(api, options.noSortKeys, options.output)
+  }
 }
 
-async function runInNode (api, examplesFile, apiFilepath) {
+async function runInNode (api, examplesFile, apiFilepath, noSortKeys, outputYamlPath) {
   const examples = helperFunctions.parseYaml(examplesFile)
   const apiFilename = path.parse(apiFilepath).base + ' v' + api.info.version
   api = await insertExamples(api, examples, apiFilename)
   await runOpenapiExamplesValidator(api)
+  if (outputYamlPath) {
+    writeFile(api, noSortKeys, outputYamlPath)
+  }
 
   return api
 }
@@ -74,6 +78,13 @@ async function runOpenapiExamplesValidator (api) {
   if (process.env.OPENAPI_EXAMPLES_VALIDATOR === "true" && result.errors.length > 0) {
     process.exit(1)
   }
+}
+
+function writeFile (api, noSortKeys, outputYamlPath) {
+  const s = helperFunctions.dumpYaml(api, noSortKeys)
+  const dir = path.parse(outputYamlPath).dir
+  fs.mkdirSync(dir, { recursive: true })
+  fs.writeFileSync(outputYamlPath, s)
 }
 
 if (path.parse(process.argv[1]).base === path.parse(__filename).base) {

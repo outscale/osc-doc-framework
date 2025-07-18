@@ -66,7 +66,7 @@ async function generateApiDocsFiles (options) {
   }
 
   if (examplesFile) {
-    api = await fillApiExamples(api, examplesFile, apiFile)
+    api = await fillApiExamples(api, examplesFile, apiFile, noSortKeys, outputYamlPath)
   }
 
   let apiMarkdown = await runWiddershins(api, languages, widdershinsTemplates, showSummaryKeys)
