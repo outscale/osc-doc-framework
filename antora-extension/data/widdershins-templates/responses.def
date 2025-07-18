@@ -18,7 +18,6 @@
 <h3 id="{{=data.operationUniqueSlug}}-responses">Response Elements</h3>
 
 {{~ data.responses.slice(0, 1) :response}}
-{{? !data.utils.isPrimitive(response.type)}}
 {{? Object.keys(response.content || {}).length }}
 {{ response.safeType = response.schema; }}
 {{ const responseKey = Object.keys(response.content)[0]; }}
@@ -31,7 +30,7 @@
 {{= data.custom.getResponseExamples(data) }}
 
 {{? blocks[0]?.rows[0]?.name === '*anonymous*' }}
-**{{= response.status}} response**{{? data.custom.printType(response)}} ({{= data.custom.printType(blocks[0].rows[0]) }}){{?}}:
+**{{= response.status}} response**{{? data.custom.printType(response)}} ({{= data.custom.printType(blocks[0].rows[0]) }}){{??}} ({{? response.schema}}{{= data.custom.printType(response)}} {{?}}{{= response.type}}){{?}}{{? blocks[0].rows.length > 1 }}:{{?}}
 {{ blocks[0].rows.shift(); }}
 {{??}}
 **{{= response.status}} response**{{? response.type}} ({{? response.schema}}{{= data.custom.printType(response)}} {{?}}{{= response.type}}){{?}}:
@@ -69,7 +68,6 @@
 {{ data.response = response; }}
 {{#def.links}}
 
-{{?}}
 {{~}}
 
 {{?}}
