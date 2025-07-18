@@ -1222,7 +1222,7 @@ function supportOperationMultipleExamples (data) {
       }
     }
   } else {
-    data['x-customRequestExamples'] = []
+    data['x-customRequestExamples'] = [{ object: {} }]
   }
 
   return data
