@@ -2,13 +2,13 @@ function generateHttpExamples (data, lang) {
     let s = ''
   
     let pathname, host
-    if (data.baseUrl !== '/') {
+    if (data.baseUrl.startsWith('/')) {
+      pathname = data.baseUrl + data.method.path
+      host = '/'
+    } else {
       const url = new URL(data.baseUrl)
       pathname = url.pathname + data.method.path
       host = url.host
-    } else {
-      pathname = data.method.path
-      host = data.baseUrl
     }
   
     const isItOksApi = data.api.info?.title === 'OKS API' || data.host?.includes('oks.outscale.')

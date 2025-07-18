@@ -62,9 +62,9 @@ function computeApiHost (data) {
   let host = ''
   if (data.servers) {
     const serverUrl = data.servers[0]?.url
-    if (serverUrl && serverUrl !== '//') {
+    if (!serverUrl.startsWith('/')) {
       host = new URL(serverUrl).host
-    }  
+    }
   }
 
   return host
