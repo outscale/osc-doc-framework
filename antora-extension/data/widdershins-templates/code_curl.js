@@ -25,7 +25,7 @@ function createGeneralOptions (data) {
       options.push({ name: 'header', value: 'SecretKey: $OSC_SECRET_KEY' })
     }
     if (data.consumes?.length) {
-      options.push({ name: 'header', value: 'Content-Type: ' + data.consumes })
+      options.push({ name: 'header', value: 'Content-Type: ' + data.consumes[0] })
     }
   } else if (data.host.startsWith('api') || data.host.startsWith('okms')) {
     if (data.security?.length && !data.operation['x-basicAuthFlag']) {
@@ -70,21 +70,19 @@ function printExamples (examples, options, data, lang) {
           s += '# You need Curl version 7.75 or later to use the --aws-sigv4 option\n\n'
         }
         if (examples[i].summary) {
-          s += '# ' + examples[i].summary + '\n'
+          s += '# ' + examples[i].summary + '\n\n'
         } else if (i === 0 && data.security.find((n) => n.BasicAuth)) {
           s += '# Example with access key/secret key authentication\n'
+          if (data.api.info?.title === 'OKS API' || data.host?.includes('oks.outscale.')) {
+            s += '# (See the "Authentication Schemes" section for other authentications)\n'
+          }
+          s += '\n'
         }
       } else {
-        s += '# Example with login/password authentication\n'
+        s += '# Example with login/password authentication\n\n'
       }
     } else if (examples[i].summary) {
-      s += '# ' + examples[i].summary + '\n'
-    }
-
-    if (data.custom.isAGatewayApi(data.host)) {
-      s += '\n'
-    } else {
-      s += '# (See the "Authentication Schemes" section for other authentications)\n\n'
+      s += '# ' + examples[i].summary + '\n\n'
     }
 
     let verb = ' -X ' + data.methodUpper
@@ -119,7 +117,7 @@ function printExamples (examples, options, data, lang) {
         let params = printParamsAsUrlEncodes(examples[i].object, null, data)
         params = params.replace(/\.member\.N/g, '.member.0')
         s += params
-      } else {
+      } else if (data.consumes[0].endsWith('json')) {
         let obj = JSON.stringify(examples[i].object, (k, v, data) => overrideSomeValues(k, v, data), 2)
         // Escape shell variables
         obj = obj.replace(/"(\$.+?)"/g, '"\'$1\'"')
@@ -136,6 +134,8 @@ function printExamples (examples, options, data, lang) {
           m.replace(/\n/g, '').replace(/, +/g, ', ').replace(/  +/g, '')
         )
         s += printOption('data', obj)
+      } else {
+        s += printOption('data', '...')
       }
     }
     s = s.replace(/ \\\n$/, '')
