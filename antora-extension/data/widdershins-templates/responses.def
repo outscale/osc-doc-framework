@@ -30,10 +30,10 @@
 {{= data.custom.getResponseExamples(data) }}
 
 {{? blocks[0]?.rows[0]?.name === '*anonymous*' }}
-**{{= response.status}} response**{{? data.custom.printType(response)}} ({{= data.custom.printType(blocks[0].rows[0]) }}){{??}} ({{? response.schema}}{{= data.custom.printType(response)}} {{?}}{{= response.type}}){{?}}{{? blocks[0].rows.length > 1 }}:{{?}}
+**{{= response.status}} response**{{? response.safeType }} ({{= blocks[0].rows[0].safeType }}){{??}} ({{? response.schema}}{{= response.type }} {{?}}{{= response.type}}){{?}}{{? blocks[0].rows.length > 1 }}:{{?}}
 {{ blocks[0].rows.shift(); }}
 {{??}}
-**{{= response.status}} response**{{? response.type}} ({{? response.schema}}{{= data.custom.printType(response)}} {{?}}{{= response.type}}){{?}}:
+**{{= response.status}} response**{{? response.type}} ({{? response.schema}}{{= response.safeType}} {{?}}{{= response.type}}){{?}}:
 {{?}}
 
 {{ const responseHeaders = data.responseHeaders.filter(x => x.status === response.status); }}
@@ -50,7 +50,7 @@
 
 |Response Element|Type|Description|
 |---|---|---|
-{{~block.rows :p}}|{{= data.custom.printParameterName(p.displayName) }}{{= data.custom.getDeprecateState(p) }}|{{= data.custom.printType(p) }}|{{= data.custom.printDescription(p) }}|
+{{~block.rows :p}}|{{= data.custom.printParameterName(p.displayName) }}{{= data.custom.getDeprecateState(p) }}|{{= p.safeType }}|{{= data.custom.printDescription(p) }}|
 {{~}}
 {{?? block.rows === undefined }}
 {{? !data.operation['x-webhook']}}Returns an empty object.{{??}}{{= response.description}}{{?}}

@@ -109,9 +109,9 @@ function runAllofMerge (api) {
 function runWiddershins (api, languages, widdershinsTemplates, showSummaryKeys) {
   console.log = turnOffConsoleLog()
 
-  api = appendWebhooksToApiPaths(api)
+  api = processApi(api)
   api = appendComponentResponsesToComponentSchemas(api)
-  api = concatenateOneOfsAndAnyOfs(api)
+  api = appendWebhooksToApiPaths(api)
 
   const languageTabs = getLanguageTabs(languages)
 
@@ -135,6 +135,18 @@ function runWiddershins (api, languages, widdershinsTemplates, showSummaryKeys) 
   return apiMarkdown
 }
 
+function appendComponentResponsesToComponentSchemas (api) {
+  const responses = Object.entries(api.components?.responses || {})
+  for (const [k, v] of responses) {
+    const firstContentKey = Object.keys(v.content || {})[0]
+    if (firstContentKey && !api.components.schemas[k]) {
+      api.components.schemas[k] = api.components.responses[k].content[firstContentKey].schema
+    }
+  }
+
+  return api
+}
+
 function appendWebhooksToApiPaths (api) {
   const webhooks = Object.entries(api.webhooks || {})
   for (const [k, v] of webhooks) {
@@ -151,108 +163,153 @@ function appendWebhooksToApiPaths (api) {
   return api
 }
 
-function appendComponentResponsesToComponentSchemas (api) {
-  const responses = Object.entries(api.components?.responses || {})
-  for (const [k, v] of responses) {
-    const firstContentKey = Object.keys(v.content || {})[0]
-    if (firstContentKey && !api.components.schemas[k]) {
-      api.components.schemas[k] = api.components.responses[k].content[firstContentKey].schema
-    }
-  }
+function processApi (api) {
+  const tags = []
 
-  return api
-}
-
-function concatenateOneOfsAndAnyOfs (api) {
-  const paths = Object.values(api.paths || {})
-  for (const path of paths) {
-    concatenateOneOfsAndAnyOfs2(path)
-    const operations = Object.values(path)
-    for (const operation of operations) {
-      concatenateOneOfsAndAnyOfs2(operation.requestBody?.content || {})
-    }
-  }
-  concatenateOneOfsAndAnyOfs2(api.components?.schemas || {})
-
-  return api
-}
-
-function concatenateOneOfsAndAnyOfs2 (obj) {
-  const values = Object.values(obj)
-  for (const n of values) {
-    const paramsOrProps = n.parameters || Object.values(n.properties || n.schema?.properties || {})
-    for (const paramOrProp of paramsOrProps) {
-      const p = paramOrProp.schema || paramOrProp
-      let xxxOf = p.anyOf || p.oneOf
-      if (xxxOf) {
-        p['x-types'] = []
-        p['x-formats'] = []
-        p['x-hasProperties'] = []
-        for (const n of xxxOf) {
-          const entries = Object.entries(n)
-          for (const [k, v] of entries) {
-            if (k === 'type') {
-              p['x-types'].push(v)
-              if (!p.type) {p.type = v}
-            } else if (k === 'format') {
-              p['x-formats'].push(v)
-              if (!p.format) {p.format = v}
-            } else {
-              if (p[k]) {}
-              else {p[k] = v}
-            }
+  const pathItemsGroups = [api.paths, api.webhooks, api.components?.pathItems]
+  for (const pathItems of pathItemsGroups) {
+    for (const v of Object.values(pathItems || {})) {
+      processObj(v)
+      for (const verb of VERBS) {
+        processObj(v[verb])
+        if (v[verb]?.tags) {
+          for (const tag of v[verb].tags) {
+            tags.push({ name: tag })
           }
-          if (!n.properties) {
-            p['x-hasProperties'].push(false)
-          } else {
-            p['x-hasProperties'].push(true)
-            delete n.type
-          }
-        }
-        if (p['x-hasProperties'].filter((x) => x === false).length) {
-          delete p.anyOf
-          delete p.oneOf
-        } else {
-          delete p.properties
-          delete p.required
-        }
-      }
-      xxxOf = p.items?.anyOf || p.items?.oneOf
-      if (xxxOf) {
-        p.items['x-types'] = []
-        p.items['x-formats'] = []
-        p.items['x-hasProperties'] = []
-        for (const n of xxxOf) {
-          const entries = Object.entries(n)
-          for (const [k, v] of entries) {
-            if (k === 'type') {
-              p.items['x-types'].push(v)
-              if (!p.items.type) {p.items.type = v}
-            } else if (k === 'format') {
-              p.items['x-formats'].push(v)
-              if (!p.items.format) {p.items.format = v}
-            } else {
-              if (p.items[k]) {}
-              else {p.items[k] = v}
-            }
-          }
-          if (!n.items?.properties) {
-            p.items['x-hasProperties'].push(false)
-          } else {
-            p.items['x-hasProperties'].push(true)
-            delete n.items.type
-          }
-        }
-        if (p.items['x-hasProperties'].filter((x) => x === false).length) {
-          delete p.items.anyOf
-          delete p.items.oneOf
-        } else {
-          delete p.items.properties
-          delete p.items.required
         }
       }
     }
   }
+
+  const fields = ['schemas', 'responses', 'parameters', 'examples', 'requestBodies', 'headers', 'securitySchemes', 'links', 'callbacks']
+  const components = api.components || {}
+  for (const field of fields) {
+    const obj = Object.values(components[field] || {})
+    for (const v of obj) {
+      processObj(v)
+    }
+  }
+
+  api.tags = processTags(api.tags || [], tags)
+
+  return api
+}
+
+function processObj (obj) {
+  if (obj) {
+    if (obj.examples?.length > 1) {
+      obj.example = obj.examples[0]
+      obj['x-examples'] = obj.examples
+      delete obj.examples
+    }
+
+    const mediaTypes = Object.values(obj.content || {})
+    for (const mediaType of mediaTypes) {
+      processObj(mediaType)
+    }
+    processObj(obj.schema)
+
+    const xxxOfs = ['allOf', 'anyOf', 'oneOf']
+    for (const xxxOf of xxxOfs) {
+      if (obj[xxxOf]) {
+        for (const n of obj[xxxOf]) {
+          processObj(n)
+        }
+        obj = concatenateXxxOfs(obj, xxxOf)
+      }
+    }
+
+    const parameters = obj.parameters || []
+    for (const parameter of parameters) {
+      processObj(parameter)
+    }
+
+    const properties = Object.values(obj.properties || {})
+    for (const property of properties) {
+      processObj(property)
+      processObj(property.items)
+    }
+    const responses = Object.values(obj.responses || {})
+    for (const response of responses) {
+      processObj(response)
+    }
+    const headers = Object.values(obj.headers || {})
+    for (const header of headers) {
+      processObj(header)
+    }
+  }
+}
+
+function concatenateXxxOfs (obj, xxxOf) {
+  // Concatenate anyOfs and oneOfs that have one entry with type:null
+  const arrWithTypeNull = obj[xxxOf].filter((x) => x.type === 'null')
+  let arrOthers = obj[xxxOf].filter((x) => x.type !== 'null')
+  if (arrWithTypeNull.length) {
+    for (let n of arrOthers) {
+      const subXxxOf = n.anyOf || n.oneOf
+      if (subXxxOf) {
+        for (const subN of subXxxOf) {
+          subN['x-nullable'] = true
+        }
+        arrOthers = subXxxOf
+      } else {
+        n['x-nullable'] = true
+      }
+    }
+    obj[xxxOf] = arrOthers
+  }
+
+  // Concatenate anyOfs and oneOfs that have the same type but different formats
+  if (obj[xxxOf].length > 1) {
+    const testType = obj[xxxOf][0].type
+    let arrWithSameTypes = obj[xxxOf].filter((x) => x.type === testType && x.format)
+    if (arrWithSameTypes.length === obj[xxxOf].length) {
+      const formats = []
+      for (const n of obj[xxxOf]) {
+        formats.push(n.format)
+        for (const [k, v] of Object.entries(n)) {
+          obj[k] = v
+        }
+      }
+      obj.format = formats.join(' or ')
+      delete obj[xxxOf]
+    }
+  } else if (obj[xxxOf].length === 1) {
+  // Replace anyOfs and oneOfs that have only one entry with their entry
+    for (const n of obj[xxxOf]) {
+      for (const [k, v] of Object.entries(n)) {
+        obj[k] = v
+      }
+    }
+    delete obj[xxxOf]
+  }
+
+  return obj
+}
+
+function processTags (apiTags, tags) {
+  for (const tag of tags) {
+    const tagIsNotAlreadyInTheArray = apiTags.filter((x) => x.name === tag.name).length === 0
+    if (tagIsNotAlreadyInTheArray) {
+      apiTags.push(tag)
+    }
+  }
+  apiTags.sort(sortTags)
+
+  return apiTags
+}
+
+function sortTags (a, b) {
+  const nameA = a.name
+  const nameB = b.name
+  if (nameA < nameB) {
+    return -1
+  }
+  if (nameA > nameB) {
+    return 1
+  }
+
+  return 0
 }
 
 function getLanguageTabs (languages) {

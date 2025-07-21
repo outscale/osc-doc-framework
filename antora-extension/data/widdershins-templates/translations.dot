@@ -1,5 +1,5 @@
 {{
-data.translations.defaultTag = 'Untagged Operations';
+data.translations.defaultTag = '(Untagged Operations)';
 data.translations.response = 'Response';
 data.translations.responseDefault = 'Default';
 data.translations.responseUnknown = 'Unknown';

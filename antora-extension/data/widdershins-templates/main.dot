@@ -54,7 +54,6 @@
 # Schemas
 
 {{ for (const s in data.components.schemas) { }}
-{{ let origSchema = data.components.schemas[s]; }}
 {{ const schema = data.api.components.schemas[s]; }}
 
 {{= data.tags.section }}
@@ -62,7 +61,7 @@
 <a class="offset-up" id="schema{{=s.toLowerCase()}}"></a>
 <a class="offset-up" id="tocs{{=s.toLowerCase()}}"></a>
 
-{{ let blocks = data.custom.schemaToArray(origSchema,-1,{trim:true,join:true},data); }}
+{{ let blocks = data.custom.schemaToArray(data.api.components.schemas[s],-1,{trim:true,join:true},data); }}
 {{ blocks = data.custom.mergeXxxOfRowsIntoSingleBlock(blocks); }}
 
 {{~ blocks :block}}
@@ -77,7 +76,7 @@
 
 |Type|Description|
 |---|---|
-{{~ block.rows :p}}|{{= data.custom.printType(p) }}|{{= data.custom.printDescription(p, data) }}|
+{{~ block.rows :p}}|{{= p.safeType }}|{{= data.custom.printDescription(p, data) }}|
 {{~}}
 
 {{?? block.rows.length }}
@@ -86,17 +85,18 @@
 {{= block.description}}{{= '\n\n'}}
 {{?}}
 
+{{ let showNested = false; }}
 |Property|Type|Description|
 |---|---|---|
-{{~ block.rows :p}}|{{= data.custom.printParameterName(p.displayName) }}{{= data.custom.getDeprecateState(p) }}|{{= data.custom.printType(p) }}|{{= data.custom.printDescription(p) }}|
-{{~}}
+{{~ block.rows :p}}{{? p.depth === 0 || showNested === false }}{{ if (p.schema['x-widdershins-oldRef'] || p.schema.items?.['x-widdershins-oldRef']) {showNested = true;} else {showNested = false;} }}|{{= data.custom.printParameterName(p.displayName) }}{{= data.custom.getDeprecateState(p) }}|{{= p.safeType }}|{{= data.custom.printDescription(p) }}|
+{{?}}{{~}}
 
 > Schema
 {{? data.options.yaml }}
 ```yaml
-{{=data.utils.yaml.stringify(data.utils.getSample(schema,data.options,{quiet:true},data.api))}}{{??}}
+{{=data.utils.yaml.stringify(data.custom.getSample(schema,data.options,{quiet:true},data.api))}}{{??}}
 ```json
-{{=data.utils.safejson(data.utils.getSample(schema,data.options,{quiet:true},data.api),null,2)}}{{?}}
+{{=data.utils.safejson(data.custom.getSample(schema,data.options,{quiet:true},data.api),null,2)}}{{?}}
 ```
 {{~}}
 

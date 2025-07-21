@@ -3,7 +3,11 @@ function generateHttpExamples (data, lang) {
   
     let pathname, host
     if (data.baseUrl.startsWith('/')) {
-      pathname = data.baseUrl + data.method.path
+      if (data.baseUrl === '/') {
+        pathname = data.method.path
+      } else {
+        pathname = data.baseUrl + data.method.path
+      }
       host = '/'
     } else {
       const url = new URL(data.baseUrl)

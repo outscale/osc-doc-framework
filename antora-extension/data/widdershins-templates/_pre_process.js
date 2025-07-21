@@ -20,7 +20,6 @@ const DEFAULT_BASE_URL = '/'
 function preProcess (data) {
   if (data.baseUrl === '//') {data.baseUrl = DEFAULT_BASE_URL}
   data.host = computeApiHost(data)
-  data.resources = _sortTags(data)
   data.version = _getVersion(data)
 
   data.custom = {
@@ -42,6 +41,7 @@ function preProcess (data) {
     getOperationDescription,
     getResponses,
     getResponseExamples,
+    getSample,
     isAGatewayApi,
     mergeXxxOfRowsIntoSingleBlock,
     printDescription,
@@ -49,8 +49,8 @@ function preProcess (data) {
     printOperationName,
     printParameterName,
     printRequired,
-    printType,
     schemaToArray,
+    setSafeType,
     supportOperationMultipleExamples,
     urlEncode,
   }
@@ -79,27 +79,6 @@ function _getVersion (data) {
   }
 
   return version
-}
-
-function _sortTags (data) {
-  const obj = {}
-  const keys = Object.keys(data.resources)
-  keys.sort((a, b) => {
-    if (a === data.translations.defaultTag || b === data.translations.defaultTag) {
-      return -1
-    } else if (a <= b) {
-      return -1
-    } else if (a > b) {
-      return 1
-    }
-  })
-  for (let i = 0; i < keys.length; i++) {
-    const k = keys[i]
-    const v = data.resources[k]
-    obj[k] = v
-  }
-
-  return obj
 }
 
 function createTabs (language_tabs) {
@@ -434,7 +413,7 @@ function getResponseExamples (data) {
               else if (obj["x-widdershins-oldRef"]) {
                   xmlWrap = obj["x-widdershins-oldRef"].split('/').pop()
               }
-              examples.push({ value: _getSample(obj, data.options, { skipWriteOnly: true, quiet: true }, data.api, data), cta: cta, xmlWrap: xmlWrap })
+              examples.push({ value: getSample(obj, data.options, { skipWriteOnly: true, quiet: true }, data.api, data), cta: cta, xmlWrap: xmlWrap })
           }
         }
       }
@@ -519,7 +498,7 @@ function _doContentType (ctTypes, ctClass) {
 }
 
 // Modified from Widdershins
-function _getSample(orig, options, samplerOptions, api,data){
+function getSample(orig, options, samplerOptions, api,data){
   if (orig && orig.example) return orig.example
   if (orig && orig.examples) return orig.examples[0]
   let result = _getSampleInner(orig,options,samplerOptions,api,data)
@@ -731,21 +710,27 @@ function pushValueMultipleOf (array, schema) {
 function pushValueMinimumMaximum (array, schema) {
   let minimum = schema.items?.minimum || schema.minimum
   let maximum = schema.items?.maximum || schema.maximum
+  let exclusiveMinimum = schema.items?.exclusiveMinimum || schema.exclusiveMinimum
+  let exclusiveMaximum = schema.items?.exclusiveMaximum || schema.exclusiveMaximum
 
-  if (minimum !== undefined) {
-    let parenthesis = ''
-    if (schema.items?.exclusiveMinimum || schema.exclusiveMinimum) {
-      parenthesis = ' (exclusive)'
+  if (typeof exclusiveMinimum === 'number') {
+    array.push('Minimum value: `' + exclusiveMinimum + '` (exclusive)')
+  } else if (minimum) {
+    if (exclusiveMinimum === true) {
+      array.push('Minimum value: `' + minimum + '` (exclusive)')
+    } else {
+      array.push('Minimum value: `' + minimum + '`')
     }
-    array.push('Minimum value: `' + minimum + '`' + parenthesis)
   }
 
-  if (maximum !== undefined) {
-    let parenthesis = ''
-    if (schema.items?.exclusiveMaximum || schema.exclusiveMaximum) {
-      parenthesis = ' (exclusive)'
+  if (typeof exclusiveMaximum === 'number') {
+    array.push('Maximum value: `' + exclusiveMaximum + '` (exclusive)')
+  } else if (maximum) {
+    if (exclusiveMaximum === true) {
+      array.push('Maximum value: `' + maximum + '` (exclusive)')
+    } else {
+      array.push('Maximum value: `' + maximum + '`')
     }
-    array.push('Maximum value: `' + maximum + '`' + parenthesis)
   }
 
   return array
@@ -775,12 +760,16 @@ function getValueDefault (schema) {
 function getValueExamples (obj) {
   let s = ''
   let v = (
+    obj.items?.['x-examples'] ||
     obj.items?.examples ||
     obj.items?.example ||
+    obj['x-examples'] ||
     obj.examples ||
     obj.example ||
+    obj.schema?.items?.['x-examples'] ||
     obj.schema?.items?.examples ||
     obj.schema?.items?.example ||
+    obj.schema?.['x-examples'] ||
     obj.schema?.examples ||
     obj.schema?.example
   )
@@ -854,7 +843,7 @@ function printErrorResponses (responses, translations) {
       s += '* **' + _capitalize(response.status) + ' response**'
       if (response.schema !== translations.schemaNone) {
         response.safeType = response.schema
-        s += ' (' + printType(response) + ' ' + response.type + ')'
+        s += ' (' + response.safeType + ' ' + response.type + ')'
       }
       if (response.description) {
         s += ': ' + response.description
@@ -890,56 +879,6 @@ function printRequired (boolean) {
   } else {
     return ''
   }
-}
-
-function printType (p) {
-  let s = p.safeType
-
-  if (p.safeType.startsWith('[#/paths/')) {
-    s = p.type
-  } else {
-    if (p.schema && p.schema['x-widdershins-oldRef'] && p.schema.type) {
-      s = p.safeType + ' ' + p.schema.type
-    }
-    if (p.schema?.items && p.schema.items['x-widdershins-oldRef'] && p.schema.items.type) {
-      s = '[' + p.safeType.slice(1, -1) + ' ' + p.schema.items.type + ']'
-    }
-  }
-
-  let xTypes = p.schema['x-types'] || []
-  const xTypesCount = [...new Set(xTypes)].length
-
-  if (p.schema['items'] && p.schema.items['x-types']) {
-    xTypes = [...new Set(p.schema.items['x-types'])]
-    s = xTypes.join(' or ')
-    if (!s.endsWith('null') && p.schema.items['x-formats'].length) {
-      xFormats = [...new Set(p.schema.items['x-formats'])]
-      s += ' (' + xFormats.join(' or ') + ')'
-    }
-    s = '[' + s + ']'
-  }
-
-  if (p.schema['x-types']) {
-    xTypes = [...new Set(p.schema['x-types'])]
-    s = xTypes.join(' or ')
-    if (!s.endsWith('null') && p.schema['x-formats'].length) {
-      xFormats = [...new Set(p.schema['x-formats'])]
-      s += ' (' + xFormats.join(' or ') + ')'
-    }
-  }
-
-  if (xTypesCount > 1) {
-    s = s.replace(p.type, p.safeType)
-    s = s.replace('object', p.safeType)
-    s = s.replace('array', p.safeType)
-  }
-  s = s.replace(/\b\(/, ' (')
-  s = s.replace(/\)\(/, ') (')
-  s = s.replace('¦null', ' or null')
-  s = s.replace('array[', '[')
-  s = s.replace(/( \(.+?\))( (?!or).+?)\b/g, '$2$1')
-
-  return s
 }
 
 // Modified from Widdershins
@@ -1077,12 +1016,26 @@ function schemaToArray(schema,offset,options,data) {
     entry.depth = Math.max(oDepth+offset,0)
     entry.description = schema.description
     entry.type = schema.type
-    entry.format = schema.format
-    entry.safeType = entry.type
 
     if (schema["x-widdershins-oldRef"]) {
       entry.$ref = schema["x-widdershins-oldRef"].replace('#/components/schemas/','')
-      entry.safeType = '['+entry.$ref+'](#schema'+entry.$ref.toLowerCase()+')'
+
+      // Reinsert 'nullable' field added to original schema by generate_api_docs_files.js
+      if (state.property) {
+        const propName = state.property.split('/')[1]
+        const oldParent = jptr(data, parent["x-widdershins-oldRef"])
+        if (oldParent.properties) {
+          const oldSchema = (
+            oldParent.properties[propName].allOf ||
+            oldParent.properties[propName].anyOf ||
+            oldParent.properties[propName].oneOf
+          )
+          if (oldSchema?.[0]['x-nullable'] === true || oldSchema?.[0].nullable === true) {
+            schema['x-nullable'] = true
+          }
+        }
+      }
+
       if (data.options.shallowSchemas) skipDepth = entry.depth
       if (!entry.description) {
         let target = jptr(data.api,schema["x-widdershins-oldRef"])
@@ -1092,7 +1045,6 @@ function schemaToArray(schema,offset,options,data) {
     if (schema.$ref) { // repeat for un-dereferenced schemas
       entry.$ref = schema.$ref.replace('#/components/schemas/','')
       entry.type = '$ref'
-      entry.safeType = '['+entry.$ref+'](#schema'+entry.$ref.toLowerCase()+')'
       if (data.options.shallowSchemas) skipDepth = entry.depth
       if (!entry.description) {
         let target = jptr(data.api,schema.$ref)
@@ -1100,30 +1052,19 @@ function schemaToArray(schema,offset,options,data) {
       }
     }
 
-    if (entry.format) entry.safeType = entry.safeType+'('+entry.format+')'
-    if ((entry.type === 'array') && schema.items) {
-      let itemsType = schema.items.type||'any'
+    if ((entry.type === 'array' || entry.type?.includes('array')) && schema.items) {
       if (schema.items["x-widdershins-oldRef"]) {
-        let $ref = schema.items["x-widdershins-oldRef"].replace('#/components/schemas/','')
-        itemsType = '['+$ref+'](#schema'+$ref.toLowerCase()+')'
         if (!entry.description) {
           let target = jptr(data.api,schema.items["x-widdershins-oldRef"])
           if (target.description) entry.description = '['+target.description+']'
         }
       }
       if (schema.items.$ref) { // repeat for un-dereferenced schemas
-        let $ref = schema.items.$ref.replace('#/components/schemas/','')
-        itemsType = '['+$ref+'](#schema'+$ref.toLowerCase()+')'
         if (!entry.description) {
           let target = jptr(data.api,schema.items.$ref)
           if (target.description) entry.description = '['+target.description+']'
         }
       }
-      if (schema.items.anyOf) itemsType = 'anyOf'
-      if (schema.items.allOf) itemsType = 'allOf'
-      if (schema.items.oneOf) itemsType = 'oneOf'
-      if (schema.items.not) itemsType = 'not'
-      entry.safeType = '['+itemsType+']'
     }
 
     if (options.trim && typeof entry.description === 'string') {
@@ -1139,20 +1080,11 @@ function schemaToArray(schema,offset,options,data) {
       entry.description = ''
     }
 
-    if (schema.nullable === true) {
-      entry.safeType += '¦null'
-    }
-
     if (schema.readOnly) entry.restrictions = data.translations.readOnly
     if (schema.writeOnly) entry.restrictions = data.translations.writeOnly
 
     entry.required = (parent.required && Array.isArray(parent.required) && parent.required.indexOf(entry.name)>=0)
     if (typeof entry.required === 'undefined') entry.required = false
-
-    if (typeof entry.type === 'undefined') {
-      entry.type = _inferType(schema)
-      entry.safeType = entry.type
-    }
 
     if (typeof entry.name === 'string' && entry.name.startsWith('x-widdershins-')) {
       entry.name = ''; // reset
@@ -1161,11 +1093,81 @@ function schemaToArray(schema,offset,options,data) {
     if (entry.depth < skipDepth) skipDepth = -1
     entry.displayName = (data.translations.indent.repeat(entry.depth)+' '+entry.name).trim()
 
+    setSafeType(schema, entry)
+
     if ((!state.top || entry.type !== 'object') && (entry.name)) {
       block.rows.push(entry)
     }
   })
   return container
+}
+
+function setSafeType (schema, entry) {
+  let safeTypes = []
+
+  if (typeof entry.type === 'undefined') {
+    entry.type = _inferType(schema)
+    safeTypes = [ entry.type ]
+  }
+
+  if (Array.isArray(entry.type)) {
+    safeTypes.push(...entry.type)
+  } else if (entry.type) {
+    safeTypes.push(entry.type)
+  }
+
+  if (schema["x-widdershins-oldRef"]) {
+    if (schema["x-widdershins-oldRef"].startsWith('#/path')) {
+      safeTypes = [ schema.type ] 
+    } else {
+      entry.$ref = schema["x-widdershins-oldRef"].replace('#/components/schemas/','')
+      safeTypes = [ '['+entry.$ref+'](#schema'+entry.$ref.toLowerCase()+') ' + schema.type ] 
+    }
+  }
+  if (schema.$ref) { // repeat for un-dereferenced schemas
+    entry.$ref = schema.$ref.replace('#/components/schemas/','')
+    safeTypes = [ '['+entry.$ref+'](#schema'+entry.$ref.toLowerCase()+') ' + schema.type ]
+  }
+
+  if ((entry.type === 'array' || entry.type?.includes('array')) && schema.items) {
+    let itemsType = schema.items.type||'any'
+    if (schema.items["x-widdershins-oldRef"]) {
+      let $ref = schema.items["x-widdershins-oldRef"].replace('#/components/schemas/','')
+      itemsType = '['+$ref+'](#schema'+$ref.toLowerCase()+')'
+    }
+    if (schema.items.$ref) { // repeat for un-dereferenced schemas
+      let $ref = schema.items.$ref.replace('#/components/schemas/','')
+      itemsType = '['+$ref+'](#schema'+$ref.toLowerCase()+')'
+    }
+    if (schema.items.anyOf) itemsType = 'anyOf'
+    if (schema.items.allOf) itemsType = 'allOf'
+    if (schema.items.oneOf) itemsType = 'oneOf'
+    if (schema.items.not) itemsType = 'not'
+    let itemsFormat = ''
+    if (schema.items?.format) {
+      itemsFormat = ' ('+schema.items.format+')'
+    }
+    if (itemsType !== schema.items.type) {
+      safeTypes = [ '['+itemsType+' '+schema.items.type+itemsFormat+']' ]
+    } else {
+      safeTypes = [ '['+itemsType+itemsFormat+']' ]
+    }
+  }
+
+  if (schema.format) {
+    entry.format = schema.format
+    for (let i = 0, length = safeTypes.length; i < length; i++) {
+      if (safeTypes[i] !== 'null') {
+        safeTypes[i] += ' ('+entry.format+')'
+      }
+    }
+  }
+
+  if (schema['x-nullable'] === true || schema.nullable === true) {
+    safeTypes.push('null')
+  }
+
+  entry.safeType = safeTypes.join(', or ')
 }
 
 // Modified from Widdershins
@@ -1199,7 +1201,7 @@ function _inferType(schema) {
   }
 
   if (possibleTypes.length === 1) return possibleTypes[0]
-  return 'any'
+  return ' '
 }
 
 function supportOperationMultipleExamples (data) {
