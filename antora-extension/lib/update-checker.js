@@ -27,7 +27,9 @@ async function checkUpdate () {
       + '(If you absolutely want to generate without updating, disable the "update_checker" key in the playbook.)\n'
       + '\u001b[0m'
     )
-    process.exit(1)
+    return true
+  } else {
+    return false
   }
 }
 

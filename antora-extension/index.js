@@ -7,8 +7,10 @@ module.exports.register = function ({ config }) {
   const logger = this.getLogger('@outscale/antora-extension')
   const compConfig = {}
 
-  this.once('contextStarted', () => {
-    if (!process.env.CI && config.updateChecker === true) checkUpdate()
+  this.once('contextStarted', async () => {
+    if (!process.env.CI && config.updateChecker === true) {
+      if (await checkUpdate()) process.exit(1)
+    }
   })
 
   this.once('contentAggregated', ({ playbook, contentAggregate }) => {
