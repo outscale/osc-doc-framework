@@ -663,7 +663,7 @@ function printDescription (p, host) {
   }
 
   if (s) {
-    s = s.replace(/\n/g, '')
+    s = s.replace(/\n|<br>/g, '')
     s = s.replace(/\|/g, '\\|')
   }
 
