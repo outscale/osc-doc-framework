@@ -802,6 +802,9 @@ function _formatInlineCode (v) {
 
   v = v.replace(/^"/, '').replace(/"$/, '') // remove quotes if it's a single string
 
+  // Remove incorrect backticks that were added by Widdershins due to 'examples'/'example' bad parsing
+  v = v.replace(/^`+|`+$/g, '')
+
   if (v === 'true' || v === 'false') {
     return v
   } else if (v) {
@@ -1092,6 +1095,20 @@ function schemaToArray(schema,offset,options,data) {
     if ((skipDepth >= 0) && (entry.depth >= skipDepth)) entry.name = ''; // reset
     if (entry.depth < skipDepth) skipDepth = -1
     entry.displayName = (data.translations.indent.repeat(entry.depth)+' '+entry.name).trim()
+
+    // Reinsert allowed sibling keys of '$ref' that were removed by Widdershins
+    if (state.property) {
+      const arr = state.property.split('/')
+      let source = jptr(data, parent['x-widdershins-oldRef'])
+      for (let i = 0, length = arr.length; i < length; i++) {
+        if (source) source = source[arr[i]]
+      }
+      if (source) {
+        if (source.description) entry.description = source.description
+        if (source.summary) entry.summary = source.summary
+        if (source['x-nullable']) schema['x-nullable'] = source['x-nullable']
+      }
+    }
 
     setSafeType(schema, entry)
 

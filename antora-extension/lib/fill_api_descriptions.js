@@ -88,7 +88,7 @@ function setDescriptionFields (api) {
   if (api.info) {
     // delete api.info.summary
     delete api.info.description
-    api.info = placeDescriptionFieldInObj(SEP + 'info', api.info)
+    api.info = placeDescriptionFieldInObj(SEP + 'info', api.info, api)
   }
 
   if (api.servers) {
@@ -98,7 +98,7 @@ function setDescriptionFields (api) {
   const pathItemsGroups = [api.paths, api.webhooks, api.components?.pathItems]
   for (const pathItems of pathItemsGroups) {
     if (pathItems) {
-      processPathItems(pathItems, isItAGatewayApi)
+      processPathItems(pathItems, isItAGatewayApi, api)
     }
   }
 
@@ -109,16 +109,16 @@ function setDescriptionFields (api) {
     for (const [k, v] of obj) {
       if (field === 'responses') {
         v.description = k
-        processObj(k, v, false)
+        processObj(k, v, false, false, api)
       } else {
-        processObj(k, v, isItAGatewayApi)
+        processObj(k, v, isItAGatewayApi, true, api)
       }
     }
   }
 
   const tags = api.tags || []
   for (const n of tags) {
-    processObj(SEP + 'tags' + SEP + n.name, n, isItAGatewayApi)
+    processObj(SEP + 'tags' + SEP + n.name, n, isItAGatewayApi, false, api)
   }
 
   if (api.externalDocs) {
@@ -138,32 +138,40 @@ function processServers (servers) {
   }
 }
 
-function processPathItems (pathItems, isItAGatewayApi) {
+function processPathItems (pathItems, isItAGatewayApi, api) {
   for (const [k, v] of Object.entries(pathItems)) {
-    processObj('', v, isItAGatewayApi)
+    processObj('', v, isItAGatewayApi, false, api)
     for (const verb of VERBS) {
       if (v[verb]) {
         const operation = v[verb].operationId || k.slice(1)
-        processObj(SEP + operation, v[verb], isItAGatewayApi)
+        processObj(SEP + operation, v[verb], isItAGatewayApi, false, api)
       }
     }
   }
 }
 
-function processObj (k, obj, isItAGatewayApi) {
+function processObj (k, obj, isItAGatewayApi, isReusableSchema, api) {
   if (obj.$ref) {
     // delete obj.summary
-    delete obj.description
+    if (!k.includes(SEP + 'responses' + SEP) && !k.endsWith(SEP + 'items')) {
+      obj = placeDescriptionFieldInObj(k, obj, api)
+      tweakObjDescriptionForGateway(k, obj)
+    }
+    if (isReusableSchema) {
+      delete obj.description
+    }
   } else {
     if (k && !k.endsWith(SEP + 'items')) {
       // delete obj.summary
       delete obj.description
       delete obj.items?.description
-      obj = placeDescriptionFieldInObj(k, obj)
-      if (isItAGatewayApi) {
-        tweakObjDescriptionForGateway(k, obj)
+      if ( !isReusableSchema || !obj.property?.length ) {
+        obj = placeDescriptionFieldInObj(k, obj, api)
+        if (isItAGatewayApi) {
+          tweakObjDescriptionForGateway(k, obj)
+        }
       }
-    } else if (!k) {
+  } else if (!k) {
       // delete obj.summary
       delete obj.description
     }
@@ -181,19 +189,19 @@ function processObj (k, obj, isItAGatewayApi) {
     for (const mediaType of mediaTypes) {
       if (mediaType.schema) {
         delete mediaType.schema.description
-        processObj(k, mediaType.schema, isItAGatewayApi)
+        processObj(k, mediaType.schema, isItAGatewayApi, false, api)
       }
     }
     if (obj.schema) {
       delete obj.description
-      processObj(k, obj.schema, isItAGatewayApi)
+      processObj(k, obj.schema, isItAGatewayApi, false, api)
     }
 
     const xOfs = ['allOf', 'anyOf', 'oneOf']
     for (const xOf of xOfs) {
       for (const [i, n] of Object.entries(obj[xOf] || [])) {
         if (n.description || n.externalDocs || n.requestBody || n.parameters || n.properties || n.responses || n.headers || n.servers) {
-          processObj(k + SEP + i, n || {}, isItAGatewayApi)
+          processObj(k + SEP + i, n || {}, isItAGatewayApi, false, api)
         }
         if (n.additionalProperties) {
           delete n.additionalProperties.description
@@ -208,21 +216,21 @@ function processObj (k, obj, isItAGatewayApi) {
     }
     for (const parameter of parameters) {
       parameter.description = prefix + SEP + parameter.name
-      // processObj(prefix + SEP + parameter.name, parameter.schema || {}, isItAGatewayApi)
+      // processObj(prefix + SEP + parameter.name, parameter.schema || {}, isItAGatewayApi, false, api)
     }
 
     const properties = Object.entries(obj.properties || {})
     for (const [k2, property] of properties) {
-      processObj(k + SEP + k2, property || {}, isItAGatewayApi)
-      processObj(k + SEP + k2 + SEP + 'items', property.items || {}, isItAGatewayApi)
+      processObj(k + SEP + k2, property || {}, isItAGatewayApi, false, api)
+      processObj(k + SEP + k2 + SEP + 'items', property.items || {}, isItAGatewayApi, false, api)
     }
     const responses = Object.entries(obj.responses || {})
     for (const [k2, response] of responses) {
-      processObj(obj.operationId + SEP + 'responses' + SEP + k2, response || {}, isItAGatewayApi)
+      processObj(obj.operationId + SEP + 'responses' + SEP + k2, response || {}, isItAGatewayApi, false, api)
     }
     const headers = Object.entries(obj.headers || {})
     for (const [k2, header] of headers) {
-      processObj(k + SEP + 'headers' + SEP + k2, header || {}, isItAGatewayApi)
+      processObj(k + SEP + 'headers' + SEP + k2, header || {}, isItAGatewayApi, false, api)
     }
 
     processServers(obj.servers || [])
@@ -255,7 +263,21 @@ function tweakPrefixForGateway (k, prefix) {
   return prefix
 }
 
-function placeDescriptionFieldInObj (descriptionPlaceholder, obj) {
+function placeDescriptionFieldInObj (descriptionPlaceholder, obj, api) {
+  let refObj = obj.$ref
+  if (refObj) {
+    descriptionPlaceholder = swapPlaceholderNameWithRefName(descriptionPlaceholder, refObj, api)
+  } else {
+    refObj = obj.oneOf
+    if (refObj) {
+      const test1 = refObj.filter((x) => x.type === 'null')
+      const test2 = refObj.filter((x) => x.$ref)
+      if (refObj.length === 2 && test1.length && test2.length) {
+        descriptionPlaceholder = swapPlaceholderNameWithRefName(descriptionPlaceholder, test2[0].$ref, api)
+      }
+    }
+  }
+
   const entries = Object.entries(obj)
   const keys = Object.keys(obj)
   if (keys[0] === 'content' || (!keys.includes('title') && keys[0] !== 'tags')) {
@@ -268,7 +290,7 @@ function placeDescriptionFieldInObj (descriptionPlaceholder, obj) {
       obj.description = descriptionPlaceholder
     }
   }
-  if (obj.type === "apiKey" || obj.type === "http" || obj.type === "mutualTLS" || obj.type === "oauth2" || obj.type === "openIdConnect") {
+  if (obj.$ref || obj.type === "apiKey" || obj.type === "http" || obj.type === "mutualTLS" || obj.type === "oauth2" || obj.type === "openIdConnect") {
     delete obj.description
   }
   if (!obj.description) {
@@ -276,6 +298,22 @@ function placeDescriptionFieldInObj (descriptionPlaceholder, obj) {
   }
 
   return obj
+}
+
+function swapPlaceholderNameWithRefName (descriptionPlaceholder, refObj, api) {
+  const arr = refObj.split('/')
+  if (arr[0] === '#') {
+    arr.shift()
+    let source = api
+    for (let i = 0, length = arr.length; i < length; i++) {
+      if (source) source = source[arr[i]]
+    }
+    if (source.type === 'object') {
+      return arr.pop()
+    }
+  }
+
+  return descriptionPlaceholder
 }
 
 function insertDescriptions (obj, descriptions, apiFilename) {

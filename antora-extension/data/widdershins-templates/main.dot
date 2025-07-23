@@ -76,7 +76,7 @@
 
 |Type|Description|
 |---|---|
-{{~ block.rows :p}}|{{= p.safeType }}|{{= data.custom.printDescription(p, data) }}|
+{{~ block.rows :p}}|{{= p.type }}|{{= data.custom.printDescription(p, data) }}|
 {{~}}
 
 {{?? block.rows.length }}
