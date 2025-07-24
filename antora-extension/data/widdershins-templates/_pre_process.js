@@ -715,7 +715,7 @@ function pushValueMinimumMaximum (array, schema) {
 
   if (typeof exclusiveMinimum === 'number') {
     array.push('Minimum value: `' + exclusiveMinimum + '` (exclusive)')
-  } else if (minimum !== 'undefined') {
+  } else if (minimum !== undefined) {
     if (exclusiveMinimum === true) {
       array.push('Minimum value: `' + minimum + '` (exclusive)')
     } else {
@@ -725,7 +725,7 @@ function pushValueMinimumMaximum (array, schema) {
 
   if (typeof exclusiveMaximum === 'number') {
     array.push('Maximum value: `' + exclusiveMaximum + '` (exclusive)')
-  } else if (maximum !== 'undefined') {
+  } else if (maximum !== undefined) {
     if (exclusiveMaximum === true) {
       array.push('Maximum value: `' + maximum + '` (exclusive)')
     } else {
