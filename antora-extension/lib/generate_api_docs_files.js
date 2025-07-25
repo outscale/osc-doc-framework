@@ -77,7 +77,7 @@ async function generateApiDocsFiles (options) {
   if (!apiFile.includes('okms')) {
     apiMarkdown = postDocsOutscaleComLinks(apiMarkdown)
   }
-  runShins(apiMarkdown, shinsTemplates, `${outputDir}/modules/ROOT/pages/${outputFileStem}.adoc`)
+  runShins(apiMarkdown, shinsTemplates, `${outputDir}/modules/ROOT/pages/${outputFileStem}.adoc`, false)
 
   if (errorsFile) {
     if (!fs.existsSync(errorsFile)) {
@@ -85,7 +85,7 @@ async function generateApiDocsFiles (options) {
     }
     const errors = helperFunctions.parseYaml(errorsFile)
     const errorsMarkdown = generateErrorMarkdown(errors, api)
-    runShins(errorsMarkdown, shinsTemplates, `${outputDir}/modules/ROOT/pages/${outputFileStem}-errors.adoc`)
+      runShins(errorsMarkdown, shinsTemplates, `${outputDir}/modules/ROOT/pages/${outputFileStem}-errors.adoc`, true)
   }
 
   if (oscCliPartials) {
@@ -392,14 +392,15 @@ function postDocsOutscaleComLinks (apiMarkdown) {
   return apiMarkdown.replaceAll('https://docs.outscale.com/', '')
 }
 
-function runShins (markdown, shinsTemplates, outputFile) {
+function runShins (markdown, shinsTemplates, outputFile, unsafeFlag = false) {
   console.log = turnOffConsoleLog()
 
   // https://github.com/Mermade/shins/blob/master/README.md#api
   const shinsOptions = {
     customCss: true,
-    root: shinsTemplates,
     layout: 'layout.ejs',
+    root: shinsTemplates,
+    unsafe: unsafeFlag,
   }
   shins.render(markdown, shinsOptions, function (err, html) {
     if (err) {
