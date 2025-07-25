@@ -57,6 +57,24 @@ main > .content {
   color: var(--neutral1000);
 }
 
+.api button {
+  padding: 0.5em 1em;
+  background: var(--brandPrimaryIndigo500);
+  border: none;
+}
+.api button a {
+  color: #fff !important;
+  text-decoration: none !important;
+}
+.api button:hover,
+.api button:focus {
+  background: #4151c4;
+  color: #fff;
+}
+.api button:active {
+  background: var(--brandPrimaryIndigo700);
+}
+
 .api li p {
   margin-bottom: initial;
 }

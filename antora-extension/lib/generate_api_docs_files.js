@@ -70,6 +70,7 @@ async function generateApiDocsFiles (options) {
   }
 
   let apiMarkdown = await runWiddershins(api, languages, widdershinsTemplates, showSummaryKeys)
+  apiMarkdown = postProcessButtonsAfterWiddershins(apiMarkdown)
   apiMarkdown = postProcessImagesAfterWiddershins(apiMarkdown)
   apiMarkdown = postProcessIndentsAfterWiddershins(apiMarkdown)
   fs.writeFileSync(outputDir + '/' + outputFileStem + '.md', apiMarkdown)
@@ -346,6 +347,10 @@ function getLanguageTabs (languages) {
   return tabs
 }
 
+function postProcessButtonsAfterWiddershins (apiMarkdown) {
+  return apiMarkdown.replace(/<button>/g, '----button-start----').replace(/<\/button>/g, '----button-end----')
+}
+
 function postProcessImagesAfterWiddershins (apiMarkdown) {
   // Remove attributes in Markdown images
   return apiMarkdown.replace(/(!\[.+?\]\(.+?) =.+?\)/g, '$1)')
@@ -400,6 +405,7 @@ function runShins (markdown, shinsTemplates, outputFile) {
     if (err) {
       console.error(err)
     } else {
+      html = postProcessButtonsAfterShins(html)
       html = postProcessIndentsAfterShins(html)
       html = postProcessExtraHighlights(html)
       html = postProcessCollapsibles(html)
@@ -412,6 +418,10 @@ function runShins (markdown, shinsTemplates, outputFile) {
     }
   })
   console.log = turnOnConsoleLog()
+}
+
+function postProcessButtonsAfterShins (html) {
+  return html.replace(/----button-start----/g, '<button>').replace(/----button-end----/g, '</button>')
 }
 
 function postProcessIndentsAfterShins (html) {
