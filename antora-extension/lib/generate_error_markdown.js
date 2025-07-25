@@ -23,6 +23,27 @@ function generateErrorMarkdown (errors, api) {
   } else {
     errors_to_treat = errors
   }
+
+  // DOC-4688
+  if (info.title === '3DS OUTSCALE API' || info.title === 'OUTSCALE API') {
+    if (!errors_to_treat['24']) {
+      errors_to_treat['24'] = {
+        description: 'ErrorOperationThrottledPerAccount',
+        error_code: 'AccessDenied',
+        error_message: 'Request rate exceeded.',
+        http_code: 429,
+      }
+    }
+    if (!errors_to_treat['25']) {
+      errors_to_treat['25'] = {
+        description: 'ErrorOperationThrottledPerCall',
+        error_code: 'AccessDenied',
+        error_message: 'Request rate exceeded.',
+        http_code: 429,
+      }
+    }
+  }
+
   for (const [k, v] of Object.entries(errors_to_treat)) {
     md += '|`' + k + '`|`' + v.error_code + '`|**' + v.description.split('\n') + '**'
     if (v.error_message) {
