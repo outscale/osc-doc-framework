@@ -346,17 +346,17 @@ function getResponses(data) {
               }
               if (contentType.schema && contentType.schema["x-widdershins-oldRef"]?.startsWith('#/components/')) {
                   let schemaName = contentType.schema["x-widdershins-oldRef"].replace('#/components/schemas/', '')
-                  entry.schema = '[' + schemaName + '](#schema' + schemaName.toLowerCase() + ')'
+                  entry.schema = '[' + schemaName + '](#tocs_' + schemaName.toLowerCase() + ')'
                   entry.$ref = true
               }
               else if (contentType.schema?.items && contentType.schema.items["x-widdershins-oldRef"]?.startsWith('#/components/')) {
                   let schemaName = contentType.schema.items["x-widdershins-oldRef"].replace('#/components/schemas/', '')
-                  entry.schema = '[' + schemaName + '](#schema' + schemaName.toLowerCase() + ')'
+                  entry.schema = '[' + schemaName + '](#tocs_' + schemaName.toLowerCase() + ')'
                   entry.$ref = true
               }
               else if (response["x-widdershins-oldRef"]) {
                   let schemaName = response["x-widdershins-oldRef"].replace('#/components/responses/', '')
-                  entry.schema = '[' + schemaName + '](#schema' + schemaName.toLowerCase() + ')'
+                  entry.schema = '[' + schemaName + '](#tocs_' + schemaName.toLowerCase() + ')'
                   entry.$ref = true
               }
           }
@@ -1138,23 +1138,23 @@ function setSafeType (schema, entry) {
       safeTypes = [ schema.type ] 
     } else {
       entry.$ref = schema["x-widdershins-oldRef"].replace('#/components/schemas/','')
-      safeTypes = [ '['+entry.$ref+'](#schema'+entry.$ref.toLowerCase()+') ' + schema.type ] 
+      safeTypes = [ '['+entry.$ref+'](#tocs_'+entry.$ref.toLowerCase()+') ' + schema.type ] 
     }
   }
   if (schema.$ref) { // repeat for un-dereferenced schemas
     entry.$ref = schema.$ref.replace('#/components/schemas/','')
-    safeTypes = [ '['+entry.$ref+'](#schema'+entry.$ref.toLowerCase()+') ' + schema.type ]
+    safeTypes = [ '['+entry.$ref+'](#tocs_'+entry.$ref.toLowerCase()+') ' + schema.type ]
   }
 
   if ((entry.type === 'array' || entry.type?.includes('array')) && schema.items) {
     let itemsType = schema.items.type||'any'
     if (schema.items["x-widdershins-oldRef"]) {
       let $ref = schema.items["x-widdershins-oldRef"].replace('#/components/schemas/','')
-      itemsType = '['+$ref+'](#schema'+$ref.toLowerCase()+')'
+      itemsType = '['+$ref+'](#tocs_'+$ref.toLowerCase()+')'
     }
     if (schema.items.$ref) { // repeat for un-dereferenced schemas
       let $ref = schema.items.$ref.replace('#/components/schemas/','')
-      itemsType = '['+$ref+'](#schema'+$ref.toLowerCase()+')'
+      itemsType = '['+$ref+'](#tocs_'+$ref.toLowerCase()+')'
     }
     if (schema.items.anyOf) itemsType = 'anyOf'
     if (schema.items.allOf) itemsType = 'allOf'

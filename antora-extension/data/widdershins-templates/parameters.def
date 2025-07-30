@@ -60,7 +60,7 @@
 {{? bodyParameters.length }}
 
 {{? bodyParameters[0].name === 'body' && bodyParameters[0].refName}}
-**Body** ({{= bodyParameters[0].safeType + ' object' }}):
+**Body** ({{= bodyParameters[0].safeType.replace('#schema', '#tocs_') + ' object' }}):
 {{ bodyParameters.shift(); }}
 {{??}}
 **Body** ({{= data.bodyParameter.contentType }}):

@@ -57,7 +57,7 @@
 {{ const schema = data.api.components.schemas[s]; }}
 
 {{= data.tags.section }}
-<h2 id="tocS_{{=s}}">{{=s}}</h2>
+<h2 id="tocs_{{=s.toLowerCase()}}">{{=s}}</h2>
 <a class="offset-up" id="schema{{=s.toLowerCase()}}"></a>
 <a class="offset-up" id="tocs{{=s.toLowerCase()}}"></a>
 

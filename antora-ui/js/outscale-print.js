@@ -20,7 +20,12 @@
     if (document.documentElement.lang === "fr") text = "Récupéré depuis"
     p.classList.add("print-only")
     p.append(text, " ", pageOrigin, " (", new Date().toISOString(), ")")
-    document.querySelector(".doc h1").after(p)
+    let title = document.querySelector(".doc h1")
+    if (title) title.after(p)
+    else {
+      title = document.querySelector(".api h1 + .heading-description")
+      if (title) title.prepend(p)
+    }
   }
 
   function adaptToPrint() {
@@ -62,7 +67,7 @@
     logo.src = logo.src.replace("/logo-darkblue.svg", "/logo.svg")
   }
 
-  if (document.querySelector(".doc h1")) {
+  if (document.querySelector(".doc h1, .api h1")) {
     const pageOrigin = getPageOrigin()
     createTimestamp(pageOrigin)
   }

@@ -68,3 +68,8 @@ span.indent-1, span.indent-2, span.indent-3, span.indent-4, span.indent-5, span.
 .indent-7 {padding-left: calc(var(--base-indent) * 7.5) !important; margin-left: calc(var(--base-indent) * 7);}
 .indent-8 {padding-left: calc(var(--base-indent) * 8.5) !important; margin-left: calc(var(--base-indent) * 8);}
 .indent-9 {padding-left: calc(var(--base-indent) * 9.5) !important; margin-left: calc(var(--base-indent) * 9);}
+
+p.print-only {
+  font-style: normal;
+  padding-bottom: 0.5em;
+}
