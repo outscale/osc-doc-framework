@@ -252,13 +252,6 @@ a.offset-up {
   position: relative;
   top: calc(-28px - 3.2em);
 }
-.api h2[id^="tocs_"] + .offset-up + p {
-  margin-top: 1em;
-  margin-bottom: 2.5em;
-}
-.api h2[id^="tocs_"] + .offset-up + table {
-  margin-top: 2.5em;
-}
 .api > p + blockquote p,
 .api blockquote.admonition-in-table > p {
   background-color: var(--feedbackError100);
