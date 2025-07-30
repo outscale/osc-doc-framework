@@ -139,8 +139,7 @@ function checkOtherLanguageLink (file, contentCatalog, logger) {
   if (otherLangPage) {
     if (resolve) file.asciidoc.attributes['page-' + otherLang] = resolve.out.basename
     else {
-      logger.error(`target of "page-${otherLang}" not found: ${otherLangPage}`)
-      console.log(`    file: ${lang}/${file.path}\n`)
+      logger.error({ file: file.src }, `target of "page-${otherLang}" not found: ${otherLangPage}`)
     }
   }
 }
