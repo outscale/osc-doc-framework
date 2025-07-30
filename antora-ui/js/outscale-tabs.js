@@ -20,6 +20,9 @@
     for (var i = 0, length = tabs.length; i < length; i++) {
       const tabHeading = tabs[i].querySelector("h2:first-child, h3:first-child, h4:first-child, h5:first-child, h6:first-child")
       const id = tabHeading.textContent.replaceAll(" ", "_").replaceAll(/[’:/()]|_+$/g, "")
+      let tabName = tabHeading.parentNode.classList.values()
+        .filter(x => x.startsWith("data-tabname=")).find(x => true)
+        .split("data-tabname=")[1].replace(/_/g, " ")
 
       const li = document.createElement("li")
       const p = document.createElement("p")
@@ -27,7 +30,7 @@
       const hash = "#_" + id
       a.className = "tabLink tabLinkGroup_" + n
       a.href = hash
-      a.textContent = tabHeading.id.replaceAll(/_\d+$/g, "")
+      a.textContent = tabName.replace(/_/g, " ")
       ul.appendChild(li)
       li.appendChild(p)
       p.appendChild(a)
@@ -63,11 +66,11 @@
     hash = findParentSection(hash)
 
     for (var i = 0, length = tabLinks.length; i < length; i++) {
-      const tabOfHash = document.getElementById(hash)
+      const tabOfHash = document.querySelector('.tab[id="' + hash + '"]')
       tabLinks[i].classList.remove("active")
       tabs[i].classList.remove("active")
       if (tabOfHash) {
-        document.querySelector("[href='" + hash + "']").classList.add("active")
+        document.querySelector(".tabLink[href='" + hash + "']").classList.add("active")
         tabOfHash.classList.add("active")
       }
     }
@@ -81,7 +84,9 @@
       hash = decodeURIComponent(window.location.hash)
       if (hash) {
         const scrollTarget = document.getElementById(hash) || document.querySelector(hash)
-        window.scrollTo({top: scrollTarget.offsetTop - 80, behavior: scrollBehavior})
+        if (scrollTarget) {
+          window.scrollTo({top: scrollTarget.offsetTop - 114, behavior: scrollBehavior})
+        }
       }
     }
 
@@ -104,7 +109,7 @@
       window.location.hash = hash
       scrollFlag = true
     }
-    hash2 = findParentSection(hash)
+    const hash2 = findParentSection(hash)
     var test = document.querySelector(".tabLink[href='" + (hash2 || hash) + "']")
     if (test) {
       for (var i = 0, length = tabs.length; i < length; i++) {

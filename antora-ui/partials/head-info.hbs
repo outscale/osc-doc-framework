@@ -1,6 +1,6 @@
     {{#if (ne page.layout '404')}}
     {{#with page.canonicalUrl}}
-    <link rel="canonical" href="{{{this}}}">
+    <link rel="canonical" href="{{{normalize this}}}">
     {{/with}}
     {{/if}}
     {{#with page.description}}

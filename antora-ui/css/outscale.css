@@ -1001,6 +1001,10 @@ a.tabLink.active {
     padding: 1em 2em;
     display: none;
   }
+  div.tab > *:first-child {
+    margin-top: -80px;
+    padding-top: 80px !important;
+  }
 }
 
 div.tab.active {

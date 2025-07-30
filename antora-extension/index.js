@@ -1,7 +1,7 @@
-const checkUpdate = require('./lib/update-checker')
 const fs = require('fs')
 const path = require('path')
 const resolveResource = require('@antora/content-classifier/lib/util/resolve-resource')
+const checkUpdate = require('./lib/update-checker')
 
 module.exports.register = function ({ config }) {
   const logger = this.getLogger('@outscale/antora-extension')
@@ -41,7 +41,8 @@ module.exports.register = function ({ config }) {
       if (files[j].out) files[j].out.path = files[j].out.path.normalize('NFC')
       if (files[j].url) files[j].pub.url = files[j].pub.url.normalize('NFC')
       if (files[j].src.mediaType === 'text/asciidoc' && files[j].contents) {
-        files[j].contents = modifyAsciiDoc(files[j])
+        const text = files[j].contents.toString()
+        files[j].contents = modifyAsciiDoc(text)
       }
     }
   })
@@ -50,8 +51,9 @@ module.exports.register = function ({ config }) {
     const pages = contentCatalog.getPages()
     for (let j = 0, length = pages.length; j < length; j++) {
       checkOtherLanguageLink(pages[j], contentCatalog, logger)
+      const text = pages[j].contents.toString()
       const componentName = pages[j].src.component
-      pages[j].contents = modifyHtml(pages[j], compConfig[componentName])
+      pages[j].contents = modifyHtml(text, compConfig[componentName])
     }
   })
 
@@ -109,20 +111,20 @@ function setFileTempPaths (files, buildOptions, tempDir, source) {
   return buildOptions
 }
 
-function modifyAsciiDoc (file) {
-  let text = file.contents.toString()
-  text = disambiguateTabIds(text)
+function modifyAsciiDoc (text) {
   text = text.normalize('NFC')
+  text = processTabFormats(text)
 
   return Buffer.from(text)
 }
 
-function disambiguateTabIds (text) {
-  const m = text.match(/\[\.tab, id=".+?"\]/g)
-  if (m?.length > 1) {
-    for (let i = 0, length = m.length; i < length; i++) {
-      text = text.replace(m[i], (s) => {return s.replace('"]', '_' + i + '"]')})
-    }
+function processTabFormats (text) {
+  const matches = text.matchAll(/\[\.tab, *?id="(?<id>.+?)"\]\n+?=.+? *?(?<heading>.+?)\n/g)
+  for (const m of matches) {
+    const newClass = m.groups.heading.replaceAll(' ', '_').replaceAll(/[’:/()]|_+$/g, '')
+    const newId = m.groups.id.replace(/ /g, '_')
+    const newM = m[0].replace('.tab', '.tab.data-tabname=' + newId).replace('id="' + m.groups.id, 'id="' + newClass)
+    text = text.replace(m[0], newM)
   }
 
   return text
@@ -143,8 +145,7 @@ function checkOtherLanguageLink (file, contentCatalog, logger) {
   }
 }
 
-function modifyHtml (page, compCfg) {
-  let text = page.contents.toString()
+function modifyHtml (text, compCfg) {
   if (compCfg.disclaimerTrigger && ~text.indexOf(compCfg.disclaimerTrigger)) {
     text += '\n<div id="disclaimer" class="paragraph page-wrapper api">\n<p>' + compCfg.disclaimerText + '</p>\n</div>'
   }

@@ -70,9 +70,9 @@
         var fragment = '#' + heading.id
         if (idx === lastIdx || heading.getBoundingClientRect().top + getNumericStyleVal(heading, 'paddingTop') > ceil) {
           activeFragments.push(fragment)
-          if (lastActiveFragment.indexOf(fragment) < 0) links[fragment].classList.add('is-active')
+          if (lastActiveFragment.indexOf(fragment) < 0) links[fragment]?.classList.add('is-active')
         } else if (~lastActiveFragment.indexOf(fragment)) {
-          links[lastActiveFragment.shift()].classList.remove('is-active')
+          links[lastActiveFragment.shift()]?.classList.remove('is-active')
         }
       })
       list.scrollTop = list.scrollHeight - list.offsetHeight
@@ -81,7 +81,7 @@
     }
     if (Array.isArray(lastActiveFragment)) {
       lastActiveFragment.forEach(function (fragment) {
-        links[fragment].classList.remove('is-active')
+        links[fragment]?.classList.remove('is-active')
       })
       lastActiveFragment = undefined
     }
@@ -92,15 +92,15 @@
     })
     if (activeFragment) {
       if (activeFragment === lastActiveFragment) return
-      if (lastActiveFragment) links[lastActiveFragment].classList.remove('is-active')
+      if (lastActiveFragment) links[lastActiveFragment]?.classList.remove('is-active')
       var activeLink = links[activeFragment]
-      activeLink.classList.add('is-active')
+      activeLink?.classList.add('is-active')
       if (list.scrollHeight > list.offsetHeight) {
         list.scrollTop = Math.max(0, activeLink.offsetTop + activeLink.offsetHeight - list.offsetHeight)
       }
       lastActiveFragment = activeFragment
     } else if (lastActiveFragment) {
-      links[lastActiveFragment].classList.remove('is-active')
+      links[lastActiveFragment]?.classList.remove('is-active')
       lastActiveFragment = undefined
     }
   }
