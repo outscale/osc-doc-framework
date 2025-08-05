@@ -199,6 +199,24 @@ html {
   header #top-menu .entry:not(.logo) {
     display: none;
   }
+  header #top-menu:focus-within {
+    height: 100vh;
+  }
+  header #top-menu:focus-within #top-menu-button {
+    right: calc(-1 * var(--topbar-height) - 4em);
+  }
+  header #top-menu:focus-within #entry-0:before {
+    position: absolute;
+    top: 9px;
+    right: 26px;
+    color: #bbb;
+    content: "×";
+    cursor: pointer;
+    z-index: 1;
+    font-size: 2em;
+    -webkit-transition: all 0.25s;
+    transition: all 0.25s;
+  }
   header #top-menu:focus-within .entry:not(.logo) {
     display: initial;
   }
@@ -293,13 +311,14 @@ html {
   header .entry button:not([type=submit]):after {
     content: "";
     position: absolute;
-    top: var(--topbar-height);
+    top: calc(var(--topbar-height) - 7px);
     left: 50vw;
     width: 10px;
     margin-top: 2px;
     margin-left: -5px;
     border: 5px solid transparent;
     border-top-color: var(--brandPrimaryDarkBlue500);
+    z-index: 1;
   }
 
   header .logo.entry a {
@@ -322,6 +341,13 @@ html {
     opacity: 0;
     transition: visibility 0s, opacity 100ms linear;
   }
+  header .dropdown.entry:focus-within ul:before {
+    position: absolute;
+    top: 0;
+    content: "";
+    height: var(--topbar-height);
+    width: 100vw;
+  }
   header .dropdown.entry:focus-within ul {
     position: static;
     height: auto;
@@ -336,6 +362,8 @@ html {
     font-size: 16px;
     white-space: nowrap;
   }
+  header .dropdown.entry button:hover,
+  header .dropdown.entry button:focus,
   header .dropdown.entry a:hover,
   header .dropdown.entry a:focus {
     background-color: var(--neutral200);
@@ -362,6 +390,9 @@ html {
   header #top-menu .entry:not(.logo) {
     display: initial;
   }
+  header #top-menu:focus-within {
+    height: initial;
+  }
 
   header {
     overflow-y: visible;
@@ -380,7 +411,7 @@ html {
 
   header .entry button:not([type=submit]):after {
     left: 50%;
-    margin-top: -12px;
+    margin-top: -5px;
   }
 
   /* This prevents blocking the closing of the dropdown when clicking its title a second time */
