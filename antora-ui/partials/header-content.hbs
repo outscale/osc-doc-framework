@@ -1,24 +1,24 @@
     <header class="header" role="banner">
       <nav id="top-menu" aria-label="Main Navigation">
-          <button id="top-menu-button" aria-expanded="false" aria-controls="entry-0">
+          <button id="top-menu-button" aria-expanded="false" aria-controls="entry-0" tabindex="0">
             <span></span>
           </button>
           <ul id="entry-0">
               {{#each page.attributes.topmenu}}
               {{#if this.image}}
               <li class="logo entry">
-                  <a href="{{or ../page.attributes.corporatesite-url ../site.url}}"><img src="{{../siteRootPath}}/{{or this.image '_/img/logo.svg'}}" alt="{{@key}}"></a>
+                  <a href="{{or ../page.attributes.corporatesite-url ../site.url}}" tabindex="0"><img src="{{../siteRootPath}}/{{or this.image '_/img/logo.svg'}}" alt="{{@key}}"></a>
               </li>
               {{else if (or this.path this.url)}}
               <li class="entry">
-                <a href={{#if this.path}}"{{../siteRootPath}}/{{this.path}}"{{else}}"{{this.url}}" target="_blank" rel="noopener"{{/if}}>{{@key}}</a>
+                <a href={{#if this.path}}"{{../siteRootPath}}/{{this.path}}"{{else}}"{{this.url}}" target="_blank" rel="noopener"{{/if}} tabindex="0">{{@key}}</a>
               </li>
               {{else if this.dropdown}}
               <li class="dropdown entry">
-                  <button aria-expanded="false" aria-controls="entry-{{@index}}">{{@key}}</button>
+                  <button aria-expanded="false" aria-controls="entry-{{@index}}" tabindex="0">{{@key}}</button>
                   <ul id="entry-{{@index}}">
                       {{#each this.dropdown}}
-                      <li><a href={{#if this.path}}"{{../../siteRootPath}}/{{this.path}}"{{else}}"{{this.url}}" target="_blank" rel="noopener"{{/if}}>{{@key}}</a></li>
+                      <li><a href={{#if this.path}}"{{../../siteRootPath}}/{{this.path}}"{{else}}"{{this.url}}" target="_blank" rel="noopener"{{/if}} tabindex="0">{{@key}}</a></li>
                       {{/each}}
                   </ul>
               </li>
@@ -26,24 +26,24 @@
               {{/each}}
               {{#if page.attributes.fr}}
               <li class="right dropdown entry">
-                  <button aria-expanded="false" aria-controls="entry-lang">English<span class="fa fa-globe fa-fw"></span></button>
+                  <button aria-expanded="false" aria-controls="entry-lang" tabindex="0">English<span class="fa fa-globe fa-fw"></span></button>
                   <ul id="entry-lang">
-                      <li><a href="{{siteRootPath}}/fr/{{#if page.version}}{{page.version}}/{{/if}}{{page.module}}/{{page.attributes.fr}}">Français</a></li>
+                      <li><a href="{{siteRootPath}}/fr/{{#if page.version}}{{page.version}}/{{/if}}{{page.module}}/{{page.attributes.fr}}" tabindex="0">Français</a></li>
                   </ul>
               </li>
               {{/if}}
               {{#if page.attributes.en}}
               <li class="right dropdown entry">
-                  <button aria-expanded="false" aria-controls="entry-lang">Français<span class="fa fa-globe fa-fw"></span></button>
+                  <button aria-expanded="false" aria-controls="entry-lang" tabindex="0">Français<span class="fa fa-globe fa-fw"></span></button>
                   <ul id="entry-lang">
-                      <li><a href="{{siteRootPath}}/en/{{#if page.version}}{{page.version}}/{{/if}}{{page.module}}/{{page.attributes.en}}">English</a></li>
+                      <li><a href="{{siteRootPath}}/en/{{#if page.version}}{{page.version}}/{{/if}}{{page.module}}/{{page.attributes.en}}" tabindex="0">English</a></li>
                   </ul>
               </li>
               {{/if}}
               {{#if (and env.SITE_SEARCH_PROVIDER (and (ne page.attributes.role 'apidocs') (ne page.layout '404')))}}
               <form id="search-field" class="right entry field has-filter" action="{{#if page.attributes.en}}Recherche.html{{else}}Search.html{{/if}}" autocomplete="off">
                   <a>
-                    <input id="search-input" name="q" type="text" placeholder="{{page.attributes.search-text}}"><button type="submit" value=""></button>
+                    <input id="search-input" name="q" type="text" placeholder="{{page.attributes.search-text}}" tabindex="0"><button type="submit" value=""></button>
                   </a>
                   <input type="checkbox" data-facet-filter="component:{{page.component.name}}" checked style="display: none">
               </form>
