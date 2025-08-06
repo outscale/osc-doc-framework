@@ -393,6 +393,9 @@ html {
   header #top-menu:focus-within {
     height: initial;
   }
+  header #top-menu:focus-within #entry-0:before {
+    content: initial;
+  }
 
   header {
     overflow-y: visible;
@@ -434,6 +437,9 @@ html {
     height: auto;
     visibility: visible;
     opacity: 1;
+  }
+  header .dropdown.entry:focus-within ul:before {
+    position: initial;
   }
   header .right.dropdown.entry ul {
     right: 0;
