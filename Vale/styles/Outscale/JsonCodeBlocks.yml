@@ -3,4 +3,4 @@ message: "This code block should probably be labelled as '[source,json]', as it 
 level: error
 scope: raw
 raw:
-- '\[source,(?!json)(.+?)\]\n----\n(\{|\[)\n'
+- '\[source, *?(?!json)(.+?)\]\n----\n(\{|\[)\n'

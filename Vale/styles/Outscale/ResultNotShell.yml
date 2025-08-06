@@ -3,4 +3,4 @@ message: "Result samples can't be in the Shell language, as Shell by nature refe
 level: error
 scope: raw
 raw:
-- '\.(Result sample|Exemple de résultat)\n\[source,shell\]\n----\n'
+- '\.(Result sample|Exemple de résultat)\n\[source, *?shell\]\n----\n'
