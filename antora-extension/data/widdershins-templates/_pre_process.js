@@ -49,6 +49,7 @@ function preProcess (data) {
     printOperationName,
     printParameterName,
     printRequired,
+    printType,
     schemaToArray,
     setSafeType,
     supportOperationMultipleExamples,
@@ -884,6 +885,14 @@ function printRequired (boolean) {
   }
 }
 
+function printType (p) {
+  if (p.safeType === 'any' && p.schema?.anyOf?.length === 1) {
+    setSafeType(p.schema?.anyOf[0], p)
+  }
+
+  return p.safeType
+}
+
 // Modified from Widdershins
 function schemaToArray(schema,offset,options,data) {
   let iDepth = 0
@@ -1129,7 +1138,7 @@ function setSafeType (schema, entry) {
 
   if (Array.isArray(entry.type)) {
     safeTypes.push(...entry.type)
-  } else if (entry.type) {
+  } else if (entry.type && !safeTypes.includes(entry.type)) {
     safeTypes.push(entry.type)
   }
 

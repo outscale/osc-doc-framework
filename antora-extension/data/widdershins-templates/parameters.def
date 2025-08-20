@@ -35,7 +35,7 @@
 
 |Path Parameter|Type|Description|
 |---|---|---|
-{{~ pathParameters :p}}|{{= data.custom.printParameterName(p.name) }}{{= data.custom.printRequired(p.required) }}{{= data.custom.getDeprecateState(p) }}|{{= p.safeType }}|{{= data.custom.printDescription(p) }}|
+{{~ pathParameters :p}}|{{= data.custom.printParameterName(p.name) }}{{= data.custom.printRequired(p.required) }}{{= data.custom.getDeprecateState(p) }}|{{= data.custom.printType(p) }}|{{= data.custom.printDescription(p) }}|
 {{~}}
 {{?}}
 
@@ -44,7 +44,7 @@
 
 |Query Parameter|Type|Description|
 |---|---|---|
-{{~ queryParameters :p}}|{{= data.custom.printParameterName(p.name) }}{{= data.custom.printRequired(p.required) }}{{= data.custom.getDeprecateState(p) }}|{{= p.safeType }}|{{= data.custom.printDescription(p) }}|
+{{~ queryParameters :p}}|{{= data.custom.printParameterName(p.name) }}{{= data.custom.printRequired(p.required) }}{{= data.custom.getDeprecateState(p) }}|{{= data.custom.printType(p) }}|{{= data.custom.printDescription(p) }}|
 {{~}}
 {{?}}
 
@@ -53,7 +53,7 @@
 
 |Header Parameter|Type|Description|
 |---|---|---|
-{{~ headerParameters :p}}|{{= data.custom.printParameterName(p.name) }}{{= data.custom.printRequired(p.required) }}{{= data.custom.getDeprecateState(p) }}|{{= p.safeType }}|{{= data.custom.printDescription(p) }}|
+{{~ headerParameters :p}}|{{= data.custom.printParameterName(p.name) }}{{= data.custom.printRequired(p.required) }}{{= data.custom.getDeprecateState(p) }}|{{= data.custom.printType(p) }}|{{= data.custom.printDescription(p) }}|
 {{~}}
 {{?}}
 
@@ -68,7 +68,7 @@
 
 |Body Parameter|Type|Description|
 |---|---|---|
-{{~ bodyParameters :p}}|{{= data.custom.printParameterName(p.name) }}{{= data.custom.printRequired(p.required) }}{{= data.custom.getDeprecateState(p) }}|{{= p.safeType }}|{{= data.custom.printDescription(p) }}|
+{{~ bodyParameters :p}}|{{= data.custom.printParameterName(p.name) }}{{= data.custom.printRequired(p.required) }}{{= data.custom.getDeprecateState(p) }}|{{= data.custom.printType(p) }}|{{= data.custom.printDescription(p) }}|
 {{~}}
 {{?}}
 

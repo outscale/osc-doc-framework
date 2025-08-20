@@ -50,7 +50,7 @@
 
 |Response Element|Type|Description|
 |---|---|---|
-{{~block.rows :p}}|{{= data.custom.printParameterName(p.displayName) }}{{= data.custom.getDeprecateState(p) }}|{{= p.safeType }}|{{= data.custom.printDescription(p) }}|
+{{~block.rows :p}}|{{= data.custom.printParameterName(p.displayName) }}{{= data.custom.getDeprecateState(p) }}|{{= data.custom.printType(p) }}|{{= data.custom.printDescription(p) }}|
 {{~}}
 {{?? block.rows === undefined }}
 {{? !data.operation['x-webhook']}}Returns an empty object.{{??}}{{= response.description}}{{?}}

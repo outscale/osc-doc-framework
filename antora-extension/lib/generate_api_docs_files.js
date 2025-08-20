@@ -275,14 +275,6 @@ function concatenateXxxOfs (obj, xxxOf) {
       obj.format = formats.join(' or ')
       delete obj[xxxOf]
     }
-  } else if (obj[xxxOf].length === 1) {
-  // Replace anyOfs and oneOfs that have only one entry with their entry
-    for (const n of obj[xxxOf]) {
-      for (const [k, v] of Object.entries(n)) {
-        obj[k] = v
-      }
-    }
-    delete obj[xxxOf]
   }
 
   return obj

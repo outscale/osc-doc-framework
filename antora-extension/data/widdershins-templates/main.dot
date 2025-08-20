@@ -86,7 +86,7 @@
 {{ let showNested = false; }}
 |Property|Type|Description|
 |---|---|---|
-{{~ block.rows :p}}{{? p.depth === 0 || showNested === false }}{{ if (p.schema['x-widdershins-oldRef'] || p.schema.items?.['x-widdershins-oldRef']) {showNested = true;} else {showNested = false;} }}|{{= data.custom.printParameterName(p.displayName) }}{{= data.custom.getDeprecateState(p) }}|{{= p.safeType }}|{{= data.custom.printDescription(p) }}|
+{{~ block.rows :p}}{{? p.depth === 0 || showNested === false }}{{ if (p.schema['x-widdershins-oldRef'] || p.schema.items?.['x-widdershins-oldRef']) {showNested = true;} else {showNested = false;} }}|{{= data.custom.printParameterName(p.displayName) }}{{= data.custom.getDeprecateState(p) }}|{{= data.custom.printType(p) }}|{{= data.custom.printDescription(p) }}|
 {{?}}{{~}}
 
 > Schema
