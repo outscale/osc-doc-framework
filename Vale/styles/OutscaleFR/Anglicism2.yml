@@ -1,0 +1,8 @@
+extends: substitution
+message: Consider using %s, as '%s' is an anglicism in our domain.
+level: error
+scope: text
+ignorecase: true
+swap:
+  dépréc.+?: another phrasing (for example 'devenir/rendre/etc. obsolète')
+  retourn.+?\b: renvoyer

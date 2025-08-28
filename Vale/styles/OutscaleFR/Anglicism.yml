@@ -1,10 +1,8 @@
 extends: substitution
-message: Consider using %s, as '%s' is an anglicism in most of our contexts.
+message: Consider using '%s', as '%s' is usually an anglicism.
 level: warning
 scope: text
 ignorecase: true
 swap:
-  dépréc.+?: another term
-  retourn.+?\b: renvoyer
   statut: état
   statuts: états
