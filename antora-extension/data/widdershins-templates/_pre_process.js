@@ -692,7 +692,7 @@ function pushValuePattern (array, schema) {
   let pattern = schema.items?.pattern || schema.pattern
 
   if (pattern !== undefined) {
-    array.push('Pattern: `' + pattern + '`')
+    array.push('Pattern: `' + pattern.replaceAll('\0', '\\0') + '`')
   }
 
   return array
@@ -808,7 +808,7 @@ function _formatInlineCode (v) {
 
   if (v === 'true' || v === 'false') {
     return v
-  } else if (v) {
+  } else if (v && v !== '<code></code>') {
     return '`' + v + '`'
   } else {
     return '<code></code>'
