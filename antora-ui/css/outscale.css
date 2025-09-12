@@ -117,7 +117,7 @@
   --feedbackError100: #fff1f0; /* WARNING admonition */
 
   --topbar-height: 49px;
-  --topbar-logo-width: 170px;
+  --topbar-logo-width: 140px;
   --sidebar-width: 20rem;
   --sidebar-width-smaller: 15rem;
   --main-font-size: 15px;
@@ -205,7 +205,7 @@ html {
   header #top-menu:focus-within #top-menu-button {
     right: calc(-1 * var(--topbar-height) - 4em);
   }
-  header #top-menu:focus-within #entry-0:before {
+  header #top-menu:focus-within [id^=entry-]:before {
     position: absolute;
     top: 9px;
     right: 26px;
@@ -297,7 +297,7 @@ html {
     font-family: "open-sans-fontsource", sans-serif;
     font-weight: 400;
     line-height: 23px;
-    padding: 13px 12px;
+    padding: 13px 1.11vw;
     text-align: center;
     text-decoration: none;
     color: var(--brandPrimaryDarkBlue500);
@@ -318,6 +318,7 @@ html {
     margin-left: -5px;
     border: 5px solid transparent;
     border-top-color: var(--brandPrimaryDarkBlue500);
+    pointer-events: none;
     z-index: 1;
   }
 
@@ -325,7 +326,7 @@ html {
     width: var(--topbar-logo-width);
     height: var(--topbar-height);
     margin: auto;
-    padding: 11px 30px;
+    padding: 11px 15px;
   }
 
   header .dropdown.entry ul {
@@ -362,16 +363,27 @@ html {
     font-size: 16px;
     white-space: nowrap;
   }
-  header .dropdown.entry button:hover,
-  header .dropdown.entry button:focus,
+  header .dropdown.entry:hover,
+  header .dropdown.entry:focus,
   header .dropdown.entry a:hover,
-  header .dropdown.entry a:focus {
+  header .dropdown.entry a:focus,
+  header .dropdown.entry button:hover,
+  header .dropdown.entry button:focus {
     background-color: var(--neutral200);
   }
 
-  header .right.entry [aria-controls="entry-lang"] .fa,
-  header .right.entry [aria-controls="entry-lang"]:after {
-    font-size: 14px;
+  header .right.dropdown.entry button {
+    height: var(--topbar-height);
+    overflow-wrap: normal;
+  }
+  header .right.dropdown.entry button:not([aria-controls="entry-lang"])::before {
+    content: "";
+    display: block;
+    margin: auto;
+    width: 4px;
+    height: 4px;
+    background: #333;
+    box-shadow: -6px 0 0 #333,6px 0 0 #333,-6px -6px 0 #333,0 -6px 0 #333,6px -6px 0 #333,-6px 6px 0 #333, 0 6px 0 #333,6px 6px 0 #333;
   }
 
   .nav-container {
@@ -393,7 +405,7 @@ html {
   header #top-menu:focus-within {
     height: initial;
   }
-  header #top-menu:focus-within #entry-0:before {
+  header #top-menu:focus-within [id^=entry-]:before {
     content: initial;
   }
 
@@ -444,10 +456,15 @@ html {
   header .right.dropdown.entry ul {
     right: 0;
   }
+  header .right.dropdown.entry ul .fa {
+    margin-right: 0.25em;
+    height: 1em;
+  }
 
-  header .right.entry [aria-controls="entry-lang"] {
-    font-size: 14px;
-    display: block;
+  header .right.dropdown.entry button {
+    padding: initial;
+    width: 4vw;
+    text-align: center;
   }
 
   .nav {
@@ -463,13 +480,13 @@ html {
   }
 }
 
-@media screen and (min-width: 1301px) {
+@media screen and (min-width: 1367px) {
   header .entry a,
   header .entry button:not([type=submit]) {
     padding: 13px 24px;
   }
   header .logo.entry a {
-    width: calc(var(--topbar-logo-width) + 60px);
+    width: calc(var(--topbar-logo-width) + 30px + 60px);
     height: var(--topbar-height);
     margin: auto;
     padding: 11px 60px;
@@ -1152,6 +1169,9 @@ div.tab.active {
   a[href^="http"]:after {
     content: "\f08e";
     font-size: 0.9em;
+  }
+  header a[href^="http"]:after {
+    color: var(--brandPrimaryDarkBlue300);
   }
   a[href*="docs-dev.outscale.internal"]:after,
   a[href*="docs-in.outscale.internal"]:after,

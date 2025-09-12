@@ -12,21 +12,20 @@
   line-height: 1.5;
   padding: 0 0.25em;
   padding-right: 30px;
-  width: 180px;
+  width: 12.8vw;
   position: relative;
   z-index: 1000;
 }
 
 #search-field > a {
   max-height: var(--topbar-height);
-  padding-left: 0;
 }
 
 #search-field [type=submit] {
   display: initial;
   position: absolute;
   top: 13px;
-  right: 16px;
+  right: 1.1vw;
   width: 24px;
   height: 23px;
   cursor: pointer;
@@ -42,27 +41,16 @@
   content: "\f002";
   position: absolute;
   top: 4px;
-  right: 5px;
+  left: 4px;
   color: #333;
   font: normal normal normal 14px/1 FontAwesome;
-}
-@media screen and (min-width: 1301px) {
-  #search-field {
-    width: 210px;
-  }
-  #search-field [type=submit] {
-    right: 34px;
-  }
-  #search-field [type=submit]:before {
-    right: 5px;
-  }
 }
 #search-input:not(:placeholder-shown) + [type=submit]:before,
 #search-field [type=submit]:focus:before,
 #search-field [type=submit]:active:before {
   content: "\f061";
   top: 0;
-  right: 0;
+  left: 0;
   width: 24px;
   height: 23px;
   padding: 2px 5px;
@@ -263,6 +251,9 @@ nav .search-result-dataset > .search-result-item:first-of-type:before {
 }
 
 @media screen and (max-width: 1023px) {
+  #search-input {
+    width: 90vw;
+  }
   #search-field [type=submit] {
     top: calc(23px + 4px);
     right: calc(-100vw + 16px);
@@ -277,5 +268,11 @@ nav .search-result-dataset > .search-result-item:first-of-type:before {
   }
   .search-result-dropdown-menu a {
     text-align: left !important;
+  }
+}
+
+@media screen and (min-width: 1367px) {
+  #search-field [type=submit] {
+    left: 12.8vw;
   }
 }

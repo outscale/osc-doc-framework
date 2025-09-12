@@ -26,7 +26,7 @@
               {{/each}}
               {{#if page.attributes.fr}}
               <li class="right dropdown entry">
-                  <button aria-expanded="false" aria-controls="entry-lang" tabindex="0">English<span class="fa fa-globe fa-fw"></span></button>
+                  <button aria-label="English" aria-expanded="false" aria-controls="entry-lang" tabindex="0">EN</button>
                   <ul id="entry-lang">
                       <li><a href="{{siteRootPath}}/fr/{{#if page.version}}{{page.version}}/{{/if}}{{page.module}}/{{page.attributes.fr}}" tabindex="0">Français</a></li>
                   </ul>
@@ -34,12 +34,24 @@
               {{/if}}
               {{#if page.attributes.en}}
               <li class="right dropdown entry">
-                  <button aria-expanded="false" aria-controls="entry-lang" tabindex="0">Français<span class="fa fa-globe fa-fw"></span></button>
+                  <button aria-label="Français" aria-expanded="false" aria-controls="entry-lang" tabindex="0">FR</button>
                   <ul id="entry-lang">
                       <li><a href="{{siteRootPath}}/en/{{#if page.version}}{{page.version}}/{{/if}}{{page.module}}/{{page.attributes.en}}" tabindex="0">English</a></li>
                   </ul>
               </li>
               {{/if}}
+              {{#each page.attributes.toprightmenu}}
+              {{#if this.dropdown}}
+              <li class="right dropdown entry">
+                  <button aria-label="{{@key}}" aria-expanded="false" aria-controls="entry-{{@index}}-right" tabindex="0"></button>
+                  <ul id="entry-{{@index}}">
+                      {{#each this.dropdown}}
+                      <li><a href={{#if this.path}}"{{../../siteRootPath}}/{{this.path}}"{{else}}"{{this.url}}" target="_blank" rel="noopener"{{/if}} tabindex="0">{{#if this.icon}}<span class="fa fa-{{this.icon}} fa-fw"></span>{{else if this.icon-path}}<img class="fa fa-fw" src="{{../../siteRootPath}}/{{this.icon-path}}" alt="{{@key}}">{{/if}}{{@key}}</a></li>
+                      {{/each}}
+                  </ul>
+              </li>
+              {{/if}}
+              {{/each}}
               {{#if (and env.SITE_SEARCH_PROVIDER (and (ne page.attributes.role 'apidocs') (ne page.layout '404')))}}
               <form id="search-field" class="right entry field has-filter" action="{{#if page.attributes.en}}Recherche.html{{else}}Search.html{{/if}}" autocomplete="off">
                   <a>
