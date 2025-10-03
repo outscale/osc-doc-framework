@@ -36,7 +36,10 @@ async function runInNode (url, apiVersion, outputDir, source, apiFile, errorsFil
   const repoName = url.split('/').slice(6)[0].replace(/%2F/g, '/')
 
   const userguideBranch = await git.currentBranch({ fs, dir: '.' })
-  if (userguideBranch === 'main' || userguideBranch === 'master') {
+  const triggerRef = process.env.TRIGGER_REF
+  if (triggerRef === 'main' || triggerRef === 'master'
+    || (!triggerRef && (userguideBranch === 'main' || userguideBranch === 'master'))
+  ) {
     package = await getLatestPackage(url)
     console.log(`We will download the package ${COLOR}${repoName}${CLR} (latest version: ${COLOR}${package.version}${CLR}), as required by '${source}'`)
   }
