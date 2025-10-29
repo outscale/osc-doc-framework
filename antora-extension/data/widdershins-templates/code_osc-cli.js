@@ -50,7 +50,19 @@ function printExamples (examples, options, data, lang) {
       s += '# ' + examples[i].summary + '\n\n'
     }
 
-    s += 'osc-cli ' + data.host.split('.')[0] + ' ' + data.method.path.replace('/', '')
+    let service = 'api'
+    let subdomain = data.host.split('.')[0]
+    if (
+      subdomain === 'fcu' ||
+      subdomain === 'lbu' ||
+      subdomain === 'eim' ||
+      subdomain === 'icu' ||
+      subdomain === 'directlink' ||
+      subdomain === 'kms'
+    ) {
+      service = subdomain
+    }
+    s += 'osc-cli ' + service + ' ' + data.method.path.replace('/', '')
     for (const option of options) {
       s += printOption(option.name, option.value, true)
     }
