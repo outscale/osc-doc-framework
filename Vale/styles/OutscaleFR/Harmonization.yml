@@ -4,6 +4,7 @@ level: error
 scope: text
 ignorecase: true
 swap:
+  adresses? IP: IP
   back-end: backend
   back-ends: backends
   (?<![-/])cloud(?![-/]): Cloud
