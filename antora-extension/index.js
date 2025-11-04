@@ -36,6 +36,7 @@ module.exports.register = function ({ config }) {
   })
 
   this.once('contentClassified', ({ contentCatalog }) => {
+    failIfApidocsNotValid(logger)
     const files = contentCatalog.getFiles()
     for (let j = 0, length = files.length; j < length; j++) {
       if (files[j].out) files[j].out.path = files[j].out.path.normalize('NFC')
@@ -128,6 +129,13 @@ function processTabFormats (text) {
   }
 
   return text
+}
+
+function failIfApidocsNotValid (logger) {
+  if (process.env.FAIL_IF_APIDOCS_NOT_VALID && fs.existsSync('build/.tmp/.logs')) {
+    logger.error('There are errors in the API docs (this environment is configured to fail if there are such errors).')
+    process.exit(1)
+  }
 }
 
 function checkOtherLanguageLink (file, contentCatalog, logger) {
