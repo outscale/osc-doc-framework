@@ -5,6 +5,7 @@ const helperFunctions = require('./helper_functions')
 
 const ERROR_START = '\u001b[31m'
 const ERROR_END = '\u001b[0m'
+let LOG = ''
 
 async function runInCli () {
   const options = helperFunctions.parseArgs()
@@ -22,9 +23,12 @@ async function runInCli () {
   if (options.output) {
     writeFile(api, options.noSortKeys, options.output)
   }
+  if (LOG) {
+    process.exit(1)
+  }
 }
 
-async function runInNode (api, examplesFile, apiFilepath, noSortKeys, outputYamlPath) {
+async function runInNode (api, examplesFile, apiFilepath, noSortKeys, outputYamlPath, logPath) {
   const examples = helperFunctions.parseYaml(examplesFile)
   const apiFilename = path.parse(apiFilepath).base + ' v' + api.info.version
   api = await insertExamples(api, examples, apiFilename)
@@ -32,6 +36,11 @@ async function runInNode (api, examplesFile, apiFilepath, noSortKeys, outputYaml
   if (outputYamlPath) {
     writeFile(api, noSortKeys, outputYamlPath)
   }
+    if (LOG) {
+      const dir = path.parse(logPath).dir
+      fs.mkdirSync(dir, { recursive: true })
+      fs.writeFileSync(logPath + '-examples.log', LOG)
+    }
 
   return api
 }
@@ -56,6 +65,7 @@ function insertExamples (api, examples, apiFilename) {
         msg += ' (response)'
       }
       console.error(msg)
+      LOG += msg + '\n'
     }
   }
 
@@ -74,9 +84,7 @@ async function runOpenapiExamplesValidator (api) {
     msg += '  ' + e.message
     if (e.params.additionalProperty) msg += " ('" + e.params.additionalProperty + "')"
     console.error(msg)
-  }
-  if (process.env.OPENAPI_EXAMPLES_VALIDATOR === "true" && result.errors.length > 0) {
-    process.exit(1)
+    LOG += msg + '\n'
   }
 }
 
