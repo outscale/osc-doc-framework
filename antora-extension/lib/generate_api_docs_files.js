@@ -51,7 +51,6 @@ async function generateApiDocsFiles (options) {
   const outputYamlPath = options.outputYamlPath
   const outputDir = options.outputDir || 'build/.tmp'
   const outputFileStem = options.outputFileStem
-  const logPath = outputDir + '/.logs/' + outputFileStem
 
   if (!fs.existsSync(apiFile)) {
     apiFile = apiFile.split('/').slice(0, -2).join('/') + '/' + apiFile.split('/').slice(-1)
@@ -63,11 +62,11 @@ async function generateApiDocsFiles (options) {
   }
 
   if (descriptionsFile) {
-    api = await fillApiDescriptions(api, descriptionsFile, apiFile, resetDescriptionKeys, noSortKeys, separator, outputYamlPath, logPath)
+    api = await fillApiDescriptions(api, descriptionsFile, apiFile, resetDescriptionKeys, noSortKeys, separator, outputYamlPath)
   }
 
   if (examplesFile) {
-    api = await fillApiExamples(api, examplesFile, apiFile, noSortKeys, outputYamlPath, logPath)
+    api = await fillApiExamples(api, examplesFile, apiFile, noSortKeys, outputYamlPath)
   }
 
   let apiMarkdown = await runWiddershins(api, languages, widdershinsTemplates, showSummaryKeys)

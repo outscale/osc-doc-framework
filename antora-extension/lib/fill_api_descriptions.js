@@ -7,7 +7,6 @@ const widdershinsPreProcess = require('../data/widdershins-templates/_pre_proces
 const VERBS = ['delete', 'get', 'head', 'options', 'patch', 'post', 'put', 'trace']
 const ERROR_START = '\u001b[31m'
 const ERROR_END = '\u001b[0m'
-let LOG = ''
 let SEP = '_'
 
 async function runInCli () {
@@ -32,12 +31,9 @@ async function runInCli () {
   if (options.output) {
     writeFile(api, options.noSortKeys, options.output)
   }
-  if (LOG) {
-    process.exit(1)
-  }
 }
 
-async function runInNode (api, descriptionsFile, apiFilepath, resetDescriptionKeys, noSortKeys, separator, outputYamlPath, logPath) {
+async function runInNode (api, descriptionsFile, apiFilepath, resetDescriptionKeys, noSortKeys, separator, outputYamlPath) {
   const descriptions = await parseCsv(descriptionsFile)
   const apiFilename = path.parse(apiFilepath).base + ' v' + api.info.version
   if (resetDescriptionKeys) {
@@ -47,11 +43,6 @@ async function runInNode (api, descriptionsFile, apiFilepath, resetDescriptionKe
   api = await insertDescriptions(api, descriptions, apiFilename)
   if (outputYamlPath) {
     writeFile(api, noSortKeys, outputYamlPath)
-  }
-  if (LOG) {
-    const dir = path.parse(logPath).dir
-    fs.mkdirSync(dir, { recursive: true })
-    fs.writeFileSync(logPath + '-descriptions.log', LOG)
   }
 
   return api
@@ -332,9 +323,7 @@ function insertDescriptions (obj, descriptions, apiFilename) {
     } else if (k === 'description') {
       obj[k] = descriptions[v] || '**&lt;NOT_FOUND description: ' + v + '&gt;**'
       if (obj[k] == '**&lt;NOT_FOUND description: ' + v + '&gt;**') {
-        const msg = `${ERROR_START}NOT_FOUND description (${apiFilename}):${ERROR_END} ${v}`
-        console.error(msg)
-        LOG += msg + '\n'
+        console.error(`${ERROR_START}NOT_FOUND description (${apiFilename}):${ERROR_END} ${v}`)
       }
     }
   }
