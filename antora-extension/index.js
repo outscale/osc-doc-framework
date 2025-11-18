@@ -1,5 +1,6 @@
 const fs = require('fs')
 const path = require('path')
+const yaml = require('js-yaml')
 const resolveResource = require('@antora/content-classifier/lib/util/resolve-resource')
 const checkUpdate = require('./lib/update-checker')
 
@@ -43,6 +44,7 @@ module.exports.register = function ({ config }) {
       if (files[j].url) files[j].pub.url = files[j].pub.url.normalize('NFC')
       if (files[j].src.mediaType === 'text/asciidoc' && files[j].contents) {
         const text = files[j].contents.toString()
+        validateJsonAndYamlBlocks(config, text, files[j].src, logger)
         files[j].contents = modifyAsciiDoc(text)
       }
     }
@@ -135,6 +137,34 @@ function failIfApidocsNotValid (logger) {
   if (process.env.FAIL_IF_APIDOCS_NOT_VALID && fs.existsSync('build/.tmp/.logs')) {
     logger.error('There are errors in the API docs (this environment is configured to fail if there are such errors).')
     process.exit(1)
+  }
+}
+
+function validateJsonAndYamlBlocks (config, text, src, logger) {
+  if (config.validateJsonAndYamlBlocks === true) {
+    const matches = text.matchAll(/\[source, *?(json|yaml).*?\]\n----\n([.\s\S]+?\n)----\n/g)
+    for (const m of matches) {
+      m[2] = m[2].replace(/^\.\.\.$/gm, '')
+      if (m[1] === 'json') {
+        try { JSON.parse(m[2]) }
+        catch (error) {
+          try { JSON.parse('{' + m[2] + '}') }
+          catch (error) {
+            const lineNumber = text.substring(0, m.index).split('\n').length
+            logger.error({ file: src, line: lineNumber }, 'JSON formatting error')
+          }
+        }
+      } else if (m[1] === 'yaml') {
+        const subMatches = m[2].split('\n---\n')
+        for (const n of subMatches) {
+          try { yaml.load(n) }
+          catch (error) {
+            const lineNumber = text.substring(0, m.index).split('\n').length
+            logger.error({ file: src, line: lineNumber }, 'YAML formatting error')
+          }
+        }
+      }
+    }
   }
 }
 
