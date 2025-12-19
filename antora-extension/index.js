@@ -144,7 +144,7 @@ function validateJsonAndYamlBlocks (config, text, src, logger) {
   if (config.validateJsonAndYamlBlocks === true) {
     const matches = text.matchAll(/\[source, *?(json|yaml).*?\]\n----\n([.\s\S]+?\n)----\n/g)
     for (const m of matches) {
-      m[2] = m[2].replace(/^\.\.\.$/gm, '')
+      m[2] = m[2].replace(/(?:,\n|^) *\.\.\.$/gm, '')
       if (m[1] === 'json') {
         try { JSON.parse(m[2]) }
         catch (error) {
