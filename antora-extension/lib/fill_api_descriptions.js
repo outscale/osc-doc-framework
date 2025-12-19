@@ -37,7 +37,7 @@ async function runInCli () {
   }
 }
 
-async function runInNode (api, descriptionsFile, apiFilepath, resetDescriptionKeys, noSortKeys, separator, outputYamlPath, logPath) {
+async function runInNode (api, descriptionsFile, apiFilepath, resetDescriptionKeys, separator, logPath) {
   const descriptions = await parseCsv(descriptionsFile)
   const apiFilename = path.parse(apiFilepath).base + ' v' + api.info.version
   if (resetDescriptionKeys) {
@@ -45,9 +45,6 @@ async function runInNode (api, descriptionsFile, apiFilepath, resetDescriptionKe
     api = setDescriptionFields(api)
   }
   api = await insertDescriptions(api, descriptions, apiFilename)
-  if (outputYamlPath) {
-    writeFile(api, noSortKeys, outputYamlPath)
-  }
   if (LOG) {
     const dir = path.parse(logPath).dir
     fs.mkdirSync(dir, { recursive: true })
@@ -340,13 +337,6 @@ function insertDescriptions (obj, descriptions, apiFilename) {
   }
 
   return obj
-}
-
-function writeFile (api, noSortKeys, outputYamlPath) {
-  const s = helperFunctions.dumpYaml(api, noSortKeys)
-  const dir = path.parse(outputYamlPath).dir
-  fs.mkdirSync(dir, { recursive: true })
-  fs.writeFileSync(outputYamlPath, s)
 }
 
 if (path.parse(process.argv[1]).base === path.parse(__filename).base) {

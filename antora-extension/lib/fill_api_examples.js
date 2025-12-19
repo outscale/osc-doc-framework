@@ -28,14 +28,11 @@ async function runInCli () {
   }
 }
 
-async function runInNode (api, examplesFile, apiFilepath, noSortKeys, outputYamlPath, logPath) {
+async function runInNode (api, examplesFile, apiFilepath, logPath) {
   const examples = helperFunctions.parseYaml(examplesFile)
   const apiFilename = path.parse(apiFilepath).base + ' v' + api.info.version
   api = await insertExamples(api, examples, apiFilename)
   await runOpenapiExamplesValidator(api)
-  if (outputYamlPath) {
-    writeFile(api, noSortKeys, outputYamlPath)
-  }
   if (LOG) {
     const dir = path.parse(logPath).dir
     fs.mkdirSync(dir, { recursive: true })
@@ -86,13 +83,6 @@ async function runOpenapiExamplesValidator (api) {
     console.error(msg)
     LOG += msg + '\n'
   }
-}
-
-function writeFile (api, noSortKeys, outputYamlPath) {
-  const s = helperFunctions.dumpYaml(api, noSortKeys)
-  const dir = path.parse(outputYamlPath).dir
-  fs.mkdirSync(dir, { recursive: true })
-  fs.writeFileSync(outputYamlPath, s)
 }
 
 if (path.parse(process.argv[1]).base === path.parse(__filename).base) {

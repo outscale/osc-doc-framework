@@ -63,11 +63,18 @@ async function generateApiDocsFiles (options) {
   }
 
   if (descriptionsFile) {
-    api = await fillApiDescriptions(api, descriptionsFile, apiFile, resetDescriptionKeys, noSortKeys, separator, outputYamlPath, logPath)
+    api = await fillApiDescriptions(api, descriptionsFile, apiFile, resetDescriptionKeys, separator, logPath)
   }
 
   if (examplesFile) {
-    api = await fillApiExamples(api, examplesFile, apiFile, noSortKeys, outputYamlPath, logPath)
+    api = await fillApiExamples(api, examplesFile, apiFile, logPath)
+  }
+
+  if (outputYamlPath) {
+    const s = helperFunctions.dumpYaml(api, noSortKeys)
+    const dir = path.parse(outputYamlPath).dir
+    fs.mkdirSync(dir, { recursive: true })
+    fs.writeFileSync(outputYamlPath, s)
   }
 
   let apiMarkdown = await runWiddershins(api, languages, widdershinsTemplates, showSummaryKeys)
