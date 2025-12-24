@@ -81,10 +81,11 @@ function addItems (htmlContent, link, language, selectors, logger) {
   const sections = $(htmlContent)(sectionSelector)
   for (let i = 0, length = sections.length; i < length; i++) {
     const section = sections[i]
-    const title = $(section)(titleSelector).html().replace(/<.+> */, '')
+    let title = $(section)(titleSelector).text()
     const anchor = $(section)(titleSelector + ' > a').attr('href')
     const baseUrl = link.substring(0, link.lastIndexOf(link.replace(/.+\//g, '')))
-    const pubDate = getDate(section, link, language, title, logger)
+    const [date, pubDate] = getDate(section, link, language, title, logger)
+    title = title.replace(date + ' ', '')
     const tags = $(section)('.tags')
     const categories = getCategories(tags)
     tags.remove()
@@ -144,9 +145,12 @@ function getDate (sectionContent, link, language, title, logger) {
     m.groups.month = frToEn[m.groups.month]
   }
 
-  const date = new Date(m.groups.day + ' ' + m.groups.month + ' ' + m.groups.year + ' 00:00:00 GMT').toUTCString()
-  if (date === 'Invalid Date') throwError(language, link, title, logger)
-  else return date
+  const date = m[0]
+  const pubDate = new Date(m.groups.day + ' ' + m.groups.month + ' ' + m.groups.year + ' 00:00:00 GMT').toUTCString()
+  if (pubDate === 'Invalid Date') throwError(language, link, title, logger)
+  else {
+    return [date, pubDate]
+  }
 }
 
 function throwError (language, link, title, logger) {
