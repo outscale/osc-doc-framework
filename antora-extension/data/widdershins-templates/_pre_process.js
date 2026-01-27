@@ -1167,16 +1167,29 @@ function setSafeType (schema, entry) {
     }
     if (schema.items.anyOf) itemsType = 'anyOf'
     if (schema.items.allOf) itemsType = 'allOf'
-    if (schema.items.oneOf) itemsType = 'oneOf'
+    if (schema.items.oneOf) {
+      safeTypes = []
+      for (let n of schema.items.oneOf) {
+        let $ref = n["x-widdershins-oldRef"].replace('#/components/schemas/','')
+        itemsType = '['+$ref+'](#tocs_'+$ref.toLowerCase()+')'
+        let itemsFormat = ''
+        if (n.format) {
+          itemsFormat = ' ('+n.format+')'
+        }
+        safeTypes.push([ '['+itemsType+' '+n.type+itemsFormat+']' ])
+      }
+    }
     if (schema.items.not) itemsType = 'not'
     let itemsFormat = ''
     if (schema.items?.format) {
       itemsFormat = ' ('+schema.items.format+')'
     }
-    if (itemsType !== schema.items.type) {
-      safeTypes = [ '['+itemsType+' '+schema.items.type+itemsFormat+']' ]
-    } else {
-      safeTypes = [ '['+itemsType+itemsFormat+']' ]
+    if (schema.items.type) {
+      if (itemsType !== schema.items.type) {
+        safeTypes = [ '['+itemsType+' '+schema.items.type+itemsFormat+']' ]
+      } else {
+        safeTypes = [ '['+itemsType+itemsFormat+']' ]
+      }
     }
   }
 
@@ -1193,7 +1206,7 @@ function setSafeType (schema, entry) {
     safeTypes.push('null')
   }
 
-  entry.safeType = safeTypes.join(', or ')
+  entry.safeType = safeTypes.join(',<br />or ')
 }
 
 // Modified from Widdershins

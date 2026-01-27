@@ -81,6 +81,7 @@ async function generateApiDocsFiles (options) {
   apiMarkdown = postProcessButtonsAfterWiddershins(apiMarkdown)
   apiMarkdown = postProcessImagesAfterWiddershins(apiMarkdown)
   apiMarkdown = postProcessIndentsAfterWiddershins(apiMarkdown)
+  apiMarkdown = postProcessXxxOfRowsToMerge(apiMarkdown)
   fs.writeFileSync(outputDir + '/' + outputFileStem + '.md', apiMarkdown)
   if (!apiFile.includes('okms')) {
     apiMarkdown = postDocsOutscaleComLinks(apiMarkdown)
@@ -384,6 +385,86 @@ function postProcessIndentsAfterWiddershins (apiMarkdown) {
     }
     apiMarkdown = apiMarkdown.replace(table, newTable)
   }
+
+  return apiMarkdown
+}
+
+function postProcessXxxOfRowsToMerge (apiMarkdown) {
+  const regex1 = /^\|(.+?(anyOf|oneOf)\/0.+?)\|(.+?)\|(.*?)\|\n\|(?:.+?\2.+?)\|(.+?)\|(.*)\|/gm
+  function replacer1 (match, p1, p2, p3, p4, p5, p6) {
+    p4 = p4.match(/(Array size: |Length:|Pattern:|Multiple of:|Minimum value:|Maximum value:|Possible values:|Default:|Example:|Value:).+/)?.[0] || ''
+    p6 = p6.match(/(Array size: |Length:|Pattern:|Multiple of:|Minimum value:|Maximum value:|Possible values:|Default:|Example:|Value:).+/)?.[0] || ''
+
+    let description
+    if (p3.endsWith('[oneOf undefined]')) {
+      description = p4 + '<br /><br />' + p6
+    } else {
+      description = p4 + '<br />or<br />' + p6
+    }
+    if (description.startsWith('<br />or<br />')) {
+      description = description.replace(/^<br \/>or<br \/>/, '')
+    }
+
+    let type
+    if (p3.startsWith('oneOf:<br />') && p5.startsWith('oneOf:<br />')) {
+      p5 = p5.replace(/^oneOf:<br \/>/, '')
+    }
+    if (p3.endsWith('[oneOf undefined]')) {
+      p3 = p3.replace(/,<br \/>or \[oneOf undefined\]$/, '')
+      p5 = '[' + p5.split(',<br />or ').join('],<br />or [') + ']'
+    }
+    if (p3.startsWith(p2 + ':<br />')) {
+      type = p5
+    } else {
+      type = p3 + ',<br />or ' + p5
+    }
+
+    return '|' + p1 + '|' + type + '|' + description + '|'
+  }
+  while (apiMarkdown.match(regex1)) {
+    apiMarkdown = apiMarkdown.replace(regex1, replacer1)
+  }
+
+  const regex2 = /^\|([^-].+?)\|(.+?)\|(.*?)\|\n\|.+?(?:anyOf|oneOf)\/0.+?\|(.+?)\|(.*?)\|\n/gm
+  function replacer2 (match, p1, p2, p3, p4, p5) {
+    let type = p4.replace(/\[[^<>]+?\]\(#[^<>]+?\) undefined,<br \/>or /g, '')
+    if (p4.includes('null,<br />or ')) {
+      type = p4.replace(/null,<br \/>or /g, '') + ',<br />or null'
+    }
+    if (p2.startsWith('[') && p2.endsWith('],<br />or null')) {
+      type = '[' + type.split(',<br />or ').join('],<br />or [') + ']' + '<br />or null'
+    }
+    else if (p2.startsWith('[') && p2.endsWith(']')) {
+      type = '[' + type.split(',<br />or ').join('],<br />or [') + ']'
+    }
+    p5 = p5.replace(/<br \/>or<br \/><br \/>or<br \/>/, '<br />or<br />')
+    let description
+    if (p5) {
+      description = p3 + '<br />' + p5
+    } else {
+      description = p3
+    }
+    const arrayInfo = description.includes('Array size:')
+    const ValueInfo = description.match(/Length:|Pattern:|Multiple of:|Minimum value:|Maximum value:|Possible values:|Default:|Example:|Value:/g)
+    if (
+      (!arrayInfo && ValueInfo?.length)
+      || (arrayInfo && ValueInfo?.length > 1)
+    ) {
+      description = description.replace(ValueInfo[0], '<br />' + ValueInfo[0])
+    }
+    return '|' + p1 + '|' + type + '|' + description + '|\n'
+  }
+  apiMarkdown = apiMarkdown.replace(regex2, replacer2)
+
+  // Schemas section
+  const regex3 = /^\|.+?\|(.+?)\|.+?\|\n\|---\|---\|---\|\n\|.+?(?:anyOf|oneOf)\/0.+?\|(.+?)\|.*?\|\n/gm
+  function replacer3 (match, p1, p2) {
+    p2 = p2.replace(/ undefined/g, '')
+    return '|' + p1 + '|\n|---|\n|' + p2 + '|\n'
+  }
+  apiMarkdown = apiMarkdown.replace(regex3, replacer3)
+  const regex4 = /^(\|.+?\|.+?) undefined(.*?\|.*?\|)$/gm
+  apiMarkdown = apiMarkdown.replace(regex4, '$1$2')
 
   return apiMarkdown
 }
