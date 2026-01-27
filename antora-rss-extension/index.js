@@ -1,3 +1,4 @@
+const path = require('path')
 const Vinyl = require('vinyl')
 const cheerio = require('cheerio')
 const expandPath = require('@antora/expand-path-helper')
@@ -83,7 +84,9 @@ function addItems (htmlContent, link, language, selectors, logger) {
     const section = sections[i]
     let title = $(section)(titleSelector).text()
     const anchor = $(section)(titleSelector + ' > a').attr('href')
-    const baseUrl = link.substring(0, link.lastIndexOf(link.replace(/.+\//g, '')))
+    const url = URL.parse(link)
+    const baseUrl = url.origin
+    const basePath = path.dirname(url.pathname)
     const [date, pubDate] = getDate(section, link, language, title, logger)
     title = title.replace(date + ' ', '')
     const tags = $(section)('.tags')
@@ -93,10 +96,10 @@ function addItems (htmlContent, link, language, selectors, logger) {
     $(section)(titleSelector).remove()
     let description = $(section).html()
     description = description.replace(/\n/g, '')
-    const matches = description.matchAll(/(href|src)="(?<URL>(?!http).+?)"/g)
+    const matches = description.matchAll(/(href|src)="(?<url>(?!http).+?)"/g)
     for (const match of matches) {
-      const absoluteUrl = expandPath(match.groups.URL, { cwd: baseUrl })
-      description = description.replace(match.groups.URL, absoluteUrl)
+      const absoluteUrl = baseUrl + expandPath(match.groups.url, { cwd: basePath })
+      description = description.replace(match.groups.url, absoluteUrl)
     }
 
     rss += '  <item>\n'
