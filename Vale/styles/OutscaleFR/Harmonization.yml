@@ -5,13 +5,10 @@ scope: text
 ignorecase: true
 swap:
   adresses? IP: IP
-  back-end: backend
-  back-ends: backends
+  back-end(s)?: backend$1
   (?<![-/])cloud(?![-/]): Cloud
-  email: e-mail
-  emails: e-mails
-  front-end: frontend
-  front-ends: frontends
+  email(s)?: e-mail$1
+  front-end(s)?: frontend$1
   upload[aeiouy]+?\b: déposer
-  '(?<!en )suivant cette syntaxe': en suivant cette syntaxe
-  "pour plus d'informations?": pour en savoir plus
+  (?<!en )suivant cette syntaxe: en suivant cette syntaxe
+  pour plus d'informations?: pour en savoir plus

@@ -4,13 +4,9 @@ level: error
 scope: text
 ignorecase: true
 swap:
-  back-end: backend
-  back-ends: backends
+  back-end(s)?: backend$1
   (?<![-/])cloud(?![-/]): Cloud
-  e-mail: email
-  e-mails: emails
-  front-end: frontend
-  front-ends: frontends
-  'click on': click
-  IP address: IP
-  IP addresses: IPs
+  e-mail(s)?: email$1
+  front-end(s)?: frontend$1
+  click on: click
+  IP address(es)?: IP$1
