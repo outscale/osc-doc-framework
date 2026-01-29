@@ -14,8 +14,10 @@ exceptions:
 - cockpit-2
 - DirectLink
 - fGPU
+- IaaS
 - Internet
 - Linux
+- Marketplace
 - Microsoft
 - Mistral
 - Net
