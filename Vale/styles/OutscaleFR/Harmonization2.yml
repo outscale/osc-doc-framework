@@ -3,5 +3,6 @@ message: Use the phrase '%s' instead of '%s'.
 level: error
 scope: text
 swap:
+  ((OUTSCALE)( ))?[Mm]achine [Ii]mage(s)?: image$4 machine$3$2
   Image(s)? Machines?( OUTSCALE)?: image$1 machine$2
   image(s)? machines( OUTSCALE)?: image$1 machine$2
