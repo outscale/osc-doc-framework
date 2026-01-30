@@ -21,7 +21,10 @@ async function runInCli () {
   api = insertExamples(api, examples, apiFilename)
   await runOpenapiExamplesValidator(api)
   if (options.output) {
-    writeFile(api, options.noSortKeys, options.output)
+    const s = helperFunctions.dumpYaml(api, options.noSortKeys)
+    const dir = path.parse(options.output).dir
+    fs.mkdirSync(dir, { recursive: true })
+    fs.writeFileSync(options.output, s)
   }
   if (LOG) {
     process.exit(1)
@@ -35,7 +38,7 @@ async function runInNode (api, examplesFile, apiFilepath, logPath) {
   await runOpenapiExamplesValidator(api)
   if (LOG) {
     const dir = path.parse(logPath).dir
-    fs.mkdirSync(dir, { recursive: true })
+    if (dir) fs.mkdirSync(dir, { recursive: true })
     fs.writeFileSync(logPath + '-examples.log', LOG)
   }
 

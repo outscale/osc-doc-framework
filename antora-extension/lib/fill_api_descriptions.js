@@ -30,7 +30,10 @@ async function runInCli () {
   }
   api = await insertDescriptions(api, descriptions, apiFilename)
   if (options.output) {
-    writeFile(api, options.noSortKeys, options.output)
+    const s = helperFunctions.dumpYaml(api, options.noSortKeys)
+    const dir = path.parse(options.output).dir
+    if (dir) fs.mkdirSync(dir, { recursive: true })
+    fs.writeFileSync(options.output, s)
   }
   if (LOG) {
     process.exit(1)

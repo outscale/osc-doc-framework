@@ -73,7 +73,7 @@ async function generateApiDocsFiles (options) {
   if (outputYamlPath) {
     const s = helperFunctions.dumpYaml(api, noSortKeys)
     const dir = path.parse(outputYamlPath).dir
-    fs.mkdirSync(dir, { recursive: true })
+    if (dir) fs.mkdirSync(dir, { recursive: true })
     fs.writeFileSync(outputYamlPath, s)
   }
 
