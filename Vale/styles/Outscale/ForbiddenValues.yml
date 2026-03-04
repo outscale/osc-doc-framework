@@ -1,0 +1,14 @@
+extends: existence
+message: Do not use the private IPs ending in .0, .1, .2, .3, or .255, as well as the private IPs between 100.64.0.0 and 100.127.255.255, as they are reserved for OUTSCALE use. For more information, see https://docs.outscale.com/en/userguide/About-Nets.html.
+level: error
+scope: raw
+nonword: true
+tokens:
+# 10.0.0.x - 10.255.255.x
+- '10\.(\d|[1-9]\d|1\d{2}|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d{2}|2[0-4]\d|25[0-5])\.([0-3]|255)(?!/|\B)'
+# 172.16.0.x - 172.31.255.x
+- '172\.(1[6-9]|2\d|3[01])\.(\d|[1-9]\d|1\d{2}|2[0-4]\d|25[0-5])\.([0-3]|255)(?!/|\B)'
+# 192.168.0.x - 192.168.255.x
+- '192\.168\.(\d|[1-9]\d|1\d{2}|2[0-4]\d|25[0-5])\.([0-3]|255)(?!/|\B)'
+# 100.64.0.x - 100.127.255.x
+- '100\.(6[4-9]|[7-9]\d|1[01]\d|12[0-7])\.(\d|[1-9]\d|1\d{2}|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d{2}|2[0-4]\d|25[0-5])(?!/|\B)'
