@@ -589,7 +589,6 @@ color: var(--brandPrimaryIndigo600);
 .api blockquote,
 .api pre.highlight {
   position: relative;
-  z-index: -1;
 }
 .api .heading-description blockquote {
   background: initial;
