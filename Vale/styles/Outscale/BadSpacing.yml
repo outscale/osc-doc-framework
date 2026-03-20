@@ -3,8 +3,6 @@ message: Bad spacing.
 level: error
 scope: raw
 raw:
-- ' +?\n|'
 - '\( |'
-- ' \)|'
 - '`\|(?= `)|'
 - '(?<=` )\|`'

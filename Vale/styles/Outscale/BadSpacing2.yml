@@ -1,0 +1,8 @@
+# This rule is split off from BadSpacing.yml so that it can be excluded from Terraform Markdown files
+extends: existence
+message: Bad spacing.
+level: error
+scope: raw
+raw:
+- ' \)|'
+- ' +?\n'
