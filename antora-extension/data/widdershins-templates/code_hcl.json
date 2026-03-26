@@ -1,0 +1,606 @@
+{
+  "oapi.AcceptNetPeering": [
+    "resources/net_peering_acceptation"
+  ],
+  "oapi.AddUserToUserGroup": [
+    "resources/user_group"
+  ],
+  "oapi.CreateAccessKey": [
+    "resources/access_key"
+  ],
+  "oapi.CreateApiAccessRule": [
+    "resources/api_access_rule"
+  ],
+  "oapi.CreateCa": [
+    "resources/ca"
+  ],
+  "oapi.CreateClientGateway": [
+    "resources/client_gateway"
+  ],
+  "oapi.CreateDhcpOptions": [
+    "resources/dhcp_option"
+  ],
+  "oapi.CreateFlexibleGpu": [
+    "resources/flexible_gpu"
+  ],
+  "oapi.CreateImage": [
+    "resources/image"
+  ],
+  "oapi.CreateImageExportTask": [
+    "resources/image_export_task"
+  ],
+  "oapi.CreateInternetService": [
+    "resources/internet_service"
+  ],
+  "oapi.CreateKeypair": [
+    "resources/keypair"
+  ],
+  "oapi.CreateListenerRule": [
+    "resources/load_balancer_listener_rule"
+  ],
+  "oapi.CreateLoadBalancer": [
+    "resources/load_balancer"
+  ],
+  "oapi.CreateLoadBalancerListeners": [
+    "resources/load_balancer"
+  ],
+  "oapi.CreateLoadBalancerPolicy": [
+    "resources/load_balancer_policy"
+  ],
+  "oapi.CreateLoadBalancerTags": [
+    "resources/load_balancer"
+  ],
+  "oapi.CreateNatService": [
+    "resources/nat_service"
+  ],
+  "oapi.CreateNet": [
+    "resources/net"
+  ],
+  "oapi.CreateNetAccessPoint": [
+    "resources/net_access_point"
+  ],
+  "oapi.CreateNetPeering": [
+    "resources/net_peering"
+  ],
+  "oapi.CreateNic": [
+    "resources/nic"
+  ],
+  "oapi.CreatePolicy": [
+    "resources/policy"
+  ],
+  "oapi.CreatePolicyVersion": [
+    "resources/policy_version"
+  ],
+  "oapi.CreatePublicIp": [
+    "resources/public_ip"
+  ],
+  "oapi.CreateRoute": [
+    "resources/route"
+  ],
+  "oapi.CreateRouteTable": [
+    "resources/route_table"
+  ],
+  "oapi.CreateSecurityGroup": [
+    "resources/security_group"
+  ],
+  "oapi.CreateSecurityGroupRule": [
+    "resources/security_group_rule"
+  ],
+  "oapi.CreateServerCertificate": [
+    "resources/server_certificate"
+  ],
+  "oapi.CreateSnapshot": [
+    "resources/snapshot"
+  ],
+  "oapi.CreateSnapshotExportTask": [
+    "resources/snapshot_export_task"
+  ],
+  "oapi.CreateSubnet": [
+    "resources/subnet"
+  ],
+  "oapi.CreateUser": [
+    "resources/user"
+  ],
+  "oapi.CreateUserGroup": [
+    "resources/user_group"
+  ],
+  "oapi.CreateVirtualGateway": [
+    "resources/virtual_gateway"
+  ],
+  "oapi.CreateVms": [
+    "resources/vm"
+  ],
+  "oapi.CreateVolume": [
+    "resources/volume"
+  ],
+  "oapi.CreateVpnConnection": [
+    "resources/vpn_connection"
+  ],
+  "oapi.CreateVpnConnectionRoute": [
+    "resources/vpn_connection_route"
+  ],
+  "oapi.DeleteAccessKey": [
+    "resources/access_key"
+  ],
+  "oapi.DeleteApiAccessRule": [
+    "resources/api_access_rule"
+  ],
+  "oapi.DeleteCa": [
+    "resources/ca"
+  ],
+  "oapi.DeleteClientGateway": [
+    "resources/client_gateway"
+  ],
+  "oapi.DeleteDhcpOptions": [
+    "resources/dhcp_option"
+  ],
+  "oapi.DeleteExportTask": [
+    "resources/image_export_task",
+    "resources/snapshot_export_task"
+  ],
+  "oapi.DeleteFlexibleGpu": [
+    "resources/flexible_gpu"
+  ],
+  "oapi.DeleteImage": [
+    "resources/image"
+  ],
+  "oapi.DeleteInternetService": [
+    "resources/internet_service"
+  ],
+  "oapi.DeleteKeypair": [
+    "resources/keypair"
+  ],
+  "oapi.DeleteListenerRule": [
+    "resources/load_balancer_listener_rule"
+  ],
+  "oapi.DeleteLoadBalancer": [
+    "resources/load_balancer"
+  ],
+  "oapi.DeleteLoadBalancerListeners": [
+    "resources/load_balancer"
+  ],
+  "oapi.DeleteLoadBalancerPolicy": [
+    "resources/load_balancer_policy"
+  ],
+  "oapi.DeleteLoadBalancerTags": [
+    "resources/load_balancer"
+  ],
+  "oapi.DeleteNatService": [
+    "resources/nat_service"
+  ],
+  "oapi.DeleteNet": [
+    "resources/net"
+  ],
+  "oapi.DeleteNetAccessPoint": [
+    "resources/net_access_point"
+  ],
+  "oapi.DeleteNetPeering": [
+    "resources/net_peering"
+  ],
+  "oapi.DeleteNic": [
+    "resources/nic"
+  ],
+  "oapi.DeletePolicy": [
+    "resources/policy"
+  ],
+  "oapi.DeletePolicyVersion": [
+    "resources/policy_version"
+  ],
+  "oapi.DeletePublicIp": [
+    "resources/public_ip"
+  ],
+  "oapi.DeleteRoute": [
+    "resources/route"
+  ],
+  "oapi.DeleteRouteTable": [
+    "resources/route_table"
+  ],
+  "oapi.DeleteSecurityGroup": [
+    "resources/security_group"
+  ],
+  "oapi.DeleteSecurityGroupRule": [
+    "resources/security_group_rule"
+  ],
+  "oapi.DeleteServerCertificate": [
+    "resources/server_certificate"
+  ],
+  "oapi.DeleteSnapshot": [
+    "resources/snapshot"
+  ],
+  "oapi.DeleteSubnet": [
+    "resources/subnet"
+  ],
+  "oapi.DeleteUser": [
+    "resources/user"
+  ],
+  "oapi.DeleteUserGroup": [
+    "resources/user_group"
+  ],
+  "oapi.DeleteVirtualGateway": [
+    "resources/virtual_gateway"
+  ],
+  "oapi.DeleteVms": [
+    "resources/vm"
+  ],
+  "oapi.DeleteVolume": [
+    "resources/volume"
+  ],
+  "oapi.DeleteVpnConnection": [
+    "resources/vpn_connection"
+  ],
+  "oapi.DeleteVpnConnectionRoute": [
+    "resources/vpn_connection_route"
+  ],
+  "oapi.DeregisterVmsInLoadBalancer": [
+    "resources/load_balancer_vms"
+  ],
+  "oapi.LinkFlexibleGpu": [
+    "resources/flexible_gpu_link"
+  ],
+  "oapi.LinkInternetService": [
+    "resources/internet_service_link"
+  ],
+  "oapi.LinkLoadBalancerBackendMachines": [
+    "resources/load_balancer_vms"
+  ],
+  "oapi.LinkManagedPolicyToUserGroup": [
+    "resources/user_group"
+  ],
+  "oapi.LinkNic": [
+    "resources/nic_link"
+  ],
+  "oapi.LinkPolicy": [
+    "resources/user"
+  ],
+  "oapi.LinkPrivateIps": [
+    "resources/nic_private_ip"
+  ],
+  "oapi.LinkPublicIp": [
+    "resources/public_ip_link"
+  ],
+  "oapi.LinkRouteTable": [
+    "resources/main_route_table_link",
+    "resources/route_table_link"
+  ],
+  "oapi.LinkVirtualGateway": [
+    "resources/virtual_gateway_link"
+  ],
+  "oapi.LinkVolume": [
+    "resources/volume_link"
+  ],
+  "oapi.ReadAccessKeys": [
+    "data-sources/access_key",
+    "data-sources/access_keys"
+  ],
+  "oapi.ReadAccounts": [
+    "data-sources/account",
+    "data-sources/accounts"
+  ],
+  "oapi.ReadAdminPassword": [
+    "resources/vm"
+  ],
+  "oapi.ReadApiAccessPolicy": [
+    "data-sources/api_access_policy"
+  ],
+  "oapi.ReadApiAccessRules": [
+    "data-sources/api_access_rule",
+    "data-sources/api_access_rules"
+  ],
+  "oapi.ReadCas": [
+    "data-sources/ca",
+    "data-sources/cas"
+  ],
+  "oapi.ReadClientGateways": [
+    "data-sources/client_gateway",
+    "data-sources/client_gateways"
+  ],
+  "oapi.ReadDhcpOptions": [
+    "data-sources/dhcp_option",
+    "data-sources/dhcp_options"
+  ],
+  "oapi.ReadEntitiesLinkedToPolicy": [
+    "data-sources/entities_linked_to_policy"
+  ],
+  "oapi.ReadFlexibleGpuCatalog": [
+    "data-sources/flexible_gpu_catalog"
+  ],
+  "oapi.ReadFlexibleGpus": [
+    "data-sources/flexible_gpu",
+    "data-sources/flexible_gpus"
+  ],
+  "oapi.ReadImageExportTasks": [
+    "data-sources/image_export_task",
+    "data-sources/image_export_tasks"
+  ],
+  "oapi.ReadImages": [
+    "data-sources/image",
+    "data-sources/images"
+  ],
+  "oapi.ReadInternetServices": [
+    "data-sources/internet_service",
+    "data-sources/internet_services"
+  ],
+  "oapi.ReadKeypairs": [
+    "data-sources/keypair",
+    "data-sources/keypairs"
+  ],
+  "oapi.ReadLinkedPolicies": [
+    "data-sources/policies_linked_to_user"
+  ],
+  "oapi.ReadListenerRules": [
+    "data-sources/load_balancer_listener_rule",
+    "data-sources/load_balancer_listener_rules"
+  ],
+  "oapi.ReadLoadBalancerTags": [
+    "data-sources/load_balancer",
+    "data-sources/load_balancers"
+  ],
+  "oapi.ReadLoadBalancers": [
+    "data-sources/load_balancer",
+    "data-sources/load_balancers"
+  ],
+  "oapi.ReadManagedPoliciesLinkedToUserGroup": [
+    "data-sources/policies_linked_to_user_group"
+  ],
+  "oapi.ReadNatServices": [
+    "data-sources/nat_service",
+    "data-sources/nat_services"
+  ],
+  "oapi.ReadNetAccessPointServices": [
+    "data-sources/net_access_point_services"
+  ],
+  "oapi.ReadNetAccessPoints": [
+    "data-sources/net_access_point",
+    "data-sources/net_access_points"
+  ],
+  "oapi.ReadNetPeerings": [
+    "data-sources/net_peering",
+    "data-sources/net_peerings"
+  ],
+  "oapi.ReadNets": [
+    "data-sources/net",
+    "data-sources/net_attributes",
+    "data-sources/nets"
+  ],
+  "oapi.ReadNics": [
+    "data-sources/nic",
+    "data-sources/nics"
+  ],
+  "oapi.ReadPolicies": [
+    "data-sources/policies"
+  ],
+  "oapi.ReadPolicy": [
+    "data-sources/policy"
+  ],
+  "oapi.ReadProductTypes": [
+    "data-sources/product_type",
+    "data-sources/product_types"
+  ],
+  "oapi.ReadPublicCatalog": [
+    "data-sources/public_catalog"
+  ],
+  "oapi.ReadPublicIps": [
+    "data-sources/public_ip",
+    "data-sources/public_ips"
+  ],
+  "oapi.ReadQuotas": [
+    "data-sources/quota",
+    "data-sources/quotas"
+  ],
+  "oapi.ReadRegions": [
+    "data-sources/regions"
+  ],
+  "oapi.ReadRouteTables": [
+    "data-sources/route_table",
+    "data-sources/route_tables"
+  ],
+  "oapi.ReadSecurityGroups": [
+    "data-sources/security_group",
+    "data-sources/security_groups"
+  ],
+  "oapi.ReadServerCertificates": [
+    "data-sources/server_certificate",
+    "data-sources/server_certificates"
+  ],
+  "oapi.ReadSnapshotExportTasks": [
+    "data-sources/snapshot_export_task",
+    "data-sources/snapshot_export_tasks"
+  ],
+  "oapi.ReadSnapshots": [
+    "data-sources/snapshot",
+    "data-sources/snapshots"
+  ],
+  "oapi.ReadSubnets": [
+    "data-sources/subnet",
+    "data-sources/subnets"
+  ],
+  "oapi.ReadSubregions": [
+    "data-sources/subregions"
+  ],
+  "oapi.ReadUserGroup": [
+    "data-sources/user_group"
+  ],
+  "oapi.ReadUserGroups": [
+    "data-sources/user_groups"
+  ],
+  "oapi.ReadUserGroupsPerUser": [
+    "data-sources/user_groups_per_user"
+  ],
+  "oapi.ReadUsers": [
+    "data-sources/user",
+    "data-sources/users"
+  ],
+  "oapi.ReadVirtualGateways": [
+    "data-sources/virtual_gateway",
+    "data-sources/virtual_gateways"
+  ],
+  "oapi.ReadVmTypes": [
+    "data-sources/vm_types"
+  ],
+  "oapi.ReadVms": [
+    "data-sources/vm",
+    "data-sources/vms"
+  ],
+  "oapi.ReadVmsHealth": [
+    "data-sources/load_balancer_vm_health"
+  ],
+  "oapi.ReadVmsState": [
+    "data-sources/vm_state",
+    "data-sources/vm_states"
+  ],
+  "oapi.ReadVolumes": [
+    "data-sources/volume",
+    "data-sources/volumes"
+  ],
+  "oapi.ReadVpnConnections": [
+    "data-sources/vpn_connection",
+    "data-sources/vpn_connections"
+  ],
+  "oapi.RegisterVmsInLoadBalancer": [
+    "resources/load_balancer_vms"
+  ],
+  "oapi.RemoveUserFromUserGroup": [
+    "resources/user_group"
+  ],
+  "oapi.SetDefaultPolicyVersion": [
+    "resources/policy_version"
+  ],
+  "oapi.StartVms": [
+    "resources/vm"
+  ],
+  "oapi.StopVms": [
+    "resources/vm"
+  ],
+  "oapi.UnlinkFlexibleGpu": [
+    "resources/flexible_gpu_link"
+  ],
+  "oapi.UnlinkInternetService": [
+    "resources/internet_service_link"
+  ],
+  "oapi.UnlinkLoadBalancerBackendMachines": [
+    "resources/load_balancer_vms"
+  ],
+  "oapi.UnlinkManagedPolicyFromUserGroup": [
+    "resources/user_group"
+  ],
+  "oapi.UnlinkNic": [
+    "resources/nic_link"
+  ],
+  "oapi.UnlinkPolicy": [
+    "resources/user"
+  ],
+  "oapi.UnlinkPrivateIps": [
+    "resources/nic_private_ip"
+  ],
+  "oapi.UnlinkPublicIp": [
+    "resources/public_ip_link"
+  ],
+  "oapi.UnlinkRouteTable": [
+    "resources/main_route_table_link",
+    "resources/route_table_link"
+  ],
+  "oapi.UnlinkVirtualGateway": [
+    "resources/virtual_gateway_link"
+  ],
+  "oapi.UnlinkVolume": [
+    "resources/volume_link"
+  ],
+  "oapi.UpdateAccessKey": [
+    "resources/access_key"
+  ],
+  "oapi.UpdateApiAccessPolicy": [
+    "resources/api_access_policy"
+  ],
+  "oapi.UpdateApiAccessRule": [
+    "resources/api_access_rule"
+  ],
+  "oapi.UpdateCa": [
+    "resources/ca"
+  ],
+  "oapi.UpdateFlexibleGpu": [
+    "resources/flexible_gpu"
+  ],
+  "oapi.UpdateImage": [
+    "resources/image_launch_permission"
+  ],
+  "oapi.UpdateListenerRule": [
+    "resources/load_balancer_listener_rule"
+  ],
+  "oapi.UpdateLoadBalancer": [
+    "resources/load_balancer",
+    "resources/load_balancer_attributes"
+  ],
+  "oapi.UpdateNet": [
+    "resources/net_attributes"
+  ],
+  "oapi.UpdateNetAccessPoint": [
+    "resources/net_access_point"
+  ],
+  "oapi.UpdateNic": [
+    "resources/nic"
+  ],
+  "oapi.UpdateRoute": [
+    "resources/route"
+  ],
+  "oapi.UpdateRoutePropagation": [
+    "resources/virtual_gateway_route_propagation"
+  ],
+  "oapi.UpdateRouteTableLink": [
+    "resources/main_route_table_link",
+    "resources/route_table_link"
+  ],
+  "oapi.UpdateServerCertificate": [
+    "resources/server_certificate"
+  ],
+  "oapi.UpdateSnapshot": [
+    "resources/snapshot_attributes"
+  ],
+  "oapi.UpdateSubnet": [
+    "resources/subnet"
+  ],
+  "oapi.UpdateUser": [
+    "resources/user"
+  ],
+  "oapi.UpdateUserGroup": [
+    "resources/user_group"
+  ],
+  "oapi.UpdateVm": [
+    "resources/vm"
+  ],
+  "oapi.UpdateVolume": [
+    "resources/volume"
+  ],
+  "oapi.UpdateVpnConnection": [
+    "resources/vpn_connection"
+  ],
+  "oks.CreateCluster": [
+    "resources/oks_cluster"
+  ],
+  "oks.CreateProject": [
+    "resources/oks_project"
+  ],
+  "oks.DeleteCluster": [
+    "resources/oks_cluster"
+  ],
+  "oks.DeleteProject": [
+    "resources/oks_project"
+  ],
+  "oks.GetKubeconfig": [
+    "data-sources/oks_kubeconfig"
+  ],
+  "oks.GetKubeconfigWithPubkeyNACL": [
+    "data-sources/oks_kubeconfig"
+  ],
+  "oks.GetQuotas": [
+    "data-sources/oks_quotas"
+  ],
+  "oks.UpdateCluster": [
+    "resources/oks_cluster"
+  ],
+  "oks.UpdateProject": [
+    "resources/oks_project"
+  ],
+  "oks.UpgradeCluster": [
+    "resources/oks_cluster"
+  ]
+}
