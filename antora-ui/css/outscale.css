@@ -824,7 +824,7 @@ code, kbd, pre {
  color: var(--neutral800);
 }
 
-.doc details summary {
+.doc details > summary {
   border: 1px #ccc solid;
   color: var(--brandPrimaryDarkBlue500) !important;
   cursor: pointer;
@@ -835,13 +835,20 @@ code, kbd, pre {
   text-align: left;
 }
 
-.doc details summary::before {
+.doc details > summary::before {
   top: 1.6rem;
   left: 0.5rem;
 }
 
-.doc details summary:hover {
+.doc details > summary:hover {
   background-color: #eee;
+}
+
+.doc details > .content {
+  border-left: 1px solid #ccc;
+  margin-left: -0.9rem;
+  padding-left: 1.4rem;
+  padding-top: 0.5rem;
 }
 
 .toc .toc-menu a:hover {
