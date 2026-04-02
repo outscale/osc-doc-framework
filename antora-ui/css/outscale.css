@@ -702,13 +702,16 @@ a.action-button:active {
   -webkit-transform: translate(1rem, 1em);
   transform: translate(1.2rem, 1em);
 }
-.doc .admonitionblock td.icon i {padding: 0;}
+.doc .admonitionblock td.icon i {
+  padding: 0;
+  width: 1.3rem;
+}
 
 .doc .admonitionblock td.icon i::after {content: "";}
-.doc .admonitionblock td.icon i.icon-note {background: none;}
-.doc .admonitionblock td.icon i.icon-tip {background: none;}
-.doc .admonitionblock td.icon i.icon-important {background: none;}
-.doc .admonitionblock td.icon i.icon-warning {background: none;}
+.doc .admonitionblock td.icon i.icon-note {background: url("../../_/img/IconInfo.svg") no-repeat 1px 1px / 1.2rem;}
+.doc .admonitionblock td.icon i.icon-tip {background: url("../../_/img/IconSuccess.svg") no-repeat -1px -1px / 1.45rem;}
+.doc .admonitionblock td.icon i.icon-important {background: url("../../_/img/IconWarning.svg") no-repeat -1px -1px / 1.4rem;}
+.doc .admonitionblock td.icon i.icon-warning {background: url("../../_/img/IconError.svg") no-repeat 0 0 / 1.3rem;}
 
 .doc .admonitionblock p .icon {
   color: initial !important;
@@ -862,10 +865,6 @@ b, dt, strong {font-weight: 700;}
   text-align: center;
   width: 1.1em;
 }
-i.fa.icon-note::before {color: var(--feedbackInformation300); content: "\f05a"; font-size: 1.1em;}
-i.fa.icon-tip::before {color: var(--feedbackSuccess300); content: "\f058"; font-size: 1.1em;}
-i.fa.icon-important::before {color: var(--feedbackWarning300); content: "\f071";}
-i.fa.icon-warning::before {color: var(--feedbackError300); content: "\f071";}
 
 .language-shell .hljs-meta.prompt_ {
   -webkit-user-select: none;
