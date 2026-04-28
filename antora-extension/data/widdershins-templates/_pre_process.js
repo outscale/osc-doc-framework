@@ -1170,13 +1170,18 @@ function setSafeType (schema, entry) {
     if (schema.items.oneOf) {
       safeTypes = []
       for (let n of schema.items.oneOf) {
-        let $ref = n["x-widdershins-oldRef"].replace('#/components/schemas/','')
-        itemsType = '['+$ref+'](#tocs_'+$ref.toLowerCase()+')'
         let itemsFormat = ''
         if (n.format) {
           itemsFormat = ' ('+n.format+')'
         }
-        safeTypes.push([ '['+itemsType+' '+n.type+itemsFormat+']' ])
+        if (n["x-widdershins-oldRef"]) {
+          let $ref = n["x-widdershins-oldRef"].replace('#/components/schemas/','')
+          itemsType = '['+$ref+'](#tocs_'+$ref.toLowerCase()+')'
+          safeTypes.push([ '['+itemsType+' '+n.type+itemsFormat+']' ])
+        } else {
+          n["x-widdershins-oldRef"] = n.type
+          safeTypes.push([ '['+n.type+itemsFormat+']' ])
+        }
       }
     }
     if (schema.items.not) itemsType = 'not'
@@ -1207,6 +1212,12 @@ function setSafeType (schema, entry) {
   }
 
   entry.safeType = safeTypes.join(',<br />or ')
+
+  // Concatenate some redundant arrays
+  entry.safeType = entry.safeType.replace(/\[(.+?)\]\(#tocs_\1\) \1/g, '$1')
+  while (entry.safeType.match(/(\[(?:.+?)\]),<br \/>or \1/)) {
+    entry.safeType = entry.safeType.replace(/(\[(?:.+?)\]),<br \/>or \1/g, '$1')
+  }
 }
 
 // Modified from Widdershins

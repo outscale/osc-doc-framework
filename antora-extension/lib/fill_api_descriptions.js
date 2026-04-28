@@ -330,16 +330,24 @@ function insertDescriptions (obj, descriptions, apiFilename) {
     if (typeof v === 'object') {
       insertDescriptions(v, descriptions, apiFilename)
     } else if (k === 'description') {
-      obj[k] = descriptions[v] || '**&lt;NOT_FOUND description: ' + v + '&gt;**'
-      if (obj[k] == '**&lt;NOT_FOUND description: ' + v + '&gt;**') {
-        const msg = `${ERROR_START}NOT_FOUND description (${apiFilename}):${ERROR_END} ${v}`
-        console.error(msg)
-        LOG += msg + '\n'
+      if (isADescriptionForXxxOf(v)) {
+        obj[k] = ''
+      } else {
+        obj[k] = descriptions[v] || '**&lt;NOT_FOUND description: ' + v + '&gt;**'
+        if (obj[k] == '**&lt;NOT_FOUND description: ' + v + '&gt;**') {
+          const msg = `${ERROR_START}NOT_FOUND description (${apiFilename}):${ERROR_END} ${v}`
+          console.error(msg)
+          LOG += msg + '\n'
+        }
       }
     }
   }
 
   return obj
+}
+
+function isADescriptionForXxxOf (s) {
+  return s.match(/\/\d+?(\/|$)/)
 }
 
 if (path.parse(process.argv[1]).base === path.parse(__filename).base) {
