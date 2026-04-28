@@ -427,6 +427,9 @@ function postProcessXxxOfRowsToMerge (apiMarkdown) {
 
   const regex2 = /^\|([^-].+?)\|(.+?)\|(.*?)\|\n\|.+?(?:anyOf|oneOf)\/0.+?\|(.+?)\|(.*?)\|\n/gm
   function replacer2 (match, p1, p2, p3, p4, p5) {
+    if (p4 === 'object') {
+      return match
+    }
     let type = p4.replace(/\[[^<>]+?\]\(#[^<>]+?\) undefined,<br \/>or /g, '')
     if (p4.includes('null,<br />or ')) {
       type = p4.replace(/null,<br \/>or /g, '') + ',<br />or null'
