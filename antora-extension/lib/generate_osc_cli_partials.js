@@ -58,15 +58,17 @@ function createOscCliSections (api, codeSamples, outputFolder, outputFileStem) {
     s += '// end::request-parameters[]\n\n\n\n'
 
     s += 'The **' + operation + '** command returns the following elements:\n\n'
-    const respRef = post.responses['200'].content['application/json'].schema['x-widdershins-oldRef'].split('/').pop()
-    s += getRef(schemas[respRef], 1, host, false) + '\n\n\n'
+    const respRef = post.responses['200'].content?.['application/json']?.schema['x-widdershins-oldRef'].split('/').pop()
+    if (respRef) {
+      s += getRef(schemas[respRef], 1, host, false) + '\n\n\n'
 
-    // s += (
-    //     ".Result sample\n[source,json]\n----\n"
-    //     + codeSamples[operation + "-res-example.json"] + "\n"
-    //     + "----\n\n"
-    // )
-    s += getResultSamplesFromYaml(path)
+      // s += (
+      //     ".Result sample\n[source,json]\n----\n"
+      //     + codeSamples[operation + "-res-example.json"] + "\n"
+      //     + "----\n\n"
+      // )
+      s += getResultSamplesFromYaml(path)
+    }
 
     fs.mkdirSync(outputFolder, { recursive: true })
     fs.writeFileSync(`${process.cwd()}/${outputFolder}/_RC-OscCli-${outputFileStem}-${operation}.adoc`, s)

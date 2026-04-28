@@ -54,7 +54,9 @@ function insertExamples (api, examples, apiFilename) {
     const respExamples = examples[operationId]?.response
 
     op.requestBody.content['application/json'].examples = reqExamples
-    op.responses['200'].content['application/json'].examples = respExamples
+    if (op.responses['200'].content?.['application/json']) {
+      op.responses['200'].content['application/json'].examples = respExamples
+    }
 
     if (!reqExamples || !respExamples) {
       let msg = `${ERROR_START}NOT_FOUND example (${apiFilename}):${ERROR_END} ${operationId}`
