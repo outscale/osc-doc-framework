@@ -54,7 +54,7 @@ function insertExamples (api, examples, apiFilename) {
     const respExamples = examples[operationId]?.response
 
     op.requestBody.content['application/json'].examples = reqExamples
-    if (op.responses['200'].content?.['application/json']) {
+    if (op.responses['200']?.content?.['application/json']) {
       op.responses['200'].content['application/json'].examples = respExamples
     }
 
