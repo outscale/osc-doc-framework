@@ -7,6 +7,7 @@ const helperFunctions = require('./helper_functions')
 const fillApiDescriptions = require('./fill_api_descriptions')
 const fillApiExamples = require('./fill_api_examples')
 const generateErrorMarkdown = require('./generate_error_markdown')
+// const generateOctlPartials = require('./generate_octl_partials')
 const generateOscCliPartials = require('./generate_osc_cli_partials')
 const generateOapiCliPartials = require('./generate_oapi_cli_partials')
 const widdershinsPreProcess = require('../data/widdershins-templates/_pre_process')
@@ -46,6 +47,7 @@ async function generateApiDocsFiles (options) {
   const languages = options.languages
   const widdershinsTemplates = options.templates || __dirname + '/../data/widdershins-templates'
   const shinsTemplates = options.templates || __dirname + '/../data/shins-templates'
+  const octlPartials = options.octlPartials
   const oscCliPartials = options.oscCliPartials
   const oapiCliPartials = options.oapiCliPartials
   const outputYamlPath = options.outputYamlPath
@@ -96,6 +98,10 @@ async function generateApiDocsFiles (options) {
     const errorsMarkdown = generateErrorMarkdown(errors, api)
       runShins(errorsMarkdown, shinsTemplates, `${outputDir}/modules/ROOT/pages/${outputFileStem}-errors.adoc`, true)
   }
+
+  // if (octlPartials) {
+  //   generateOctlPartials(apiMarkdown, api, `${outputDir}/modules/ROOT/partials`, outputFileStem)
+  // }
 
   if (oscCliPartials) {
     generateOscCliPartials(apiMarkdown, api, `${outputDir}/modules/ROOT/partials`, outputFileStem)
@@ -329,6 +335,7 @@ function getLanguageTabs (languages) {
       ruby: 'Ruby',
       'shell--curl': 'Curl',
       'shell--oapi-cli': 'oapi-cli',
+      'shell--octl': 'octl',
       'shell--osc-cli': 'OSC CLI',
       'text--hcl': 'HCL',
     }

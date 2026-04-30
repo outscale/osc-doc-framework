@@ -21,17 +21,6 @@ under the License.
   <div id="api-body" <% if (current_page.page_classes) {%>class="<%= current_page.page_classes %>" <% } %>data-languages="<%- language_array(current_page.data.language_tabs) %>">
     <div class="toc-wrapper nav-container">
       <aside class="nav">
-        <% if (language_tabs.length>0) {%>
-          <div class="lang-selector">
-            <% for (var lang in language_tabs) { %>
-              <% if (typeof language_tabs[lang] === 'object') { %>
-                <a href="#" name="<%= Object.keys(language_tabs[lang])[0] %>"><%= language_tabs[lang][Object.keys(language_tabs[lang])[0]] %></a>
-              <% } else { %>
-                <a href="#" name="<%= language_tabs[lang] %>"><%= language_tabs[lang] %></a>
-              <% } %>
-            <% } %>
-          </div>
-        <% } %>
         <% if (current_page.data.search) { %>
           <div class="search">
             <input type="text" class="search" id="input-search" placeholder="Search">
@@ -61,22 +50,8 @@ under the License.
       </aside>
     </div>
     <div class="page-wrapper">
-      <div class="dark-box"></div>
       <div class="api">
         <%- page_content %>
-      </div>
-      <div class="dark-box">
-        <% if (language_tabs && language_tabs.length) { %>
-          <div class="lang-selector">
-            <% for (var lang in language_tabs) { %>
-              <% if (typeof language_tabs[lang] === 'object') { %>
-                <a href="#" name="<%= Object.keys(language_tabs[lang])[0] %>"><%= language_tabs[lang][Object.keys(language_tabs[lang])[0]]  %></a>
-              <% } else { %>
-                <a href="#" name="<%= language_tabs[lang] %>"><%= language_tabs[lang] %></a>
-              <% } %>
-            <% } %>
-          </div>
-        <% } %>
       </div>
     </div>
   </div>

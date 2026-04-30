@@ -567,13 +567,6 @@ html, body {
     padding-bottom: 1px;
   }
 }
-  .page-wrapper .dark-box {
-    width: 50%;
-    background-color: #2E3336;
-    position: absolute;
-    right: 0;
-    top: 0;
-    bottom: 0; }
   .page-wrapper .lang-selector {
     position: fixed;
     z-index: 50;
@@ -755,8 +748,6 @@ html, body {
     padding-bottom: 0.3em; } }
 
 @media (max-width: 700px) {
-  .dark-box {
-    display: none; }
   .api > h1, .api > h2, .api > h3, .api > h4, .api > h5, .api > h6, .api > p, .api > table, .api > ul, .api > ol, .api > aside, .api > dl {
     margin-right: 0; }
   .toc-wrapper .lang-selector {

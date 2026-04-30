@@ -18,7 +18,8 @@ This file lists `osc-doc-framework`-specific configuration keys that you can use
     * `separator`: The character used in the naming pattern of the CSV placeholder keys (by default, `_`).
     * `examples_file`: (optional) The path of the YAML examples definition file. For example, `oapi-examples.yaml`.
     * `errors_file`: (optional) The path of the YAML errors definition file (prefixed with the DEV repo name as parent directory, if there is one). For example, `oAPI/errors.yaml`.
-    * `languages`: The languages for the auto-generated example tabs, separated by commas. The following values are supported: `shell--osc-cli`, `shell--oapi-cli`, `shell--curl`, `python`, `javascript`, `text--hcl`, `http`.
+    * `languages`: The languages for the auto-generated example tabs, separated by commas. The following values are supported: `shell--octl`, `shell--osc-cli`, `shell--oapi-cli`, `shell--curl`, `python`, `javascript`, `text--hcl`, `http`.
+    * `octl_partials`: (optional) If `true`, Antora partials are generated for the octl User Guide sections of this API (`shell--octl` must be among the specified `languages`).
     * `osc_cli_partials`: (optional) If `true`, Antora partials are generated for the OSC CLI User Guide sections of this API (`shell--osc-cli` must be among the specified `languages`).
     * `oapi_cli_partials`: (optional) If `true`, Antora partials are generated for the oapi-cli User Guide sections of this API (`shell--oapi-cli` must be among the specified `languages`).
     * `output_yaml_path`: The filepath where you want to save the API definition file that's used in the generation (possibly augmented with descriptions and examples). If not specified, the augmented API definition file is not saved to disk.
