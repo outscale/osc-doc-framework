@@ -10,7 +10,7 @@ function generateOscCliPartials (apiMarkdown, api, outputFolder, outputFileStem)
 
 function createCodeSamples (apiMarkdown) {
   const matches = [
-    ...apiMarkdown.matchAll(/<a name="(?<name>.+?-example\.sh)"><\/a>\n(?<examples>(\n```shell--osc-cli\n[\s\S]+?\n```)+)/g),
+    ...apiMarkdown.matchAll(/<a name="(?<name>.+?-example\.sh)"><\/a>\n[\s\S]*?(?<examples>(\n```shell--osc-cli\n[\s\S]+?\n```)+)/g),
   ]
   const codeSamples = {}
   for (let i = 0, length = matches.length; i < length; i++) {
@@ -164,7 +164,7 @@ function getRef (schema, level, host, requestFlag) {
     array = widdershinsPreProcess.pushValueEnum(array, v)
     valueDefault = widdershinsPreProcess.getValueDefault(v)
     if (valueDefault) {
-      array.push(valueDefault)
+      array.push(valueDefault.replace(/<code><\/code>/, '` `'))
     }
     valueExamples = widdershinsPreProcess.getValueExamples(v)
     array = widdershinsPreProcess.pushValueConst(array, v)

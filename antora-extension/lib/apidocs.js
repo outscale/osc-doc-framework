@@ -21,6 +21,7 @@ async function main () {
     examples: obj.buildOptions.examplesFile,
     errors: obj.buildOptions.errorsFile,
     languages: obj.buildOptions.languages,
+    octlPartials: obj.buildOptions.generateOctlPartials,
     oscCliPartials: obj.buildOptions.generateOscCliPartials,
     oapiCliPartials: obj.buildOptions.generateOapiCliPartials,
     outputYamlPath: obj.buildOptions.outputYamlPath,

@@ -392,6 +392,9 @@ html {
   .nav {
     top: 0;
   }
+  .nav-menu {
+    padding-top: 1.5em;
+  }
 }
 
 @media screen and (min-width: 1024px) {
@@ -473,6 +476,9 @@ html {
   }
   .nav-container {
     width: var(--sidebar-width-smaller);
+  }
+  .nav-menu {
+    padding-top: 0.5rem;
   }
   aside.toc.sidebar {
     -ms-flex-preferred-size: var(--sidebar-width-smaller);

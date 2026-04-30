@@ -11,6 +11,7 @@ const generateHclExamples = require('./code_hcl')
 const generateHttpExamples = require('./code_http')
 const generateJavaScriptExamples = require('./code_javascript')
 const generateOapiCliExamples = require('./code_oapi-cli')
+const generateOctlExamples = require('./code_octl')
 const generateOscCliExamples = require('./code_osc-cli')
 const generatePythonExamples = require('./code_python')
 const xml = require('jgexml/json2xml.js')
@@ -31,6 +32,7 @@ function preProcess (data) {
     generateHttpExamples,
     generateJavaScriptExamples,
     generateOapiCliExamples,
+    generateOctlExamples,
     generateOscCliExamples,
     generatePythonExamples,
     generateServersSection,
