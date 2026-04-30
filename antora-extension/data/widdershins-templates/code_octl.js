@@ -17,7 +17,11 @@ function printExamples (examples, data, lang) {
       s += '# ' + examples[i].summary + '\n\n'
     }
 
-    s += 'octl iaas api ' + data.operation.operationId
+    let api_name = 'iaas'
+    if (data.api.info?.title === 'OKS API' || data.host?.includes('oks.outscale.')) {
+      api_name = 'kube'
+    }
+    s += 'octl ' + api_name + ' api ' + data.operation.operationId
 
     for (const [k, v] of Object.entries(pathParams)) {
       if (v === 'string' || v === 0 || v === true || v === false) {
