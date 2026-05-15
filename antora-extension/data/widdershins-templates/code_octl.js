@@ -6,6 +6,10 @@ function generateOctlExamples (data, lang) {
 }
 
 function printExamples (examples, data, lang) {
+  if (data.operation.operationId === 'GetClientIP') {
+    return 'This action is not available with octl.'
+  }
+
   let s = ''
   for (let i = 0, length = examples.length; i < length; i++) {
     const pathParams = convertQueryAndHeaderParameters(data.parameters, 'path')
