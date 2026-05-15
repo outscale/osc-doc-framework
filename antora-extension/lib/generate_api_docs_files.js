@@ -501,6 +501,7 @@ function runShins (markdown, shinsTemplates, outputFile, unsafeFlag = false) {
       html = postProcessIndentsAfterShins(html)
       html = postProcessExtraHighlights(html)
       html = postProcessCollapsibles(html)
+      html = postProcessLinksInOctlExamples(html)
       html = postProcessLinksInHclExamples(html)
       html = postProcessDeprecateTags(html)
       html = postProcessAdmonitionsInTables(html)
@@ -563,6 +564,16 @@ function postProcessDeprecateTags (html) {
   html = html.replace(/----Deprecated----/g, ' <span class="deprecated">Deprecated</span>')
 
   return html
+}
+
+function postProcessLinksInOctlExamples (html) {
+  function replacer (match) {
+    return match.replace(
+      /(https:\/\/github\.com\/outscale\/octl\/.+?\.md)/g,
+      '<a href="$1">$1</a>'
+    )
+  }
+  return html.replace(/<pre class="highlight tab tab-shell--octl">([\s\S]+?)<\/pre>/g, replacer)
 }
 
 function postProcessLinksInHclExamples (html) {
