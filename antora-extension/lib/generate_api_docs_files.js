@@ -7,7 +7,7 @@ const helperFunctions = require('./helper_functions')
 const fillApiDescriptions = require('./fill_api_descriptions')
 const fillApiExamples = require('./fill_api_examples')
 const generateErrorMarkdown = require('./generate_error_markdown')
-// const generateOctlPartials = require('./generate_octl_partials')
+const generateOctlPartials = require('./generate_octl_partials')
 const generateOscCliPartials = require('./generate_osc_cli_partials')
 const generateOapiCliPartials = require('./generate_oapi_cli_partials')
 const widdershinsPreProcess = require('../data/widdershins-templates/_pre_process')
@@ -47,6 +47,7 @@ async function generateApiDocsFiles (options) {
   const languages = options.languages
   const widdershinsTemplates = options.templates || __dirname + '/../data/widdershins-templates'
   const shinsTemplates = options.templates || __dirname + '/../data/shins-templates'
+  const octlPrefix = options.octlPrefix
   const octlPartials = options.octlPartials
   const oscCliPartials = options.oscCliPartials
   const oapiCliPartials = options.oapiCliPartials
@@ -99,9 +100,9 @@ async function generateApiDocsFiles (options) {
       runShins(errorsMarkdown, shinsTemplates, `${outputDir}/modules/ROOT/pages/${outputFileStem}-errors.adoc`, true)
   }
 
-  // if (octlPartials) {
-  //   generateOctlPartials(apiMarkdown, api, `${outputDir}/modules/ROOT/partials`, outputFileStem)
-  // }
+  if (octlPartials) {
+    generateOctlPartials(apiMarkdown, octlPrefix, `${outputDir}/scripts/octl/docs/reference`, `${outputDir}/modules/ROOT/partials`, outputFileStem)
+  }
 
   if (oscCliPartials) {
     generateOscCliPartials(apiMarkdown, api, `${outputDir}/modules/ROOT/partials`, outputFileStem)
@@ -289,6 +290,16 @@ function concatenateXxxOfs (obj, xxxOf) {
       }
       obj.format = formats.join(' or ')
       delete obj[xxxOf]
+    }
+  }
+
+  // Concatenate lone anyOfs and oneOfs
+  if (obj[xxxOf]?.length === 1) {
+    const n = obj[xxxOf][0]
+    for (const [k, v] of Object.entries(n)) {
+      if (k !== '$ref' && k !== 'type') {
+        obj[k] = v
+      }
     }
   }
 
