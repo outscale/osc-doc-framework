@@ -21,6 +21,7 @@ async function main () {
     examples: obj.buildOptions.examplesFile,
     errors: obj.buildOptions.errorsFile,
     languages: obj.buildOptions.languages,
+    octlPrefix: obj.buildOptions.octlPrefix,
     octlPartials: obj.buildOptions.generateOctlPartials,
     oscCliPartials: obj.buildOptions.generateOscCliPartials,
     oapiCliPartials: obj.buildOptions.generateOapiCliPartials,
@@ -35,6 +36,11 @@ async function main () {
     descriptor.name = 'ROOT'
     delete descriptor.nav
     fs.writeFileSync(TEMP_DIR + '/antora.yml', yaml.dump(descriptor))
+  }
+
+  if (options.octlPartials && !options.octlPrefix) {
+    console.error('\nError: In ' + obj.source + '/antora.yml, if you specify `octlPartials`, you must also specify `octlPrefix`. See file://' + process.cwd() + '/node_modules/@outscale/osc-doc-framework/antora-extension/Configuration-Reference.md\n')
+    process.exit(1)
   }
 
   const api_repository = obj.apiRepository

@@ -50,7 +50,7 @@ function createOapiCliSections (api, codeSamples, outputFolder) {
 
     s += formatRequestSamples(codeSamples[operation + '-req-example.sh'])
 
-    s += 'This command contains the following attributes that you need to specify:\n\n'
+    s += 'This command contains the following options that you need to specify:\n\n'
     const reqRef = post.requestBody.content['application/json'].schema['x-widdershins-oldRef'].split('/').pop()
     s += '// tag::request-parameters[]\n\n'
     s += getRef(schemas[reqRef], 1, host, true) + '\n'
