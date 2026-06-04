@@ -11,7 +11,7 @@ function generateOctlPartials (apiMarkdown, octlPrefix, octlDirDocsReference, ou
       const octlText = fs.readFileSync(octlDirDocsReference + '/' + file, 'utf-8')
       const apidocText = getApidocSection(apiMarkdown, call)
 
-      const mainDescription = getMainDescription(octlText, call)
+      const mainDescription = getMainDescription(apidocText, call)
       const requestSample = getRequestSample(apidocText, service, call)
       const options = getOptions(octlText, apidocText, service)
       const resultElementsAndResultSample = getResultElementsAndResultSample(apidocText, call)
@@ -36,13 +36,13 @@ function getApidocSection (apiMarkdown, call) {
   return split(apiMarkdown, start, end)
 }
 
-function getMainDescription (octlText, call) {
-  const start = '\n### Synopsis\n'
-  const end = '```\noctl '
+function getMainDescription (apidocText, call) {
+  const start = '`\n\n'
+  const end = '\n<aside class="warning">'
 
-  let description = split(octlText, start, end)
+  let description = split(apidocText, start, end)
 
-  const match = description.match(/^> \[WARNING\]\n\n(> .*?\n\n?)+?(?=[^>])/)
+  const match = description.match(/^> \[WARNING\]<br \/>\n(> .*?\n\n?)+?(?=[^>])/)
   if (match) {
     const warning = match[0]
     const desc_no_warning = description.slice(warning.length)
@@ -59,7 +59,10 @@ function getRequestSample (apidocText, service, call) {
   let s = ''
   const matches = apidocText.matchAll(/```shell--octl\n[\s\S]+?(?=```)/g)
   for (m of matches) {
-    const summary = m[0].match(/#+? (?!For more information)(.+?)\n/g)
+    m[0] = m[0].replaceAll(/# For more information, see .+?octl.+?\n\n/g, '')
+    m[0] = m[0].replaceAll(/(?<=^|\n)octl/g, '$ octl')
+    m[0] = m[0].replaceAll('&lt', '<').replaceAll('&gt', '>')
+    const summary = m[0].match(/#+? .+?\n/g)
     if (summary) {
       s += '\n.Request sample: ' + summary[0].replace(/^# +?/, '') + m[0].replace(summary[0] + '\n', '').trimEnd() + '\n```\n'
     } else {
@@ -71,7 +74,7 @@ function getRequestSample (apidocText, service, call) {
 }
 
 function getOptions (octlText, apidocText, service) {
-  let s = '\nThis command contains the following options that you need to specify:'
+  let s = ''
 
   const octlStart = '\n### Options\n'
   const octlEnd = '\n### Options inherited'
@@ -102,6 +105,10 @@ function getOptions (octlText, apidocText, service) {
     }
     const description = required + apidocPartMatch[2]
     s += '\n* `' + m.groups.option + '`: ' + description
+  }
+
+  if (s) {
+    s = '\nThis command contains the following options that you need to specify:' + s
   }
 
   return s
@@ -135,9 +142,9 @@ function getResultElementsAndResultSample (apidocText, call) {
   matches = apidocPart.matchAll(/(?:----summary-start----\n```bash\n# (?<summary>.+?)\n```\n\n----summary-end----\n)?(?<code>```json\n[\s\S]+?```)/g)
   for (m of matches) {
     if (m.groups.summary) {
-      s += '.Result sample: ' + m.groups.summary + '\n' + m.groups.code + '\n\n'
+      s += '\n\n.Result sample: ' + m.groups.summary + '\n' + m.groups.code
     } else {
-      s += '.Result sample\n' + m.groups.code + '\n\n'
+      s += '\n\n.Result sample\n' + m.groups.code
     }
   }
 
