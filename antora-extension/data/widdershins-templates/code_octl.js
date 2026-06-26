@@ -10,7 +10,7 @@ function printExamples (examples, data, lang) {
     return 'This action is not available with octl.'
   }
 
-  let s = '# For more information, see https://github.com/outscale/octl/blob/main/docs/README.md\n\n'
+  let s = '# For more information, see Installing-and-Configuring-octl.html\n\n'
 
   for (let i = 0, length = examples.length; i < length; i++) {
     const pathParams = convertQueryAndHeaderParameters(data.parameters, 'path')

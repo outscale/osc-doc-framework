@@ -579,9 +579,9 @@ function postProcessDeprecateTags (html) {
 
 function postProcessLinksInOctlExamples (html) {
   function replacer (match) {
-    return match.replace(
-      /(https:\/\/github\.com\/outscale\/octl\/.+?\.md)/g,
-      '<a href="$1">$1</a>'
+    return match.replaceAll(
+      "Installing-and-Configuring-octl.html",
+      '<a href="en/userguide/Installing-and-Configuring-octl.html">Installing-and-Configuring-octl.html</a>'
     )
   }
   return html.replace(/<pre class="highlight tab tab-shell--octl">([\s\S]+?)<\/pre>/g, replacer)
