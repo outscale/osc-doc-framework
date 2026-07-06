@@ -100,10 +100,15 @@ function getOptions (octlText, apidocText, service) {
     const reg2 = new RegExp(regStart + option.replaceAll('_', '-') + regEnd)
     const apidocPartMatch = apidocPart.match(reg1) || apidocPart.match(reg2)
     let required = ''
-    if (!apidocPartMatch[1]) {
+    let description = ''
+    if (!apidocPartMatch || (apidocPartMatch && !apidocPartMatch[1])) {
       required = '(optional) '
     }
-    const description = required + apidocPartMatch[2]
+    if (apidocPartMatch) {
+      description = required + apidocPartMatch[2]
+    } else {
+      description = required + m.groups.description
+    }
     s += '\n* `' + m.groups.option + '`: ' + description
   }
 
