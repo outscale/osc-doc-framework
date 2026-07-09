@@ -39,8 +39,9 @@ function getApidocSection (apiMarkdown, call) {
 function getMainDescription (apidocText, call) {
   const start = '`\n\n'
   const end = '\n<aside class="warning">'
+  const altEnd = '\n<aside class="success">'
 
-  let description = split(apidocText, start, end)
+  let description = split(apidocText, start, end, altEnd)
 
   const match = description.match(/^> \[WARNING\]<br \/>\n(> .*?\n\n?)+?(?=[^>])/)
   if (match) {
@@ -189,8 +190,10 @@ function markdown_to_asciidoc (s) {
   s = s.replace(/\\\|/g, '|')
   // Correctly render monospace when it is a single space character
   s = s.replace(/<code><\/code>/g, '`` ``')
+  // Correctly render monospace when it contains { or \ (to avoid special character interpretation)
+  s = s.replaceAll(/`(.*?[\{\\].*?)`/g, '`+++$1+++`')
   // Convert admonitions
-  s = s.replace(/(?<=\n)(\*\*)?(\[[A-Z]+?\])(\*\*)?( \+)?\n+?([\s\S]+)$/g, '$2\n====$5====\n')
+  s = s.replace(/(?<=\n)(\*\*)?(\[[A-Z]+?\])(\*\*)?( \+)?\n+?([\s\S]+)$/g, '$2\n====\n$5====\n')
   s = s.replace(/> (\*\*)?(\[[A-Z]+\])(\*\*)?( \+)?\n+?> (.+\n)/g, '$2\n====\n$5====\n')
   // Convert code blocks
   s = s.replaceAll(/```(.+?)--.+?\n([\s\S]+?)\n```/g, '[source,$1]\n----\n$2\n----')
