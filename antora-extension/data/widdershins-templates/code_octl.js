@@ -1,3 +1,7 @@
+const fs = require('fs')
+
+const TEMP_DIR = 'build/.tmp'
+
 function generateOctlExamples (data, lang) {
   const examples = data['x-customRequestExamples'] || {}
   let s = printExamples(examples, data, lang)
@@ -6,27 +10,30 @@ function generateOctlExamples (data, lang) {
 }
 
 function printExamples (examples, data, lang) {
-  if (data.operation.operationId === 'GetClientIP') {
-    return 'This action is not available with octl.'
+  let api_name = 'iaas'
+  if (data.api.info?.title === 'OKS API' || data.host?.includes('oks.outscale.')) {
+    api_name = 'kube'
   }
+  const operationId = data.operation.operationId
+
+  if (!fs.existsSync(TEMP_DIR + '/scripts/octl/docs/reference/octl_' + api_name + '_api_' + operationId + '.md')) {
+    return 'This action is currently not available with octl.'
+  }
+
+  const pathParams = convertQueryAndHeaderParameters(data.parameters, 'path')
+  const queryParams = convertQueryAndHeaderParameters(data.parameters, 'query')
+  const headerParams = convertQueryAndHeaderParameters(data.parameters, 'header')
 
   let s = '# For more information, see Installing-and-Configuring-octl.html\n\n'
 
   for (let i = 0, length = examples.length; i < length; i++) {
-    const pathParams = convertQueryAndHeaderParameters(data.parameters, 'path')
-    const queryParams = convertQueryAndHeaderParameters(data.parameters, 'query')
-    const headerParams = convertQueryAndHeaderParameters(data.parameters, 'header')
     const bodyParams = examples[i].object
 
     if (examples[i].summary) {
       s += '# ' + examples[i].summary + '\n\n'
     }
 
-    let api_name = 'iaas'
-    if (data.api.info?.title === 'OKS API' || data.host?.includes('oks.outscale.')) {
-      api_name = 'kube'
-    }
-    s += 'octl ' + api_name + ' api ' + data.operation.operationId
+    s += 'octl ' + api_name + ' api ' + operationId
 
     for (const [k, v] of Object.entries(pathParams)) {
       if (v === 'string' || v === 0 || v === true || v === false) {
