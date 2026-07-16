@@ -191,7 +191,11 @@ function markdown_to_asciidoc (s) {
   // Correctly render monospace when it is a single space character
   s = s.replace(/<code><\/code>/g, '`` ``')
   // Correctly render monospace when it contains { or \ (to avoid special character interpretation)
-  s = s.replaceAll(/`(.*?[\{\\].*?)`/g, '`+++$1+++`')
+  function replacer (match, p1) {
+    if (!p1.includes('`') && (p1.includes('{') || p1.includes('\\'))) return '`+++' + p1 + '+++`'
+    else return match
+  }
+  s = s.replaceAll(/`(.*?)`/g, replacer)
   // Convert admonitions
   s = s.replace(/(?<=\n)(\*\*)?(\[[A-Z]+?\])(\*\*)?( \+)?\n+?([\s\S]+)$/g, '$2\n====\n$5====\n')
   s = s.replace(/> (\*\*)?(\[[A-Z]+\])(\*\*)?( \+)?\n+?> (.+\n)/g, '$2\n====\n$5====\n')
