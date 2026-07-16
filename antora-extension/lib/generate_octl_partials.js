@@ -17,10 +17,10 @@ function generateOctlPartials (apiMarkdown, octlPrefix, octlDirDocsReference, ou
       const resultElementsAndResultSample = getResultElementsAndResultSample(apidocText, call)
 
       let s = [
-        markdown_to_asciidoc(mainDescription),
-        markdown_to_asciidoc(requestSample),
-        markdown_to_asciidoc(options),
-        markdown_to_asciidoc(resultElementsAndResultSample),
+        markdown_to_asciidoc(mainDescription, outputFileStem),
+        markdown_to_asciidoc(requestSample, outputFileStem),
+        markdown_to_asciidoc(options, outputFileStem),
+        markdown_to_asciidoc(resultElementsAndResultSample, outputFileStem),
       ].join('\n') + '\n'
 
       fs.mkdirSync(outputFolder, { recursive: true })
@@ -169,7 +169,7 @@ function pascalcase_to_snakecase (s) {
   return s.split(/\.?(?=[A-Z])/).join('_').toLowerCase()
 }
 
-function markdown_to_asciidoc (s) {
+function markdown_to_asciidoc (s, outputFileStem) {
   // Convert line breaks
   s = s.replace(/(<\/?br ?\/?>){2,}/g, '\n')
   s = s.replace(/<\/?br ?\/?>\n?/g, ' +\n')
@@ -180,7 +180,9 @@ function markdown_to_asciidoc (s) {
   // Convert links
   function convertLinkForUG(match, p1, p2) {
     if (match.includes('](#')) {
-      return 'xref:ROOT::api.adoc' + p2 + '[' + p1 + ']'
+      return 'xref:ROOT::' + outputFileStem + '.adoc' + p2 + '[' + p1 + ']'
+    } else if (match.includes('](') && !match.includes('http') && !match.includes(':')) {
+      return 'https://docs.outscale.com/' + p2 + '[' + p1 + ']'
     } else {
       return p2 + '[' + p1 + ']'
     }

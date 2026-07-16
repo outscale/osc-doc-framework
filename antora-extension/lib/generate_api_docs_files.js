@@ -85,10 +85,10 @@ async function generateApiDocsFiles (options) {
   apiMarkdown = postProcessImagesAfterWiddershins(apiMarkdown)
   apiMarkdown = postProcessIndentsAfterWiddershins(apiMarkdown)
   apiMarkdown = postProcessXxxOfRowsToMerge(apiMarkdown)
-  fs.writeFileSync(outputDir + '/' + outputFileStem + '.md', apiMarkdown)
   if (!apiFile.includes('okms')) {
     apiMarkdown = postDocsOutscaleComLinks(apiMarkdown)
   }
+  fs.writeFileSync(outputDir + '/' + outputFileStem + '.md', apiMarkdown)
   runShins(apiMarkdown, shinsTemplates, `${outputDir}/modules/ROOT/pages/${outputFileStem}.adoc`, false)
 
   if (errorsFile) {
