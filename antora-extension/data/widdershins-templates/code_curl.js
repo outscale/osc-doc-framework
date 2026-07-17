@@ -32,7 +32,7 @@ function createGeneralOptions (data) {
       options.push({ name: 'user', value: '$OSC_ACCESS_KEY:$OSC_SECRET_KEY' }, { name: 'aws-sigv4', value: 'osc' })
     } else if (data.operation['x-basicAuthFlag']) {
       options.push(
-        { name: 'header', value: 'Authorization: Basic $(echo -n "$OSC_EMAIL:$OSC_PASSWORD" | base64)' },
+        { name: 'header', value: 'Authorization: Basic $(echo -n "$OSC_LOGIN:$OSC_PASSWORD" | base64)' },
         { name: 'header', value: 'X-Osc-Date: $(TZ=GMT date +%Y%m%dT%H%M%SZ)' }
       )
     }
@@ -192,7 +192,7 @@ function overrideSomeValues (k, v, data) {
       }
     } else {
       if (k === 'AuthenticationMethod') return 'password'
-      else if (k === 'Login') return '$OSC_EMAIL'
+      else if (k === 'Login') return '$OSC_LOGIN'
       else if (k === 'Password') return '$OSC_PASSWORD'
     }
   }
