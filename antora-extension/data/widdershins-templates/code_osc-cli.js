@@ -24,7 +24,7 @@ function createGeneralOptions (data) {
   if (data.operation['x-basicAuthFlag'] && !data.host.startsWith('icu')) {
     options.push(
       { name: 'authentication-method', value: '"password"' },
-      { name: 'login', value: '"$OSC_EMAIL"' },
+      { name: 'login', value: '"$OSC_LOGIN"' },
       { name: 'password', value: '"$OSC_PASSWORD"' }
     )
   }
@@ -155,7 +155,7 @@ function overrideSomeValues (k, v, data) {
       }
     } else {
       if (k === 'AuthenticationMethod') return '"password"'
-      else if (k === 'Login') return '"$OSC_EMAIL"'
+      else if (k === 'Login') return '"$OSC_LOGIN"'
       else if (k === 'Password') return '"$OSC_PASSWORD"'
     }
   }

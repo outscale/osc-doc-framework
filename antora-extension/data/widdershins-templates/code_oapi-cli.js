@@ -23,7 +23,7 @@ function createGeneralOptions (data) {
 
   if (data.operation['x-basicAuthFlag']) {
     options.push(
-      { name: 'login', value: '"$OSC_EMAIL"' },
+      { name: 'login', value: '"$OSC_LOGIN"' },
       { name: 'password', value: '"$OSC_PASSWORD"' },
     )
   }

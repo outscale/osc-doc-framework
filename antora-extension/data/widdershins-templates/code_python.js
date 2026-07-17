@@ -20,7 +20,7 @@ function generatePythonExamples (data) {
 
   if (basicAuth) {
     s +=
-      '# gw = Gateway(email=os.environ.get("OSC_EMAIL"), password=os.environ.get("OSC_PASSWORD"))  # For login/password authentication\n'
+      '# gw = Gateway(email=os.environ.get("OSC_LOGIN"), password=os.environ.get("OSC_PASSWORD"))  # For login/password authentication\n'
   }
   s += '\n'
 
