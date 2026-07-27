@@ -85,8 +85,10 @@ function getOptions (octlText, apidocText, service) {
   const apidocEnd = '>Response Elements</h3>\n'
   const apidocPart = split(apidocText, apidocStart, apidocEnd)
 
+  let i = 0
   const matches = octlPart.matchAll(/\n      --(?<option>.+?)(?<type>(?: \S+?)?)\b   +(?<description>.*)/g)
   for (const m of matches) {
+    i++
     let option = m.groups.option
     let regStart = `\n\\|(?:.+? )?`
     if (option.includes('.')) {
@@ -113,7 +115,9 @@ function getOptions (octlText, apidocText, service) {
     s += '\n* `' + m.groups.option + '`: ' + description
   }
 
-  if (s) {
+  if (i === 1) {
+    s = '\nThis command contains the following option that you need to specify:' + s
+  } else if (i > 1) {
     s = '\nThis command contains the following options that you need to specify:' + s
   }
 
@@ -121,7 +125,7 @@ function getOptions (octlText, apidocText, service) {
 }
 
 function getResultElementsAndResultSample (apidocText, call) {
-  let s = '\nThe **' + call + '** command returns the following elements:'
+  let s = ''
 
   const apidocStart = '>Response Elements</h3>\n'
   const apidocEnd = '\n## '
@@ -142,6 +146,13 @@ function getResultElementsAndResultSample (apidocText, call) {
       }
       s += '\n' + ' '.repeat(4 * m.groups.indent?.length) + '* ' + element + ': ' + m.groups.description
     }
+  }
+  if (i === 0) {
+    s = '\nThe **' + call + '** command does not return anything.'
+  } else if (i === 1) {
+    s = '\nThe **' + call + '** command returns the following element:' + s
+  } else if (i > 2) {
+    s = '\nThe **' + call + '** command returns the following elements:' + s
   }
 
   // Result sample

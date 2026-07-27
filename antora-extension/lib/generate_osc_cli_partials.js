@@ -51,16 +51,27 @@ function createOscCliSections (api, codeSamples, outputFolder, outputFileStem) {
 
     s += formatRequestSamples(codeSamples[operation + '-req-example.sh'])
 
-    s += 'This command contains the following options that you need to specify:\n\n'
     const reqRef = post.requestBody.content['application/json'].schema['x-widdershins-oldRef'].split('/').pop()
+    const reqS = getRef(schemas[reqRef], 1, host, true) + '\n'
+    const reqCount = reqS.split('* ').length - 1
+    if (reqCount === 1) {
+      s += 'This command contains the following option that you need to specify:\n\n'
+    } else if (reqCount > 1) {
+      s += 'This command contains the following options that you need to specify:\n\n'
+    }
     s += '// tag::request-parameters[]\n\n'
-    s += getRef(schemas[reqRef], 1, host, true) + '\n'
+    s += reqS
     s += '// end::request-parameters[]\n\n\n\n'
 
-    s += 'The **' + operation + '** command returns the following elements:\n\n'
     const respRef = post.responses['200']?.content?.['application/json']?.schema['x-widdershins-oldRef'].split('/').pop()
     if (respRef) {
-      s += getRef(schemas[respRef], 1, host, false) + '\n\n\n'
+      const respS = getRef(schemas[respRef], 1, host, false) + '\n\n\n'
+      const respCount = respS.split('* ').length - 1
+      if (respCount === 1) {
+        s += 'The **' + operation + '** command returns the following element:\n\n' + respS
+      } else if (respCount > 1) {
+        s += 'The **' + operation + '** command returns the following elements:\n\n' + respS
+      }
 
       // s += (
       //     ".Result sample\n[source,json]\n----\n"
@@ -68,6 +79,8 @@ function createOscCliSections (api, codeSamples, outputFolder, outputFileStem) {
       //     + "----\n\n"
       // )
       s += getResultSamplesFromYaml(path)
+    } else {
+      s += 'The **' + operation + '** command does not return anything.\n\n'
     }
 
     fs.mkdirSync(outputFolder, { recursive: true })
