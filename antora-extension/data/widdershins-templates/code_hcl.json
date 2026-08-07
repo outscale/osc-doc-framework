@@ -591,6 +591,15 @@
   "oks.GetKubeconfigWithPubkeyNACL": [
     "data-sources/oks_kubeconfig"
   ],
+  "oks.GetNetPeeringAcceptanceTemplate": [
+    "data-sources/oks_crd_templates"
+  ],
+  "oks.GetNetPeeringRequestTemplate": [
+    "data-sources/oks_crd_templates"
+  ],
+  "oks.GetNodepoolTemplate": [
+    "data-sources/oks_crd_templates"
+  ],
   "oks.GetQuotas": [
     "data-sources/oks_quotas"
   ],
