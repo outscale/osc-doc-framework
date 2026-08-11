@@ -211,7 +211,7 @@ function formatRequestSamples (s) {
     const tagName = 'example_' + i
     const summary = command.groups.summary || ''
     if (summary) {
-      s2 += '// tag::' + tagName + '[] ' + summary + '\n\n'
+      s2 += '// tag::' + tagName + '[] ' + '\n\n'
       s2 += '.Request sample: ' + summary + '\n'
     } else {
       s2 += '// tag::' + tagName + '[]' + '\n\n'
@@ -232,7 +232,7 @@ function getResultSamplesFromYaml (path) {
     const tagName = k.replace('ex', 'example_')
     const summary = v.summary || ''
     if (summary) {
-      s += '// tag::' + tagName + '[] ' + summary + '\n\n'
+      s += '// tag::' + tagName + '[] ' + '\n\n'
       s += '.Result sample: ' + summary + '\n'
     } else {
       s += '// tag::' + tagName + '[]' + '\n\n'
