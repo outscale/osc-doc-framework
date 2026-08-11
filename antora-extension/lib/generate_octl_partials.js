@@ -187,7 +187,7 @@ function markdown_to_asciidoc (s, outputFileStem) {
   // Convert lists
   s = s.replace(/(?<=\n)(    )+?\*(?= )/g, (x) => '*'.repeat(1 + x.length / 4))
   // Add line break before lists
-  s = s.replace(/((\n\*+ .+)+)/g, '\n$1')
+  s = s.replace(/(?<!\])((\n\*+ .+)+)/g, '\n$1')
   // Convert links
   function convertLinkForUG(match, p1, p2) {
     if (match.includes('](#')) {
@@ -200,7 +200,7 @@ function markdown_to_asciidoc (s, outputFileStem) {
   }
   s = s.replace(/\[(.+?)\]\((.+?)\)/g, convertLinkForUG)
   // Unescape pipe characters
-  s = s.replace(/\\\|/g, '|')
+  s = s.replace(/\\(\\)?\|/g, '|')
   // Correctly render monospace when it is a single space character
   s = s.replace(/<code><\/code>/g, '`` ``')
   // Correctly render monospace when it contains { or \ (to avoid special character interpretation)
