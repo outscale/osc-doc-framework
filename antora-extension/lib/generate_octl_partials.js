@@ -53,29 +53,37 @@ function getMainDescription (apidocText, call) {
     description = 'The **' + call + '** command ' + description[0].toLowerCase() + description.slice(1)
   }
 
-  return description
+  return '// tag::main-description[]\n\n' + description + '// end::main-description[]\n\n\n'
 }
 
 function getRequestSample (apidocText, service, call) {
-  let s = ''
+  let s = '// tag::examples[]\n\n'
+
+  let i = 0
   const matches = apidocText.matchAll(/```shell--octl\n[\s\S]+?(?=```)/g)
   for (m of matches) {
     m[0] = m[0].replaceAll(/# For more information, see .+?octl.+?\n\n/g, '')
     m[0] = m[0].replaceAll(/(?<=^|\n)octl/g, '$ octl')
     m[0] = m[0].replaceAll('&lt', '<').replaceAll('&gt', '>')
+    i++
     const summary = m[0].match(/#+? .+?\n/g)
     if (summary) {
-      s += '\n.Request sample: ' + summary[0].replace(/^# +?/, '') + m[0].replace(summary[0] + '\n', '').trimEnd() + '\n```\n'
+      s += '// tag::example_' + i + '[] ' + '\n'
+      s += '.Request sample: ' + summary[0].replace(/^# +?/, '') + m[0].replace(summary[0] + '\n', '').trimEnd() + '\n```\n'
     } else {
-      s += '\n.Request sample\n' + m[0].trimEnd() + '\n```\n'
+      s += '// tag::example_' + i + '[]' + '\n\n'
+      s += '.Request sample\n' + m[0].trimEnd() + '\n```\n'
     }
+    s += '// end::example_' + i + '[]\n\n'
   }
 
-  return s.trim()
+  s += '// end::examples[]\n\n'
+
+  return s
 }
 
 function getOptions (octlText, apidocText, service) {
-  let s = ''
+  let s = '// tag::request-parameters[]\n\n'
 
   const octlStart = '\n### Options\n'
   const octlEnd = '\n### Options inherited'
@@ -112,14 +120,18 @@ function getOptions (octlText, apidocText, service) {
     } else {
       description = required + m.groups.description
     }
-    s += '\n* `' + m.groups.option + '`: ' + description
+    s += '// tag::' + m.groups.option + '[]\n'
+    s += '* `' + m.groups.option + '`: ' + description + '\n'
+    s += '// end::' + m.groups.option + '[]\n'
   }
 
   if (i === 1) {
-    s = '\nThis command contains the following option that you need to specify:' + s
+    s = '\nThis command contains the following option that you need to specify:\n\n' + s + '\n'
   } else if (i > 1) {
-    s = '\nThis command contains the following options that you need to specify:' + s
+    s = '\nThis command contains the following options that you need to specify:\n\n' + s + '\n'
   }
+
+  s += '// end::request-parameters[]\n\n'
 
   return s
 }
@@ -148,22 +160,32 @@ function getResultElementsAndResultSample (apidocText, call) {
     }
   }
   if (i === 0) {
-    s = '\nThe **' + call + '** command does not return anything.'
+    s = '\nThe **' + call + '** command does not return anything.' + '\n\n\n\n'
   } else if (i === 1) {
-    s = '\nThe **' + call + '** command returns the following element:' + s
+    s = '\nThe **' + call + '** command returns the following element:' + s + '\n\n\n\n'
   } else if (i > 2) {
-    s = '\nThe **' + call + '** command returns the following elements:' + s
+    s = '\nThe **' + call + '** command returns the following elements:' + s + '\n\n\n\n'
   }
 
   // Result sample
+  s += '// tag::examples[]\n\n'
+
+  i = 0
   matches = apidocPart.matchAll(/(?:----summary-start----\n```bash\n# (?<summary>.+?)\n```\n\n----summary-end----\n)?(?<code>```json\n[\s\S]+?```)/g)
   for (m of matches) {
+    i++
     if (m.groups.summary) {
-      s += '\n\n.Result sample: ' + m.groups.summary + '\n' + m.groups.code
+      const summary = m.groups.summary
+      s += '// tag::example_' + i + '[] ' + '\n\n'
+      s += '.Result sample: ' + m.groups.summary + '\n' + m.groups.code + '\n'
     } else {
-      s += '\n\n.Result sample\n' + m.groups.code
+      s += '// tag::example_' + i + '[]' + '\n\n'
+      s += '.Result sample\n' + m.groups.code + '\n'
     }
+    s += '// end::example_' + i + '[]\n\n'
   }
+
+  s += '// end::examples[]\n\n'
 
   return s.trimEnd()
 }
