@@ -872,16 +872,19 @@ b, dt, strong {font-weight: 700;}
   width: 1.1em;
 }
 
+.doc pre.highlight > code.language-shell {
+  padding-left: 1.875em;
+}
+.language-shell .hljs-meta.prompt_,
+.language-shell .hljs-comment {
+  margin-left: -1.2em;
+}
 .language-shell .hljs-meta.prompt_ {
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
   display: inline-block;
-  margin-left: -1.2em;
-}
-.doc pre.highlight > code.language-shell {
-  padding-left: 1.875em;
 }
 
 .fa-check {

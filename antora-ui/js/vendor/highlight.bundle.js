@@ -19,7 +19,12 @@
   hljs.registerLanguage('python', require('highlight.js/lib/languages/python'))
   hljs.registerLanguage('ruby', require('highlight.js/lib/languages/ruby'))
   hljs.registerLanguage('rust', require('highlight.js/lib/languages/rust'))
-  hljs.registerLanguage('shell', require('highlight.js/lib/languages/shell'))
+  // Highlight Shell as "Bash but with prompts highlighted"
+  hljs.registerLanguage('shell', require('highlight.js/lib/languages/bash'))
+  hljs.getLanguage('shell').contains.push({
+    className: 'meta.prompt',
+    begin: /^\s{0,3}[./~\w\d[\]()@-]*[>%$][ ]?/,
+  })
   hljs.registerLanguage('sql', require('highlight.js/lib/languages/sql'))
   hljs.registerLanguage('xml', require('highlight.js/lib/languages/xml'))
   hljs.registerLanguage('yaml', require('highlight.js/lib/languages/yaml'))
