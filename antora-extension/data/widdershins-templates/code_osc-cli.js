@@ -13,6 +13,8 @@ function generateOscCliExamples (data, lang) {
     s += printExamples([examples[examples.length - 1]], options, data, lang)
   }
 
+  s += printNotesForSpecialOscCliSyntaxes(data.parameters)
+
   return s
 }
 
@@ -161,6 +163,39 @@ function overrideSomeValues (k, v, data) {
   }
 
   return v
+}
+
+function printNotesForSpecialOscCliSyntaxes (parameters) {
+  let s = ''
+
+  const exceptions1 = ['AccepterOwnerId', 'CustomerId', 'PeerOwnerId', 'SecurityGroupAccountIdToLink', 'SourceSecurityGroupOwnerId', 'ZipCode']
+  const exceptions2 = ['ClientToken']
+  const exceptions3 = ['Body', 'CaPem', 'CertificateBody', 'CertificateChain', 'Chain', 'PrivateKey']
+
+  const flattenedParams = parameters.map((x) => x.name.split(" ").at(-1))
+
+  let arr = flattenedParams.filter((x) => exceptions1.includes(x))
+  if (arr.length >= 2) {
+    s += '\n\n# Note regarding --' + arr.join(' and --') + ':\n# With OSC CLI, you must wrap these values in two pairs of quotes to make sure\n# they are correctly parsed as strings and not as integers: --' + arr[0] + ' \'"1234"\''
+  } else if (arr.length) {
+    s += '\n\n# Note regarding --' + arr + ':\n# With OSC CLI, you must wrap this value in two pairs of quotes to make sure it\n# is correctly parsed as a string and not as an integer: --' + arr + ' \'"1234"\''
+  }
+
+  arr = flattenedParams.filter((x) => exceptions2.includes(x))
+  if (arr.length >= 2) {
+    s += '\n\n# Note regarding --' + arr.join(' and --') + ':\n# With OSC CLI, if you want to specify a number for these, you must wrap the\n# value in two pairs of quotes to make sure it is correctly parsed as a string\n# and not as an integer: --' + arr[0] + ' \'"1234"\''
+  } else if (arr.length) {
+    s += '\n\n# Note regarding --' + arr + ':\n# With OSC CLI, if you want to specify a number for this, you must wrap the\n# value in two pairs of quotes to make sure it is correctly parsed as a string\n# and not as an integer: --' + arr + ' \'"1234"\''
+  }
+
+  arr = flattenedParams.filter((x) => exceptions3.includes(x))
+  if (arr.length >= 2) {
+    s += '\n\n# Note regarding --' + arr.join(' and --') + ':\n# With OSC CLI, make sure you use this syntax: --' + arr[0] + '=$(cat FILENAME.pem)'
+  } else if (arr.length) {
+    s += '\n\n# Note regarding --' + arr + ':\n# With OSC CLI, make sure you use this syntax: --' + arr + '=$(cat FILENAME.pem)'
+  }
+
+  return s
 }
 
 module.exports = generateOscCliExamples
