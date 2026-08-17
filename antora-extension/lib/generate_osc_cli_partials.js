@@ -206,23 +206,49 @@ function formatRequestSamples (s) {
   const commands = s.matchAll(/(# (?<summary>.+)\n\n)?(?<command>\$ osc-cli [\s\S]+?)(?=\n```)/g)
   let s2 = '// tag::examples[]\n\n'
   let i = 0
-  for (const command of commands) {
+  for (const n of commands) {
     i++
-    const tagName = 'example_' + i
-    const summary = command.groups.summary || ''
+    s2 += '// tag::example_' + i + '[]\n\n'
+    const summary = n.groups.summary
     if (summary) {
-      s2 += '// tag::' + tagName + '[] ' + '\n\n'
       s2 += '.Request sample: ' + summary + '\n'
     } else {
-      s2 += '// tag::' + tagName + '[]' + '\n\n'
-      s2 += '.Request sample' + '\n'
+      s2 += '.Request sample\n'
     }
-    s2 +=
-      '[source,shell]\n' + '----\n' + command.groups.command.trim() + '\n' + '----\n' + '// end::' + tagName + '[]\n\n'
+    s2 += '[source,shell]\n'
+    s2 += '----\n'
+    const match = n.groups.command.match(/^(?<command_without_end_note>[\s\S]+?)\n(?<end_note>(?:# .+?\n)+?)$/)
+    if (match) {
+      s2 += match.groups.command_without_end_note
+      s2 += '----\n'
+      s2 += formatEndNote(match.groups.end_note)
+    } else {
+      s2 += n.groups.command + '\n'
+      s2 += '----\n'
+    }
+    s2 += '// end::example_' + i + '[]\n\n'
   }
   s2 += '// end::examples[]\n\n\n\n'
 
   return s2
+}
+
+function formatEndNote (endNote) {
+  // Remove comment indicators and line breaks
+  endNote = endNote.replace('# ', '').replaceAll(':\n# ', ': +\n').replaceAll('\n# ', ' ')
+  // Format options in monospace
+  endNote = endNote.replace(/(--[\w\d_\-\.]+([ =]['"\$\(\[\{]+?.+?["'\$\)\]\}]+)?)/g, '`$1`')
+  // Add full stop if there isn't one
+  if (endNote.endsWith('.\n') === false) {
+    endNote = endNote.trim() + '.\n'
+  }
+
+  let s = '[IMPORTANT]\n'
+  s += '====\n'
+  s += endNote
+  s += '====\n'
+
+  return s
 }
 
 function getResultSamplesFromYaml (path) {
@@ -232,10 +258,10 @@ function getResultSamplesFromYaml (path) {
     const tagName = k.replace('ex', 'example_')
     const summary = v.summary || ''
     if (summary) {
-      s += '// tag::' + tagName + '[] ' + '\n\n'
+      s += '// tag::' + tagName + '[]\n\n'
       s += '.Result sample: ' + summary + '\n'
     } else {
-      s += '// tag::' + tagName + '[]' + '\n\n'
+      s += '// tag::' + tagName + '[]\n\n'
       s += '.Result sample' + '\n'
     }
     s += '[source,json]\n'

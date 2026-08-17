@@ -66,12 +66,12 @@ function getRequestSample (apidocText, service, call) {
     m[0] = m[0].replaceAll(/(?<=^|\n)octl/g, '$ octl')
     m[0] = m[0].replaceAll('&lt', '<').replaceAll('&gt', '>')
     i++
+    s += '// tag::example_' + i + '[]\n'
     const summary = m[0].match(/#+? .+?\n/g)
     if (summary) {
-      s += '// tag::example_' + i + '[] ' + '\n'
       s += '.Request sample: ' + summary[0].replace(/^# +?/, '') + m[0].replace(summary[0] + '\n', '').trimEnd() + '\n```\n'
     } else {
-      s += '// tag::example_' + i + '[]' + '\n\n'
+      s += '\n'
       s += '.Request sample\n' + m[0].trimEnd() + '\n```\n'
     }
     s += '// end::example_' + i + '[]\n\n'
@@ -176,10 +176,10 @@ function getResultElementsAndResultSample (apidocText, call) {
     i++
     if (m.groups.summary) {
       const summary = m.groups.summary
-      s += '// tag::example_' + i + '[] ' + '\n\n'
+      s += '// tag::example_' + i + '[]\n\n'
       s += '.Result sample: ' + m.groups.summary + '\n' + m.groups.code + '\n'
     } else {
-      s += '// tag::example_' + i + '[]' + '\n\n'
+      s += '// tag::example_' + i + '[]\n\n'
       s += '.Result sample\n' + m.groups.code + '\n'
     }
     s += '// end::example_' + i + '[]\n\n'
