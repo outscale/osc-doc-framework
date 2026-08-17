@@ -193,19 +193,20 @@ function formatRequestSamples (s) {
   const commands = s.matchAll(/(# (?<summary>.+)\n\n)?(?<command>\$ oapi-cli [\s\S]+?)(?=\n```)/g)
   let s2 = '// tag::examples[]\n\n'
   let i = 0
-  for (const command of commands) {
+  for (const n of commands) {
     i++
-    const tagName = 'example_' + i
-    const summary = command.groups.summary || ''
+    s2 += '// tag::example_' + i + '[]\n\n'
+    const summary = n.groups.summary
     if (summary) {
-      s2 += '// tag::' + tagName + '[] ' + '\n\n'
       s2 += '.Request sample: ' + summary + '\n'
     } else {
-      s2 += '// tag::' + tagName + '[]' + '\n\n'
-      s2 += '.Request sample' + '\n'
+      s2 += '.Request sample\n'
     }
-    s2 +=
-      '[source,shell]\n' + '----\n' + command.groups.command.trim() + '\n' + '----\n' + '// end::' + tagName + '[]\n\n'
+    s2 += '[source,shell]\n'
+    s2 += '----\n'
+    s2 += n.groups.command.trim() + '\n'
+    s2 += '----\n'
+    s2 += '// end::example_' + i + '[]\n\n'
   }
   s2 += '// end::examples[]\n\n\n\n'
 
@@ -219,10 +220,10 @@ function getResultSamplesFromYaml (path) {
     const tagName = k.replace('ex', 'example_')
     const summary = v.summary || ''
     if (summary) {
-      s += '// tag::' + tagName + '[] ' + '\n\n'
+      s += '// tag::' + tagName + '[]\n\n'
       s += '.Result sample: ' + summary + '\n'
     } else {
-      s += '// tag::' + tagName + '[]' + '\n\n'
+      s += '// tag::' + tagName + '[]\n\n'
       s += '.Result sample' + '\n'
     }
     s += '[source,json]\n'
