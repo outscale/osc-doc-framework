@@ -19,7 +19,7 @@
 
     for (var i = 0, length = tabs.length; i < length; i++) {
       const tabHeading = tabs[i].querySelector("h2:first-child, h3:first-child, h4:first-child, h5:first-child, h6:first-child")
-      const id = tabHeading.textContent.replaceAll(" ", "_").replaceAll(/[’:/()]|_+$/g, "")
+      const id = tabHeading.textContent.replaceAll(" ", "_").replaceAll(/[’':/()]|_+$/g, "")
       let tabName = tabHeading.parentNode.classList.values()
         .filter(x => x.startsWith("data-tabname=")).find(x => true)
         .split("data-tabname=")[1].replace(/_/g, " ")

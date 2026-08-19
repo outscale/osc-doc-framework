@@ -124,7 +124,7 @@ function modifyAsciiDoc (text) {
 function processTabFormats (text) {
   const matches = text.matchAll(/\[\.tab, *?id="(?<id>.+?)"\]\n+?=.+? *?(?<heading>.+?)\n/g)
   for (const m of matches) {
-    const newClass = m.groups.heading.replaceAll(' ', '_').replaceAll(/[’:/()]|_+$/g, '')
+    const newClass = m.groups.heading.replaceAll(' ', '_').replaceAll(/[’':/()]|_+$/g, '')
     const newId = m.groups.id.replace(/ /g, '_')
     const newM = m[0].replace('.tab', '.tab.data-tabname=' + newId).replace('id="' + m.groups.id, 'id="' + newClass)
     text = text.replace(m[0], newM)
