@@ -114,9 +114,10 @@ function formatDescription (description, isList=false) {
     // Convert links
     description = description.replace(/\[(.+?)\]\((.+?)\)/g, convertLink)
     // Unescape pipe characters
-    description = description.replace(/\\\|/g, '|')
+    description = description.replaceAll('\\\|', '|')
     // Correctly render monospace when it is a single space character
-    description = description.replace(/<code><\/code>/g, '`` ``')
+    description = description.replaceAll('<code></code>', '`` ``')
+    description = description.replaceAll('` `', '`` ``')
     // Convert admonitions
     description = description.replace(/(?<=\n)(\*\*)?(\[[A-Z]+?\])(\*\*)?( \+)?\n+?([\s\S]+)$/g, '$2\n====\n$5\n====')
     description = description.replace(/> (\*\*)?(\[[A-Z]+\])(\*\*)?( \+)?\n+?> (.+\n)/g, '$2\n====\n$5\n====')
@@ -164,7 +165,7 @@ function getRef (schema, level, host, requestFlag) {
     array = widdershinsPreProcess.pushValueEnum(array, v)
     valueDefault = widdershinsPreProcess.getValueDefault(v)
     if (valueDefault) {
-      array.push(valueDefault.replace(/<code><\/code>/, '` `'))
+      array.push(valueDefault.replace('<code></code>', '`` ``'))
     }
     valueExamples = widdershinsPreProcess.getValueExamples(v)
     array = widdershinsPreProcess.pushValueConst(array, v)
