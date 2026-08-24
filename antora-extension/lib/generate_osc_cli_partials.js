@@ -206,6 +206,7 @@ function formatRequestSamples (s) {
   const commands = s.matchAll(/(# (?<summary>.+)\n\n)?(?<command>\$ osc-cli [\s\S]+?)(?=\n```)/g)
   let s2 = '// tag::examples[]\n\n'
   let i = 0
+  let endNote = ''
   for (const n of commands) {
     i++
     s2 += '// tag::example_' + i + '[]\n\n'
@@ -220,15 +221,15 @@ function formatRequestSamples (s) {
     const match = n.groups.command.match(/^(?<command_without_end_note>[\s\S]+?)\n(?<end_note>(?:# .+?\n)+?)$/)
     if (match) {
       s2 += match.groups.command_without_end_note
-      s2 += '----\n'
-      s2 += formatEndNote(match.groups.end_note)
+      endNote = formatEndNote(match.groups.end_note)
     } else {
       s2 += n.groups.command + '\n'
-      s2 += '----\n'
     }
+    s2 += '----\n'
     s2 += '// end::example_' + i + '[]\n\n'
   }
-  s2 += '// end::examples[]\n\n\n\n'
+  s2 += '// end::examples[]\n\n'
+  s2 += endNote + '\n\n'
 
   return s2
 }
@@ -246,7 +247,7 @@ function formatEndNote (endNote) {
   let s = '[IMPORTANT]\n'
   s += '====\n'
   s += endNote
-  s += '====\n'
+  s += '====\n\n'
 
   return s
 }
