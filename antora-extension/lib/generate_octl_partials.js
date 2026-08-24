@@ -37,7 +37,7 @@ function getApidocSection (apiMarkdown, call) {
 }
 
 function getMainDescription (apidocText, call) {
-  const start = '`\n\n'
+  const start = /`[A-Z]+? \/[^ ]+?`\n\n/
   const end = '\n<aside class="warning">'
   const altEnd = '\n<aside class="success">'
 
