@@ -224,8 +224,8 @@ function markdown_to_asciidoc (s, outputFileStem) {
   // Unescape pipe characters
   s = s.replace(/\\(\\)?\|/g, '|')
   // Correctly render monospace when it is a single space character
-  s = s.replaceAll('<code></code>', '`` ``')
   s = s.replaceAll('` `', '`` ``')
+  s = s.replaceAll('<code></code>', '`` ``')
   // Correctly render monospace when it contains { or \ (to avoid special character interpretation)
   function replacer (match, p1) {
     if (!p1.includes('`') && (p1.includes('{') || p1.includes('\\'))) return '`+++' + p1 + '+++`'
