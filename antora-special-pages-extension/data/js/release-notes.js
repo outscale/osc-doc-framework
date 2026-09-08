@@ -150,11 +150,15 @@
 
     for (entry of entries) {
       const entryTags = entry.querySelectorAll(".tags span")
+      let matchCount = 0
       entry.style.display = "none"
       for (let entryTag of entryTags) {
-        if (filters.includes(entryTag.textContent) || !filters.length) {
-          entry.style.display = "block"
+        if (filters.includes(entryTag.textContent)) {
+          matchCount += 1
         }
+      }
+      if (matchCount === filters.length || !filters.length) {
+        entry.style.display = "block"
       }
     }
 
@@ -163,6 +167,8 @@
         sect1.style.display = "block"
       }
     }
+
+    handleNoResultsMessage(sect1s)
 
     closeButton.style.display = "none"
     for (let box of checkboxes) {
@@ -185,6 +191,25 @@
     }
 
     return [sect1s, entries]
+  }
+
+  function handleNoResultsMessage (sect1s) {
+    const test1 = document.querySelector(".sect1[style='display: block;']")
+    const test2 = document.querySelector(".no-results")
+    if (!test1 && !test2) {
+      const div = document.createElement("div")
+      const p = document.createElement("p")
+      const lang = document.querySelector("html")["lang"]
+      if (lang === "fr") {p.textContent = "Pas d'entrées pour les filtres sélectionnés."}
+      else {p.textContent = "No entries for the selected filters."}
+      div.classList.add("no-results")
+      div.append(p)
+      sect1s[sect1s.length - 1].after(div)
+      document.getElementById("disclaimer").style.display = "none"
+    } else if (test1 && test2) {
+      document.querySelector(".no-results").remove()
+      document.getElementById("disclaimer").style.display = null
+    }
   }
 
   function moveMenu () {

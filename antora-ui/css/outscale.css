@@ -1284,6 +1284,10 @@ div.tab.active {
   }
 }
 
+.content.release-notes .no-results {
+  padding-top: 3em;
+}
+
 .added,
 .improved,
 .removed,
