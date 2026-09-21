@@ -1,5 +1,56 @@
 # osc-doc-framework Changelog
 
+## 1.19.0 (2026-09-21)
+
+### New features
+
+* (antora-extension / antora-special-pages-extension) End-user features:
+    * In the API docs, automatically generate code samples for [octl](https://github.com/outscale/octl) commands [4e45394...9bc89ab](https://github.com/outscale/osc-doc-framework/compare/4e45394fb015e33ba0acf7a3746878f5978bb008...9bc89abce9461d327e8a775c50eaa52485c910b2)
+* (antora-special-pages-extension) End-user features:
+    * On the [Release Notes](https://docs.outscale.com/en/userguide/Release-Notes.html) page, clicking multiple filters now intersects the filters ("AND" logic) instead of uniting them ("OR" logic) [b39d4cb](https://github.com/outscale/osc-doc-framework/commit/b39d4cb7fc7e0f1a9d7752d927a75651e8891755)
+* (antora-extension) Authoring/CI-centric features:
+    * Support more OpenAPI 3.1 features [f1815c4](https://github.com/outscale/osc-doc-framework/commit/f1815c48047c8aff7528f863feb0c1a13a75d165), [6de860a](https://github.com/outscale/osc-doc-framework/commit/6de860a29980f609b43758503aaca382557c0b32)
+    * Implement a `FAIL_IF_APIDOCS_NOT_VALID` environment variable that blocks the CI if there are errors in the API docs [c5ad368](https://github.com/outscale/osc-doc-framework/commit/c5ad3688e410dff0c56cf2b7b911eaef3006d4ac)
+    * In the API docs, add support for formatting links as colored buttons [bf2fd08](https://github.com/outscale/osc-doc-framework/commit/bf2fd08d8d7cbd923605958550b03959ab21da6b)
+    * In the User Guide, make it possible to detect formatting errors in JSON and YAML code blocks [c5ad368...2b19547](https://github.com/outscale/osc-doc-framework/compare/c5ad3688e410dff0c56cf2b7b911eaef3006d4ac...2b195477aceac72c5632436dc445264d73cece2b), [0c6e9f9](https://github.com/outscale/osc-doc-framework/commit/0c6e9f9cdaa3fa82fb07df6162ba003b495cabff)
+    * Automatically generate Antora partials for [octl](https://github.com/outscale/octl) commands [7d8f7e3](https://github.com/outscale/osc-doc-framework/commit/7d8f7e3505ab2dcb7d40cbe33483a44946fffa0b), [27d2c36...6201e80](https://github.com/outscale/osc-doc-framework/compare/27d2c36acd48af1232debdf117e1a1b8bb40fccf...6201e80f203184b9a9863fdf684d97de7ac18533), [4c8b1de...198495e](https://github.com/outscale/osc-doc-framework/compare/29cce2f5fb692eb4dcd979305f35d7f27ebd1aaa...198495e761b0cb46c768b0248aff12137f94732b), [d2d92fc...62b38a6](https://github.com/outscale/osc-doc-framework/compare/d2d92fc0d56480a9699afdac24fe4fd90f4285d7...62b38a68527109cc1121eaa6b88dbac6395cae8c)
+
+### Improvements
+
+* (antora-extension) API doc generation improvements:
+    * Visually optimize the display of oneOf elements [10e2c57](https://github.com/outscale/osc-doc-framework/commit/10e2c57f95eb00338bed3bceca9b23351c10cc30)
+    * Ensure Node scripts can be executed on the command line [ca45549](https://github.com/outscale/osc-doc-framework/commit/ca4554925b335603ff93f04af95b86a651e124be)
+    * Add option to not re-sort the keys when filling the API definition file with examples [a6d8cbc](https://github.com/outscale/osc-doc-framework/commit/a6d8cbc59d900a93a5c98e28d5c2bc56e0e66bd5)
+    * Separate the API calls->Terraform resources matches into its own file (to facilitate update automation) [6f24780](https://github.com/outscale/osc-doc-framework/commit/6f24780f99e5cf714cf1f9f4dc40731dc211e34c)
+    * Replace `OSC_EMAIL` with `OSC_LOGIN` in code samples for consistency [75103e9](https://github.com/outscale/osc-doc-framework/commit/75103e9db80ece6f99d1bb2edbd636105211b703)
+    * Add warning about numerical string syntax in OSC CLI code samples [198495e...2c7b3fb](https://github.com/outscale/osc-doc-framework/compare/198495e761b0cb46c768b0248aff12137f94732b...2c7b3fb204b579f1e0af74a298e86859fab5df84), [d2d92fc](https://github.com/outscale/osc-doc-framework/commit/d2d92fc0d56480a9699afdac24fe4fd90f4285d7)
+* (antora-ui) UI improvements:
+    * Display [EIM Policy Generator](https://docs.outscale.com/en/userguide/EIM-Policy-Generator.html) in top menu [5504ca9](https://github.com/outscale/osc-doc-framework/commit/5504ca94d86b169c3f1aa2001af80ada7478fcb9)
+    * Update admonition icons (so that WARNING and IMPORTANT admonitions use different icons) [487764b](https://github.com/outscale/osc-doc-framework/commit/487764be1028195c5bf2c79e3f4ad39acca8b971)
+    * Improve readability of collapsible blocks [50f570e](https://github.com/outscale/osc-doc-framework/commit/50f570e3f0f533b0e12733f18b823d41f4846e0a)
+    * Improve tab code so that the tab anchors can be detected by broken link checkers [83424d6](https://github.com/outscale/osc-doc-framework/commit/83424d650a577f726e3dfa46b88a20bbb8bd1fbf)
+* (Vale) Style Guide improvements:
+    * Adjust rules [8e0bb3b...cd2534e](https://github.com/outscale/osc-doc-framework/compare/8e0bb3b6c843c289d8a65814514753f4b46e40c3...cd2534e00b376f427dc9163ec22ea49ba2116660), [7d62de5](https://github.com/outscale/osc-doc-framework/commit/7d62de5667535707047b31a481a2fd64bbcc065b), [10e2c57...3b19135](https://github.com/outscale/osc-doc-framework/compare/10e2c57f95eb00338bed3bceca9b23351c10cc30...3b191354d8ead560d35fb32a1bf43e1f5edece1f)
+    * Add rule to prevent using forbidden OUTSCALE private IPs [b6824db](https://github.com/outscale/osc-doc-framework/commit/b6824dbac17b8e56c724ae25d4f82adc7e18aea0)
+    * Apply rules to Markdown files [b486157](https://github.com/outscale/osc-doc-framework/commit/b48615718f7f07059d36e49196441e0b951a9cc1)
+* Update logic of update-checker.js [ef75463](https://github.com/outscale/osc-doc-framework/commit/ef754637982b7cc853e299a77fd9c4e5706620b3)
+* Add CI checks of the OUTSCALE GitHub organization to the repo [e0d9d5f](https://github.com/outscale/osc-doc-framework/commit/e0d9d5f0ee63177b4e09d77790f724c313ee2daa), [27d2c36](https://github.com/outscale/osc-doc-framework/commit/27d2c36acd48af1232debdf117e1a1b8bb40fccf)
+
+### Bugfixes
+
+* (antora-extension) Fix API doc generation for certain edge cases [90459c6](https://github.com/outscale/osc-doc-framework/commit/90459c6f2c375a61e3105c5f51e6e1fbe564b288), [cb52b0b](https://github.com/outscale/osc-doc-framework/commit/cb52b0b5f6236e7969dc34e7bfa6077330c11c61), [33a5b52](https://github.com/outscale/osc-doc-framework/commit/33a5b5267a4aec131c122f15b19c606e0862fb59), [94ca05e](https://github.com/outscale/osc-doc-framework/commit/94ca05eb6e199659d7e7c9647f040c3dd16349c8), [111e9b5](https://github.com/outscale/osc-doc-framework/commit/111e9b527979513234eee222d53cebf33d5e1b54), [6de860a...bea1849](https://github.com/outscale/osc-doc-framework/compare/6de860a29980f609b43758503aaca382557c0b32...bea1849696e608cf94403ed56dd348e809297731), [d2769a1](https://github.com/outscale/osc-doc-framework/commit/d2769a139cd7adf2df8f4549fc3a01579837a013), [8e0bb3b](https://github.com/outscale/osc-doc-framework/commit/8e0bb3b6c843c289d8a65814514753f4b46e40c3), [f530703](https://github.com/outscale/osc-doc-framework/commit/f530703edcfaaf96ba4bbf6e3d241e09d0c5b620), [ca08b15](https://github.com/outscale/osc-doc-framework/commit/ca08b158a518f054c83aa9d08f1a0a2067f1cfc2), [487764b...4e45394](https://github.com/outscale/osc-doc-framework/compare/487764be1028195c5bf2c79e3f4ad39acca8b971...4e45394fb015e33ba0acf7a3746878f5978bb008), [1d072b0](https://github.com/outscale/osc-doc-framework/commit/1d072b06cd1ba1e447103d46ecace4d6fc8e62a4), [a126b6b](https://github.com/outscale/osc-doc-framework/commit/a126b6b994643a141ef748af2aa7abfd1d128016), [2b0bbee](https://github.com/outscale/osc-doc-framework/commit/2b0bbee96de7f960c1da603273ef687ccc96c5ac)
+* (antora-extension) In the oAPI docs page, hard-code some specific error codes [6ede2bd](https://github.com/outscale/osc-doc-framework/commit/6ede2bdfa25a8476f42504eed8dbaba0e4487740)
+* (antora-extension) Implement `TRIGGER_REF` environment variable in download_package.js [6d69e22](https://github.com/outscale/osc-doc-framework/commit/6d69e22fdb311f9879af4fda6da3999d5a35d94e)
+* (antora-extension / antora-ui) Fix (remove) apostrophes in tab anchors that are linked to from the table of contents [02a990a](https://github.com/outscale/osc-doc-framework/commit/02a990ac4c417f908dbb9a05737134d336c8706c)
+* (antora-ui) Fix CSS bugs [1e024a1](https://github.com/outscale/osc-doc-framework/commit/1e024a11d15f0e5829603788ad643618c9a909c6), [bce9b52](https://github.com/outscale/osc-doc-framework/commit/bce9b529902544970abe4612cc20c68460f457a5), [dcc7e66](https://github.com/outscale/osc-doc-framework/commit/dcc7e66fb0adc6416854b21d6d95cc501c1a18e1), [2f5a4ac](https://github.com/outscale/osc-doc-framework/commit/2f5a4ac2b67b33b75011883705c95a9b5580f4cb)
+* (antora-ui) Fix menu behavior on mobile [7d1a5f2...c852ca9](https://github.com/outscale/osc-doc-framework/compare/7d1a5f2cd5dbcfcfc7129f904381d7ab0f37eeec...c852ca9742b6b873cc074b5dc4dc280085eab650)
+* (antora-ui) Fix syntax highlighting and behavior of "Copy" button in Shell code blocks [2c7b3fb...6832133](https://github.com/outscale/osc-doc-framework/compare/2c7b3fb204b579f1e0af74a298e86859fab5df84...6832133b0fceca36e7a3411f4b52b2b61d1de305)
+* (antora-rss-extension) Fix RSS feed titles getting cut off if the Release Note heading contains a tooltip [7732287](https://github.com/outscale/osc-doc-framework/commit/773228736ac1adf754e598f0c82bba4c5b2a715d)
+* (antora-rss-extension) Fix parsing of internal links in RSS feed [5de0510](https://github.com/outscale/osc-doc-framework/commit/5de05105b41f37ca6f7961fe51f9750914eb7354)
+* (antora-special-pages-extension) In the Error 404 page, the Homepage link shouldn't open a new tab [9fb7ffd](https://github.com/outscale/osc-doc-framework/commit/9fb7ffd4afc7429ab6c67f392aeb63cb14aa14ec)
+* (antora-tooltipper-extension) Adjust tooltip detection [5e52dba...7d1a5f2](https://github.com/outscale/osc-doc-framework/compare/5e52dba97e6d8dc031764f22804f49ff451d0528...7d1a5f2cd5dbcfcfc7129f904381d7ab0f37eeec)
+* (Vale) Adjust detection patterns [e6764d4](https://github.com/outscale/osc-doc-framework/commit/e6764d4ac40babc703c52788fddf1f52aa58a7c4), [7c034f1](https://github.com/outscale/osc-doc-framework/commit/7c034f14b2d298b127cfc832d0d82097ca24f0fe)
+
 ## 1.18.0 (2025-07-17)
 
 ### New features
