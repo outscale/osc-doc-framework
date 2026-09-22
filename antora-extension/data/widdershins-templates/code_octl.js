@@ -99,6 +99,9 @@ function printOption (option, value) {
     else if (value.startsWith('"{')) quote = "'"
     else if (value.startsWith('[')) quote = "'"
     else if (value.startsWith('$(')) quote = '"'
+    else if (value.endsWith('.pem')) quote = ''
+    else if (value.endsWith('.pub')) quote = ''
+    else if (value.endsWith('.txt')) quote = ''
   } else {
     quote = ''
   }
@@ -116,20 +119,20 @@ function overrideSomeValues (k, v, data) {
   if (k === 'DryRun' || k === 'dryRun') {
     return 'False'
   } else if ((call === 'CreateVms' || call === 'UpdateVm') && k === 'UserData') {
-    return '$(base64 -i user_data.txt)'
+    return 'user_data.txt'
   }
   // Certificate parameter values need a special syntax
   else if (call === 'CreateKeypair' && k === 'PublicKey') {
-    return '$(cat key_name.pub)'
+    return 'key_name.pub'
   } else if (call === 'CreateCa' && k === 'CaPem') {
-    return '$(cat ca-certificate.pem)'
+    return 'ca-certificate.pem'
   } else if (call === 'CreateServerCertificate' || call === 'UploadServerCertificate') {
     if (k === 'Body' || k === 'CertificateBody') {
-      return '$(cat certificate.pem)'
+      return 'certificate.pem'
     } else if (k === 'Chain' || k === 'CertificateChain') {
-      return '$(cat certificate-chain.pem)'
+      return 'certificate-chain.pem'
     } else if (k === 'PrivateKey' || k === 'PrivateKey') {
-      return '$(cat private-key.pem)'
+      return 'private-key.pem'
     }
   }
 
