@@ -105,6 +105,9 @@ function fakeBodyParameter(data) {
   if (!data.parameters) data.parameters = []
   let bodyParams = []
   if (data.bodyParameter.schema) {
+    if (data.bodyParameter.schema.additionalProperties && !data.bodyParameter.schema.type) {
+      data.bodyParameter.schema.type = 'object'
+    }
     let param = {}
     param.in = 'body'
     param.schema = data.bodyParameter.schema

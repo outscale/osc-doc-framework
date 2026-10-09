@@ -189,6 +189,9 @@ function processApi (api) {
       processObj(v)
       for (const verb of VERBS) {
         processObj(v[verb])
+        if (v[verb]?.requestBody) {
+          processObj(v[verb].requestBody)
+        }
         if (v[verb]?.tags) {
           for (const tag of v[verb].tags) {
             tags.push({ name: tag })
