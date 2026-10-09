@@ -36,7 +36,9 @@ function createGeneralOptions (data) {
         { name: 'header', value: 'X-Osc-Date: $(TZ=GMT date +%Y%m%dT%H%M%SZ)' }
       )
     }
-    options.push({ name: 'header', value: 'Content-Type: application/json' })
+    if (data.consumes?.length) {
+      options.push({ name: 'header', value: 'Content-Type: ' + data.consumes[0] })
+    }
   } else {
     if (data.security?.length && !data.operation['x-basicAuthFlag']) {
       options.push({ name: 'user', value: '$OSC_ACCESS_KEY:$OSC_SECRET_KEY' }, { name: 'aws-sigv4', value: 'aws:amz' })
