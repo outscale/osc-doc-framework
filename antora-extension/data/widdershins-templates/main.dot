@@ -6,7 +6,7 @@
 <div class="heading-description">
 {{? data.api.info?.contact?.email}}Email: <a href="mailto:{{=data.api.info.contact.email}}">{{=data.api.info.contact.email}}</a>{{? data.api.info.contact.name}} ({{=data.api.info.contact.name}}){{?}}.
 {{?}}{{? data.api.info?.contact?.url}}Web: <a href="{{=data.api.info.contact.url}}">{{= data.api.info.contact.name || 'Support'}}</a>.
-{{?}}{{? data.api.info?.license}}License: {{? data.api.info.license.url}}<a href="{{=data.api.info.license.url}}">{{=data.api.info.license.name}}</a>{{?? data.api.info.license.identifier}}<a href="https://spdx.org/licenses/{{=data.api.info.license.identifier}}">{{=data.api.info.license.name}}</a>{{??}}{{=data.api.info.license.name}}{{?}}.
+{{?}}{{? data.api.info?.license}}License: {{? data.api.info.license.url}}<a href="{{=data.api.info.license.url}}">{{=data.api.info.license.name}}</a>{{?? data.api.info.license.identifier === 'UNLICENSED' }}UNLICENSED{{?? data.api.info.license.identifier}}<a href="https://spdx.org/licenses/{{=data.api.info.license.identifier}}">{{=data.api.info.license.name}}</a>{{??}}{{=data.api.info.license.name}}{{?}}.
 {{?}}{{? data.api.info?.termsOfService}}<a href="{{=data.api.info.termsOfService}}">Terms of service</a>.
 {{?}}
 </div>

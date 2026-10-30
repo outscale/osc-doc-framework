@@ -18,11 +18,14 @@ function generateCurlExamples (data, lang) {
 
 function createGeneralOptions (data) {
   const options = []
+  const isItIamV2Api = data.api.info?.title.toLowerCase().startsWith('iam')
 
   if (!data.custom.isAGatewayApi(data.host)) {
     if (data.security?.length && data.security.find((n) => n.AccessKeyAuth)) {
       options.push({ name: 'header', value: 'AccessKey: $OSC_ACCESS_KEY' })
       options.push({ name: 'header', value: 'SecretKey: $OSC_SECRET_KEY' })
+    } else if (isItIamV2Api) {
+      options.push({ name: 'header', value: 'Authorization: Bearer $TOKEN' })
     }
     if (data.consumes?.length) {
       options.push({ name: 'header', value: 'Content-Type: ' + data.consumes[0] })
@@ -64,6 +67,7 @@ function createGeneralOptions (data) {
 }
 
 function printExamples (examples, options, data, lang) {
+  const isItOksApi = data.api.info?.title === 'OKS API' || data.host?.includes('oks.outscale.')
   let s = ''
   for (let i = 0, length = examples.length; i < length; i++) {
     if (data.security?.length) {
@@ -75,7 +79,7 @@ function printExamples (examples, options, data, lang) {
           s += '# ' + examples[i].summary + '\n\n'
         } else if (i === 0 && data.security.find((n) => n.BasicAuth)) {
           s += '# Example with access key/secret key authentication\n'
-          if (data.api.info?.title === 'OKS API' || data.host?.includes('oks.outscale.')) {
+          if (isItOksApi) {
             s += '# (See the "Authentication Schemes" section for other authentications)\n'
           }
           s += '\n'

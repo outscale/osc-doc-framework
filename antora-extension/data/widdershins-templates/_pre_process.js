@@ -203,7 +203,7 @@ function generateAuthenticationSchemesSection (data) {
         s += '|\n'
       } else if (v.type === 'openIdConnect') {
         s += '|' + v.type + '|' + (v.description || '')
-        s += '<br />' + openIdConnectUrl + '|\n'
+        s += '<br />' + v.openIdConnectUrl + '|\n'
       } else {
         s += '|' + v.type + '|' + (v.description || '') + '|\n'
       }
@@ -891,6 +891,12 @@ function printRequired (boolean) {
 }
 
 function printType (p) {
+  if (
+    p.safeType.startsWith('array[')
+    || p.in === 'path'
+  ) {
+    setSafeType(p.schema, p)
+  }
   if (p.safeType === 'any' && p.schema?.anyOf?.length === 1) {
     setSafeType(p.schema?.anyOf[0], p)
   }

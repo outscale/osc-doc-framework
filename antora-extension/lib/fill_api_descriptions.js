@@ -171,7 +171,7 @@ function processObj (k, obj, isItAGatewayApi, isReusableSchema, api) {
     }
   } else {
     if (k && !k.endsWith(SEP + 'items')) {
-      // delete obj.summary
+      delete obj.summary
       delete obj.description
       delete obj.items?.description
       if ( !isReusableSchema || !obj.property?.length ) {
@@ -328,7 +328,9 @@ function swapPlaceholderNameWithRefName (descriptionPlaceholder, refObj, api) {
 function insertDescriptions (obj, descriptions, apiFilename) {
   for (const [k, v] of Object.entries(obj)) {
     if (typeof v === 'object') {
-      insertDescriptions(v, descriptions, apiFilename)
+      if (v !== null) {
+        insertDescriptions(v, descriptions, apiFilename)
+      }
     } else if (k === 'description') {
       obj[k] = descriptions[v] || '**&lt;NOT_FOUND description: ' + v + '&gt;**'
       if (isADescriptionForXxxOf(v)) {

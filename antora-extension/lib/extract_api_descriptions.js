@@ -120,10 +120,15 @@ function processObj (k, obj, isItAGatewayApi, parentK = null) {
         tweakObjDescriptionForGateway(k, obj)
       }
       // delete obj.summary
+      if (obj.summary && !obj.description) {
+        obj.description = obj.summary
+      }
       if (obj.description) {
         if (k.includes(SEP + 'responses' + SEP)) {
-          k = SEP + 'responses' + SEP + parentK
-          obj.description = k
+          if (isItAGatewayApi) {
+            k = SEP + 'responses' + SEP + parentK
+            obj.description = k
+          }
           const s = writeCsv(k, obj.description)
           if (!CSV_ARRAY.includes(s)) {
             CSV_ARRAY.push(s)
@@ -230,7 +235,7 @@ function writeCsv (key, value) {
   if (value) {
     value = value.replaceAll('"', '&quot;')
     if (value.includes(';') || value.includes('\n')) {
-      value = '"' + value.trimEnd() + '"'
+      value = '"' + value.replaceAll('\n', '<br />\n').trimEnd() + '"'
     }
     s = key + ';' + value
   }

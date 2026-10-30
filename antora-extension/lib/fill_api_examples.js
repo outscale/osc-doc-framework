@@ -48,28 +48,29 @@ async function runInNode (api, examplesFile, apiFilepath, logPath) {
 function insertExamples (api, examples, apiFilename) {
   const paths = api.paths
   for (const path of Object.values(paths)) {
-    const op = path.post || path.get || {}
-    const operationId = op.operationId
-    const reqExamples = examples[operationId]?.request
-    const respExamples = examples[operationId]?.response
+    for (const op of Object.values(path)) {
+      const operationId = op.operationId
+      const reqExamples = examples[operationId]?.request
+      const respExamples = examples[operationId]?.response
 
-    if (op.requestBody) {
-      op.requestBody.content['application/json'].examples = reqExamples
-      if (op.responses['200']?.content?.['application/json']) {
-        op.responses['200'].content['application/json'].examples = respExamples
+      if (op.requestBody) {
+        op.requestBody.content['application/json'].examples = reqExamples
+        if (op.responses['200']?.content?.['application/json']) {
+          op.responses['200'].content['application/json'].examples = respExamples
+        }
       }
-    }
 
-    if (!reqExamples || !respExamples) {
-      let msg = `${ERROR_START}NOT_FOUND example (${apiFilename}):${ERROR_END} ${operationId}`
-      if (!reqExamples) {
-        msg += ' (request)'
+      if (!reqExamples || !respExamples) {
+        let msg = `${ERROR_START}NOT_FOUND example (${apiFilename}):${ERROR_END} ${operationId}`
+        if (!reqExamples) {
+          msg += ' (request)'
+        }
+        if (!respExamples) {
+          msg += ' (response)'
+        }
+        console.error(msg)
+        LOG += msg + '\n'
       }
-      if (!respExamples) {
-        msg += ' (response)'
-      }
-      console.error(msg)
-      LOG += msg + '\n'
     }
   }
 

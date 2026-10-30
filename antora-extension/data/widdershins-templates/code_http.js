@@ -16,6 +16,7 @@ function generateHttpExamples (data, lang) {
     }
   
     const isItOksApi = data.api.info?.title === 'OKS API' || data.host?.includes('oks.outscale.')
+    const isItIamV2Api = data.api.info?.title.toLowerCase().startsWith('iam')
     if (isItOksApi) {
       s += '----highlight-comment-start----# Example with access key/secret key authentication----highlight-end----\n'
       s += '----highlight-comment-start----# (See the "Authentication Schemes" section for other authentications)----highlight-end----\n\n'
@@ -28,10 +29,10 @@ function generateHttpExamples (data, lang) {
       }
       if (data.operation['x-webhook']) {
         s += printRequestLine(data, '/')
-        s += printHeaders(data, null, isItOksApi)
+        s += printHeaders(data, null, isItOksApi, isItIamV2Api)
       } else {
         s += printRequestLine(data, pathname)
-        s += printHeaders(data, host, isItOksApi)
+        s += printHeaders(data, host, isItOksApi, isItIamV2Api)
       }
       s += printBody(data, examples[i])
       if (length && i < length - 1) {
@@ -42,7 +43,7 @@ function generateHttpExamples (data, lang) {
     }
     if (!examples.length) {
       s += printRequestLine(data, pathname)
-      s += printHeaders(data, host, isItOksApi)
+      s += printHeaders(data, host, isItOksApi, isItIamV2Api)
     }
   
     return s
@@ -54,7 +55,7 @@ function generateHttpExamples (data, lang) {
     return s
   }
   
-  function printHeaders (data, host, isItOksApi) {
+  function printHeaders (data, host, isItOksApi, isItIamV2Api) {
     let s = ''
     if (host) {
       s += 'Host: ' + host + '\n'
@@ -81,6 +82,8 @@ function generateHttpExamples (data, lang) {
     if (isItOksApi) {
       s += 'AccessKey: XXXX\n'
       s += 'SecretKey: YYYY\n'
+    } else if (isItIamV2Api) {
+      s += 'Authorization: Bearer &lt;TOKEN&gt;\n'
     }
   
     return s
