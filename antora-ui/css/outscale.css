@@ -829,6 +829,10 @@ code, kbd, pre {
   overflow: initial !important;
 }
 
+.breakable {
+  word-break: break-all;
+}
+
 .toc .toc-menu a {
  color: var(--neutral800);
 }
