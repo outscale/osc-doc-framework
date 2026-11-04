@@ -1,0 +1,7 @@
+extends: substitution
+message: Put a non-breaking between "3DS" and "OUTSCALE" (type Option+Space).
+level: error
+scope: raw
+nonword: true
+swap:
+  3DS OUTSCALE: 3DS OUTSCALE
