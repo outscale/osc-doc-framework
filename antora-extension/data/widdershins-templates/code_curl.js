@@ -20,7 +20,47 @@ function createGeneralOptions (data) {
   const options = []
   const isItIamV2Api = data.api.info?.title.toLowerCase().startsWith('iam')
 
-  if (!data.custom.isAGatewayApi(data.host)) {
+  if (data.custom.isAGatewayApi(data.host)) {
+    if (
+      data.host.startsWith('fcu') ||
+      data.host.startsWith('lbu') ||
+      data.host.startsWith('eim') ||
+      data.host.startsWith('directlink') ||
+      data.host.startsWith('icu') ||
+      data.host.startsWith('kms')
+    ) {
+      if (data.security?.length && !data.operation['x-basicAuthFlag']) {
+        options.push({ name: 'user', value: '$OSC_ACCESS_KEY:$OSC_SECRET_KEY' }, { name: 'aws-sigv4', value: 'aws:amz' })
+      }
+      if (data.host.startsWith('icu') || data.host.startsWith('directlink') || data.host.startsWith('kms')) {
+        let service = ''
+        if (data.host.startsWith('icu')) service = 'TinaIcuService'
+        else if (data.host.startsWith('directlink')) service = 'OvertureService'
+        else if (data.host.startsWith('kms')) service = 'TrentService'
+        options.push(
+          { name: 'header', value: 'x-amz-target: ' + service + '.' + data.method.path.replace('/', '') },
+          { name: 'header', value: 'Content-Type: application/x-amz-json-1.1' }
+        )
+      } else {
+        options.push(
+          { name: 'data-urlencode', value: 'Version=' + data.version },
+          { name: 'data-urlencode', value: 'Action=' + data.method.path.replace('/', '') }
+        )
+      }
+    } else {
+      if (data.security?.length && !data.operation['x-basicAuthFlag']) {
+        options.push({ name: 'user', value: '$OSC_ACCESS_KEY:$OSC_SECRET_KEY' }, { name: 'aws-sigv4', value: 'osc' })
+      } else if (data.operation['x-basicAuthFlag']) {
+        options.push(
+          { name: 'header', value: 'Authorization: Basic $(echo -n "$OSC_LOGIN:$OSC_PASSWORD" | base64)' },
+          { name: 'header', value: 'X-Osc-Date: $(TZ=GMT date +%Y%m%dT%H%M%SZ)' }
+        )
+      }
+      if (data.consumes?.length) {
+        options.push({ name: 'header', value: 'Content-Type: ' + data.consumes[0] })
+      }
+    }
+  } else {
     if (data.security?.length && data.security.find((n) => n.AccessKeyAuth)) {
       options.push({ name: 'header', value: 'AccessKey: $OSC_ACCESS_KEY' })
       options.push({ name: 'header', value: 'SecretKey: $OSC_SECRET_KEY' })
@@ -29,37 +69,6 @@ function createGeneralOptions (data) {
     }
     if (data.consumes?.length) {
       options.push({ name: 'header', value: 'Content-Type: ' + data.consumes[0] })
-    }
-  } else if (data.host.startsWith('api') || data.host.startsWith('okms')) {
-    if (data.security?.length && !data.operation['x-basicAuthFlag']) {
-      options.push({ name: 'user', value: '$OSC_ACCESS_KEY:$OSC_SECRET_KEY' }, { name: 'aws-sigv4', value: 'osc' })
-    } else if (data.operation['x-basicAuthFlag']) {
-      options.push(
-        { name: 'header', value: 'Authorization: Basic $(echo -n "$OSC_LOGIN:$OSC_PASSWORD" | base64)' },
-        { name: 'header', value: 'X-Osc-Date: $(TZ=GMT date +%Y%m%dT%H%M%SZ)' }
-      )
-    }
-    if (data.consumes?.length) {
-      options.push({ name: 'header', value: 'Content-Type: ' + data.consumes[0] })
-    }
-  } else {
-    if (data.security?.length && !data.operation['x-basicAuthFlag']) {
-      options.push({ name: 'user', value: '$OSC_ACCESS_KEY:$OSC_SECRET_KEY' }, { name: 'aws-sigv4', value: 'aws:amz' })
-    }
-    if (data.host.startsWith('icu') || data.host.startsWith('directlink') || data.host.startsWith('kms')) {
-      let service = ''
-      if (data.host.startsWith('icu')) service = 'TinaIcuService'
-      else if (data.host.startsWith('directlink')) service = 'OvertureService'
-      else if (data.host.startsWith('kms')) service = 'TrentService'
-      options.push(
-        { name: 'header', value: 'x-amz-target: ' + service + '.' + data.method.path.replace('/', '') },
-        { name: 'header', value: 'Content-Type: application/x-amz-json-1.1' }
-      )
-    } else {
-      options.push(
-        { name: 'data-urlencode', value: 'Version=' + data.version },
-        { name: 'data-urlencode', value: 'Action=' + data.method.path.replace('/', '') }
-      )
     }
   }
 
@@ -94,7 +103,14 @@ function printExamples (examples, options, data, lang) {
     let verb = ' -X ' + data.methodUpper
 
     let url = data.url
-    if (data.custom.isAGatewayApi(data.host) && !data.host.startsWith('api') && !data.host.startsWith('okms')) {
+    if (
+      data.host.startsWith('fcu') ||
+      data.host.startsWith('lbu') ||
+      data.host.startsWith('eim') ||
+      data.host.startsWith('directlink') ||
+      data.host.startsWith('icu') ||
+      data.host.startsWith('kms')
+    ) {
       url = data.baseUrl
     }
     url = url.replace('{region}', "'$OSC_REGION'").replace('eu-west-2', "'$OSC_REGION'")

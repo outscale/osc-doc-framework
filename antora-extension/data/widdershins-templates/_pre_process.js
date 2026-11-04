@@ -591,6 +591,7 @@ function isAGatewayApi (host) {
   return (
     (host.startsWith('api') && !host.includes('oks')) ||
     host.startsWith('okms') ||
+    host.startsWith('secrets-manager') ||
     host.startsWith('fcu') ||
     host.startsWith('lbu') ||
     host.startsWith('eim') ||
@@ -636,6 +637,8 @@ function printDescription (p, host) {
   const arrayTotal = []
   if (p.description) {
     arrayTotal.push(p.description)
+  } else if (p.schema?.description) {
+    arrayTotal.push(p.schema.description)
   }
   if (array.length) {
     arrayTotal.push(array.join('. ') + '.')
