@@ -124,7 +124,10 @@ function fakeBodyParameter(data) {
       bodyParams.push(param)
     }
 
-    if ((param.schema.type === 'object') && (data.options.expandBody || (!param.schema["x-widdershins-oldRef"]))) {
+    if (
+      (param.schema.type === 'object' || param.schema.type === 'array')
+      && (data.options.expandBody || !param.schema["x-widdershins-oldRef"])
+    ) {
       let offset = (data.options.omitBody ? -1 : 0)
       let props = schemaToArray(data.bodyParameter.schema, offset, { trim: true }, data)
 
@@ -876,13 +879,7 @@ function printOperationName (operationUniqueName) {
 }
 
 function printParameterName (s) {
-  const pattern = '**additionalProperties**'
-  const replacement = '*additional properties*'
-  if (s.includes(pattern)) {
-    return s.replace(pattern, replacement)
-  } else {
-    return s
-  }
+  return s.replace('**additionalProperties**', '*additional properties*').replace('*anonymous*', '')
 }
 
 function printRequired (boolean) {

@@ -63,7 +63,8 @@
 **Body** ({{= bodyParameters[0].safeType.replace('#schema', '#tocs_') + ' object' }}):
 {{ bodyParameters.shift(); }}
 {{??}}
-**Body** ({{= data.bodyParameter.contentType }}):
+**Body**:
+{{ bodyParameters[0].description = data.operation.requestBody.description; }}
 {{?}}
 
 |Body Parameter|Type|Description|
