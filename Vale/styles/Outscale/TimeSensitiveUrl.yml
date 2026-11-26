@@ -1,5 +1,5 @@
 extends: existence
-message: "Don't link to this URL as it contains a date (it is bound to change eventually). Link to the parent page instead: 'https://en.outscale.com/terms-of-service/' or 'https://fr.outscale.com/cgucgv/'."
+message: "Don't link to this URL as it contains a date (it is bound to change eventually). Link to the parent page instead: 'https://en.outscale.com/legal-informations/' or 'https://fr.outscale.com/informations-legales/'."
 level: error
 scope: raw
 raw:
