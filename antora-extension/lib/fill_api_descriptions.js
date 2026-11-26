@@ -174,7 +174,11 @@ function processObj (k, obj, isItAGatewayApi, isReusableSchema, api) {
       delete obj.summary
       delete obj.description
       delete obj.items?.description
-      if ( !isReusableSchema || !obj.property?.length ) {
+      if (
+        (!isReusableSchema || !obj.property?.length)
+        && !(k.includes(SEP + 'responses' + SEP) && obj.type === 'array')
+        && !(k.includes(SEP + 'responses' + SEP) && obj.anyOf)
+      ) {
         obj = placeDescriptionFieldInObj(k, obj, api)
         if (isItAGatewayApi) {
           tweakObjDescriptionForGateway(k, obj)
@@ -188,7 +192,11 @@ function processObj (k, obj, isItAGatewayApi, isReusableSchema, api) {
       obj.externalDocs.description = k + SEP + 'externalDocs'
     }
     if (obj.requestBody) {
-      delete obj.requestBody.description
+      if (obj.requestBody.content?.['application/json']?.schema?.type === 'array') {
+        obj.requestBody.description = k.slice(1) + SEP + 'requestBody'
+      } else {
+        delete obj.requestBody.description
+      }
     }
     if (obj.additionalProperties) {
       delete obj.additionalProperties.description
